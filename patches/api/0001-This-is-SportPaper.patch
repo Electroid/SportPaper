@@ -1,14 +1,11 @@
-From 8fa1a710312e7ab404096dee541146300b9c5775 Mon Sep 17 00:00:00 2001
+From 8a5df62b27580d8b8a8129e06fe0c94b23e26c2e Mon Sep 17 00:00:00 2001
 From: kashike <kashike@vq.lc>
 Date: Fri, 16 Dec 2016 12:49:25 -0800
 Subject: [PATCH] This is SportPaper
 
----
- pom.xml | 25 ++++---------------------
- 1 file changed, 4 insertions(+), 21 deletions(-)
 
 diff --git a/pom.xml b/pom.xml
-index fe9d6d2..b5ccba3 100644
+index fe9d6d26..70aa3ad0 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -4,20 +4,15 @@
@@ -56,5 +53,5 @@ index fe9d6d2..b5ccba3 100644
      <pluginRepositories>
          <pluginRepository>
 -- 
-2.10.2
+2.18.0
 
