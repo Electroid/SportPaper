@@ -1,0 +1,7 @@
+/.idea/
+/base/mc-dev/
+/SportPaper-API/
+/SportPaper-Server/
+*.iml
+*.DS_Store
+
