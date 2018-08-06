@@ -1,0 +1,37 @@
+From 0657b23eb32a31bb5f1f93831cc2ba5229923984 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 6 Aug 2018 16:39:57 -0700
+Subject: [PATCH] Fix Decompilation errors
+
+
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
+index ab4520ba..fc5ad291 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
+@@ -172,10 +172,6 @@ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
+         return Objects.toStringHelper(this).add("action", this.a).add("entries", this.b).toString();
+     }
+ 
+-    public void a(PacketListener packetlistener) {
+-        this.a((PacketListenerPlayOut) packetlistener);
+-    }
+-
+     static class SyntheticClass_1 {
+ 
+         static final int[] a = new int[PacketPlayOutPlayerInfo.EnumPlayerInfoAction.values().length];
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java b/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
+index 90606f50..4b8eb3ee 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
+@@ -109,8 +109,4 @@ public class PacketPlayOutScoreboardTeam implements Packet<PacketListenerPlayOut
+     public void a(PacketListenerPlayOut packetlistenerplayout) {
+         packetlistenerplayout.a(this);
+     }
+-
+-    public void a(PacketListener packetlistener) {
+-        this.a((PacketListenerPlayOut) packetlistener);
+-    }
+ }
+-- 
+2.18.0
+

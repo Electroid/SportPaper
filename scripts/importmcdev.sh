@@ -35,6 +35,9 @@ function import {
 	fi
 )
 
+import PacketPlayOutPlayerInfo
+import PacketPlayOutScoreboardTeam
+
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1
 git add . -A >/dev/null 2>&1
