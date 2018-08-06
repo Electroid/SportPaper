@@ -1,0 +1,95 @@
+From 9fd98b0d32c25feb0d17d6c7add86d2d056fa5fd Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 21:54:22 -0700
+Subject: [PATCH] Make scoreboard classes public
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftCriteria.java b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftCriteria.java
+index 7dedd022..5a7c60c2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftCriteria.java
++++ b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftCriteria.java
+@@ -7,7 +7,7 @@ import net.minecraft.server.ScoreboardObjective;
+ 
+ import com.google.common.collect.ImmutableMap;
+ 
+-final class CraftCriteria {
++public final class CraftCriteria {
+     static final Map<String, CraftCriteria> DEFAULTS;
+     static final CraftCriteria DUMMY;
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftObjective.java b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftObjective.java
+index 5bd8cf9d..18f515b8 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftObjective.java
++++ b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftObjective.java
+@@ -9,7 +9,7 @@ import org.bukkit.scoreboard.DisplaySlot;
+ import org.bukkit.scoreboard.Objective;
+ import org.bukkit.scoreboard.Score;
+ 
+-final class CraftObjective extends CraftScoreboardComponent implements Objective {
++public final class CraftObjective extends CraftScoreboardComponent implements Objective {
+     private final ScoreboardObjective objective;
+     private final CraftCriteria criteria;
+ 
+@@ -19,7 +19,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
+         this.criteria = CraftCriteria.getFromNMS(objective);
+     }
+ 
+-    ScoreboardObjective getHandle() {
++    public ScoreboardObjective getHandle() {
+         return objective;
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScore.java b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScore.java
+index ee9d2aed..b10201d8 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScore.java
++++ b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScore.java
+@@ -17,7 +17,7 @@ import org.bukkit.scoreboard.Score;
+  * <p>
+  * Also, as an added perk, a CraftScore will (intentionally) stay a valid reference so long as objective is valid.
+  */
+-final class CraftScore implements Score {
++public final class CraftScore implements Score {
+     private final String entry;
+     private final CraftObjective objective;
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardComponent.java b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardComponent.java
+index d26d09d4..43b72ecf 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardComponent.java
++++ b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardComponent.java
+@@ -1,6 +1,6 @@
+ package org.bukkit.craftbukkit.scoreboard;
+ 
+-abstract class CraftScoreboardComponent {
++public abstract class CraftScoreboardComponent {
+     private CraftScoreboard scoreboard;
+ 
+     CraftScoreboardComponent(CraftScoreboard scoreboard) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardTranslations.java b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardTranslations.java
+index d08e5a28..4a305bb1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardTranslations.java
++++ b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftScoreboardTranslations.java
+@@ -6,7 +6,7 @@ import org.bukkit.scoreboard.DisplaySlot;
+ 
+ import com.google.common.collect.ImmutableBiMap;
+ 
+-class CraftScoreboardTranslations {
++public class CraftScoreboardTranslations {
+     static final int MAX_DISPLAY_SLOT = 3;
+     static ImmutableBiMap<DisplaySlot, String> SLOTS = ImmutableBiMap.of(
+             DisplaySlot.BELOW_NAME, "belowName",
+diff --git a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftTeam.java b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftTeam.java
+index f5ff0f71..54e9ea1d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftTeam.java
++++ b/src/main/java/org/bukkit/craftbukkit/scoreboard/CraftTeam.java
+@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableSet;
+ 
+ import net.minecraft.server.ScoreboardTeam;
+ 
+-final class CraftTeam extends CraftScoreboardComponent implements Team {
++public final class CraftTeam extends CraftScoreboardComponent implements Team {
+     private final ScoreboardTeam team;
+ 
+     CraftTeam(CraftScoreboard scoreboard, ScoreboardTeam team) {
+-- 
+2.18.0
+
