@@ -1,11 +1,11 @@
-From 9179a5d89ee88625c8719e7af3cd4c0b382f74a3 Mon Sep 17 00:00:00 2001
+From d4a3ccd49773c009d7b32fa89ae586a59f8e3207 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 02:23:15 -0700
 Subject: [PATCH] Relative teleport API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index c7e96dec..966d7340 100644
+index c7e96dec..e0704aec 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -1751,6 +1751,37 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -39,7 +39,7 @@ index c7e96dec..966d7340 100644
 +            return false;
 +        }
 +
-+        getHandle().playerConnection.teleport(deltaPos.toLocation(getWorld(), deltaYaw, deltaPitch), java.util.EnumSet.allOf(PacketPlayOutPosition.EnumPlayerTeleportFlags.class));
++        getHandle().playerConnection.teleport(deltaPos.toLocation(getWorld(), deltaYaw, deltaPitch));
 +        return true;
 +    }
 +
