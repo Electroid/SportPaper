@@ -1,0 +1,322 @@
+From 2194160b04154f1b1f94f2dff02f024b2887e5ae Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 11 Aug 2018 20:30:23 -0700
+Subject: [PATCH] MC Utils
+
+
+diff --git a/src/main/java/net/minecraft/server/Chunk.java b/src/main/java/net/minecraft/server/Chunk.java
+index ab0d41ca..82f1443c 100644
+--- a/src/main/java/net/minecraft/server/Chunk.java
++++ b/src/main/java/net/minecraft/server/Chunk.java
+@@ -821,6 +821,7 @@ public class Chunk {
+         return !block.isTileEntity() ? null : ((IContainer) block).a(this.world, this.c(blockposition));
+     }
+ 
++    public final TileEntity getTileEntityImmediately(BlockPosition pos) { return this.a(pos, EnumTileEntityState.IMMEDIATE); } // Paper - OBFHELPER
+     public TileEntity a(BlockPosition blockposition, Chunk.EnumTileEntityState chunk_enumtileentitystate) {
+         // CraftBukkit start
+         TileEntity tileentity = null;
+diff --git a/src/main/java/net/minecraft/server/ChunkCoordIntPair.java b/src/main/java/net/minecraft/server/ChunkCoordIntPair.java
+index 652c0797..ca693b02 100644
+--- a/src/main/java/net/minecraft/server/ChunkCoordIntPair.java
++++ b/src/main/java/net/minecraft/server/ChunkCoordIntPair.java
+@@ -10,6 +10,8 @@ public class ChunkCoordIntPair {
+         this.z = j;
+     }
+ 
++    public static long asLong(final BlockPosition pos) { return a(pos.getX() >> 4, pos.getZ() >> 4); } // Paper - OBFHELPER
++    public static long asLong(int x, int z) { return a(x, z); } // Paper - OBFHELPER
+     public static long a(int i, int j) {
+         return (long) i & 4294967295L | ((long) j & 4294967295L) << 32;
+     }
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index 6a365252..8766a539 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -13,6 +13,7 @@ import org.bukkit.Location;
+ import org.bukkit.TreeType;
+ import org.bukkit.block.BlockState;
+ import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.world.StructureGrowEvent;
+@@ -546,6 +547,18 @@ public final class ItemStack {
+         return this.tag == null ? null : this.tag.getList("ench", 10);
+     }
+ 
++    // Paper start - (this is just a good no conflict location)
++    public org.bukkit.inventory.ItemStack asBukkitMirror() {
++        return CraftItemStack.asCraftMirror(this);
++    }
++    public org.bukkit.inventory.ItemStack asBukkitCopy() {
++        return CraftItemStack.asCraftMirror(this.cloneItemStack());
++    }
++    public static ItemStack fromBukkitCopy(org.bukkit.inventory.ItemStack itemstack) {
++        return CraftItemStack.asNMSCopy(itemstack);
++    }
++    // Paper end
++
+     public void setTag(NBTTagCompound nbttagcompound) {
+         this.tag = nbttagcompound;
+     }
+diff --git a/src/main/java/net/minecraft/server/MCUtil.java b/src/main/java/net/minecraft/server/MCUtil.java
+new file mode 100644
+index 00000000..992e5060
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/MCUtil.java
+@@ -0,0 +1,201 @@
++
++package net.minecraft.server;
++
++import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.util.Waitable;
++import org.spigotmc.AsyncCatcher;
++
++import javax.annotation.Nullable;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.Executor;
++import java.util.concurrent.Executors;
++import java.util.function.Supplier;
++
++public final class MCUtil {
++    private static final Executor asyncExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Paper Async Task Handler Thread - %1$d").build());
++
++    private MCUtil() {}
++
++
++    /**
++     * Ensures the target code is running on the main thread
++     * @param reason
++     * @param run
++     * @param <T>
++     * @return
++     */
++    public static <T> T ensureMain(String reason, Supplier<T> run) {
++        if (AsyncCatcher.enabled && Thread.currentThread() != MinecraftServer.getServer().primaryThread) {
++            new IllegalStateException( "Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
++            Waitable<T> wait = new Waitable<T>() {
++                @Override
++                protected T evaluate() {
++                    return run.get();
++                }
++            };
++            MinecraftServer.getServer().processQueue.add(wait);
++            try {
++                return wait.get();
++            } catch (InterruptedException | ExecutionException e) {
++                e.printStackTrace();
++            }
++            return null;
++        }
++        return run.get();
++    }
++
++    /**
++     * Calculates distance between 2 entities
++     * @param e1
++     * @param e2
++     * @return
++     */
++    public static double distance(Entity e1, Entity e2) {
++        return Math.sqrt(distanceSq(e1, e2));
++    }
++
++
++    /**
++     * Calculates distance between 2 block positions
++     * @param e1
++     * @param e2
++     * @return
++     */
++    public static double distance(BlockPosition e1, BlockPosition e2) {
++        return Math.sqrt(distanceSq(e1, e2));
++    }
++
++    /**
++     * Gets the distance between 2 positions
++     * @param x1
++     * @param y1
++     * @param z1
++     * @param x2
++     * @param y2
++     * @param z2
++     * @return
++     */
++    public static double distance(double x1, double y1, double z1, double x2, double y2, double z2) {
++        return Math.sqrt(distanceSq(x1, y1, z1, x2, y2, z2));
++    }
++
++    /**
++     * Get's the distance squared between 2 entities
++     * @param e1
++     * @param e2
++     * @return
++     */
++    public static double distanceSq(Entity e1, Entity e2) {
++        return distanceSq(e1.locX,e1.locY,e1.locZ, e2.locX,e2.locY,e2.locZ);
++    }
++
++    /**
++     * Gets the distance sqaured between 2 block positions
++     * @param pos1
++     * @param pos2
++     * @return
++     */
++    public static double distanceSq(BlockPosition pos1, BlockPosition pos2) {
++        return distanceSq(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ());
++    }
++
++    /**
++     * Gets the distance squared between 2 positions
++     * @param x1
++     * @param y1
++     * @param z1
++     * @param x2
++     * @param y2
++     * @param z2
++     * @return
++     */
++    public static double distanceSq(double x1, double y1, double z1, double x2, double y2, double z2) {
++        return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2);
++    }
++
++    /**
++     * Converts a NMS World/BlockPosition to Bukkit Location
++     * @param world
++     * @param x
++     * @param y
++     * @param z
++     * @return
++     */
++    public static Location toLocation(World world, double x, double y, double z) {
++        return new Location(world.getWorld(), x, y, z);
++    }
++
++    /**
++     * Converts a NMS World/BlockPosition to Bukkit Location
++     * @param world
++     * @param pos
++     * @return
++     */
++    public static Location toLocation(World world, BlockPosition pos) {
++        return new Location(world.getWorld(), pos.getX(), pos.getY(), pos.getZ());
++    }
++
++    /**
++     * Converts an NMS entity's current location to a Bukkit Location
++     * @param entity
++     * @return
++     */
++    public static Location toLocation(Entity entity) {
++        return new Location(entity.getWorld().getWorld(), entity.locX, entity.locY, entity.locZ);
++    }
++
++    public static BlockPosition toBlockPosition(Location loc) {
++        return new BlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
++    }
++
++    public static boolean isEdgeOfChunk(BlockPosition pos) {
++        final int modX = pos.getX() & 15;
++        final int modZ = pos.getZ() & 15;
++        return (modX == 0 || modX == 15 || modZ == 0 || modZ == 15);
++    }
++
++    /**
++     * Gets a chunk without changing its boolean for should unload
++     * @param world
++     * @param x
++     * @param z
++     * @return
++     */
++    @Nullable
++    public static Chunk getLoadedChunkWithoutMarkingActive(World world, int x, int z) {
++        return ((ChunkProviderServer) world.chunkProvider).chunks.get(ChunkCoordIntPair.a(x, z));
++    }
++
++    /**
++     * Gets a chunk without changing its boolean for should unload
++     * @param provider
++     * @param x
++     * @param z
++     * @return
++     */
++    @Nullable
++    public static Chunk getLoadedChunkWithoutMarkingActive(IChunkProvider provider, int x, int z) {
++        return ((ChunkProviderServer)provider).chunks.get(ChunkCoordIntPair.a(x, z));
++    }
++
++    /**
++     * Posts a task to be executed asynchronously
++     * @param run
++     */
++    public static void scheduleAsyncTask(Runnable run) {
++        asyncExecutor.execute(run);
++    }
++
++    @Nullable
++    public static TileEntityHopper getHopper(World world, BlockPosition pos) {
++        Chunk chunk = world.getChunkIfLoaded(pos.getX() >> 4, pos.getZ() >> 4);
++        if (chunk != null && chunk.getBlockData(pos).getBlock() == Blocks.HOPPER) {
++            TileEntity tileEntity = chunk.getTileEntityImmediately(pos);
++            if (tileEntity instanceof TileEntityHopper) {
++                return (TileEntityHopper) tileEntity;
++            }
++        }
++        return null;
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/server/NBTTagCompound.java b/src/main/java/net/minecraft/server/NBTTagCompound.java
+index 22d7c2ab..afd594f1 100644
+--- a/src/main/java/net/minecraft/server/NBTTagCompound.java
++++ b/src/main/java/net/minecraft/server/NBTTagCompound.java
+@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
+ 
+ public class NBTTagCompound extends NBTBase {
+ 
+-    private Map<String, NBTBase> map = Maps.newHashMap();
++    public Map<String, NBTBase> map = Maps.newHashMap(); // Paper
+ 
+     public NBTTagCompound() {}
+ 
+diff --git a/src/main/java/net/minecraft/server/NBTTagList.java b/src/main/java/net/minecraft/server/NBTTagList.java
+index a0e6b0ff..cb102811 100644
+--- a/src/main/java/net/minecraft/server/NBTTagList.java
++++ b/src/main/java/net/minecraft/server/NBTTagList.java
+@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
+ public class NBTTagList extends NBTBase {
+ 
+     private static final Logger b = LogManager.getLogger();
+-    private List<NBTBase> list = Lists.newArrayList();
++    public List<NBTBase> list = Lists.newArrayList(); // Paper
+     private byte type = 0;
+ 
+     public NBTTagList() {}
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index b46ac6ab..18343f7c 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -78,8 +78,8 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+     private int g;
+     private boolean h;
+     private int i;
+-    private long j;
+-    private long k;
++    private long j;private void setLastPing(long lastPing) { this.j = lastPing;}; private long getLastPing() { return this.j;}; // Paper - OBFHELPER
++    private long k;private void setKeepAliveID(long keepAliveID) { this.k = keepAliveID;}; private long getKeepAliveID() {return this.k; };  // Paper - OBFHELPER
+     // CraftBukkit start - multithreaded fields
+     private volatile int chatThrottle;
+     private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(PlayerConnection.class, "chatThrottle");
+@@ -2041,6 +2041,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+ 
+     }
+ 
++    private long getCurrentMillis() { return d(); } // Paper - OBFHELPER
+     private long d() {
+         return System.nanoTime() / 1000000L;
+     }
+-- 
+2.18.0
+
