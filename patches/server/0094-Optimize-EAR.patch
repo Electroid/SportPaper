@@ -1,0 +1,41 @@
+From d87fd7ec2b546aff941134caf751b7b2c473e229 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 13 Aug 2018 21:58:25 -0700
+Subject: [PATCH] Optimize EAR
+
+
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index d3767d2a8..35e63217b 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -28,6 +28,7 @@ import net.minecraft.server.EntityTNTPrimed;
+ import net.minecraft.server.EntityVillager;
+ import net.minecraft.server.EntityWeather;
+ import net.minecraft.server.EntityWither;
++import net.minecraft.server.MCUtil;
+ import net.minecraft.server.MathHelper;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.World;
+@@ -110,6 +111,7 @@ public class ActivationRange
+         maxRange = Math.max( maxRange, miscActivationRange );
+         maxRange = Math.min( ( world.spigotConfig.viewDistance << 4 ) - 8, maxRange );
+ 
++        Chunk chunk; // Paper
+         for ( Entity player : (List<Entity>) (List) world.players )
+         {
+ 
+@@ -128,9 +130,9 @@ public class ActivationRange
+             {
+                 for ( int j1 = k; j1 <= l; ++j1 )
+                 {
+-                    if ( world.getWorld().isChunkLoaded( i1, j1 ) )
++                    if ( (chunk = MCUtil.getLoadedChunkWithoutMarkingActive(world, i1, j1 )) != null ) // Paper
+                     {
+-                        activateChunkEntities( world.getChunkAt( i1, j1 ) );
++                        activateChunkEntities( chunk ); // Paper
+                     }
+                 }
+             }
+-- 
+2.18.0
+

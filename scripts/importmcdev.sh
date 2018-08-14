@@ -35,12 +35,14 @@ function import {
 	fi
 )
 
+import ChunkCache
 import ChunkCoordIntPair
 import NBTTagCompound
 import PacketPlayInUseEntity
 import PacketPlayOutEntityMetadata
 import PacketPlayOutPlayerInfo
 import PacketPlayOutScoreboardTeam
+import PersistentScoreboard
 
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1
