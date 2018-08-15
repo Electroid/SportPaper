@@ -1,0 +1,56 @@
+From 241d3472a1993a9857270ac404ab47346c920f66 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 14 Aug 2018 20:39:14 -0700
+Subject: [PATCH] Add source to PlayerExpChangeEvent
+
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java b/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java
+index f37491d7..97a0f6b7 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.event.player;
+ 
++import com.sun.istack.internal.Nullable;
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ 
+@@ -8,13 +10,32 @@ import org.bukkit.event.HandlerList;
+  */
+ public class PlayerExpChangeEvent extends PlayerEvent {
+     private static final HandlerList handlers = new HandlerList();
++    // Paper start
++    @Nullable
++    private final Entity source;
+     private int exp;
+ 
+     public PlayerExpChangeEvent(final Player player, final int expAmount) {
+-         super(player);
+-         exp = expAmount;
++        this(player, null, expAmount);
+     }
+ 
++    public PlayerExpChangeEvent(final Player player, @Nullable final Entity sourceEntity, final int expAmount) {
++        super(player);
++        source = sourceEntity;
++        exp = expAmount;
++    }
++
++    /**
++     * Get the source that provided the experience.
++     *
++     * @return The source of the experience
++     */
++    @Nullable
++    public Entity getSource() {
++        return source;
++    }
++    // Paper end
++
+     /**
+      * Get the amount of experience the player will receive
+      *
+-- 
+2.18.0
+
