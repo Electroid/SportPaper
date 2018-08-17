@@ -1,8 +1,8 @@
 #!/bin/bash
-sourceBase=$(dirname $SOURCE)/../
-cd ${basedir:-$sourceBase}
+sourceBase=$(dirname "$SOURCE")/../
+cd "${basedir:-$sourceBase}"
 
-basedir=$(pwd -P)
+basedir="$(pwd -P)"
 
 log_info() {
     echo -e "\033[32m---\033[0m $1"

@@ -6,15 +6,16 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 	SOURCE="$(readlink "$SOURCE")"
 	[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
-. $(dirname $SOURCE)/init.sh
+initScript=$(dirname "$SOURCE")/init.sh
+. "$initScript"
 
 PS1="$"
 log_info "Rebuilding patches from current state..."
 function savePatches {
 	what=$1
-	cd $basedir/$what/
+	cd "$basedir/$what/"
 
-	mkdir -p $basedir/patches/$2
+	mkdir -p "$basedir/patches/$2"
 	if [ -d ".git/rebase-apply" ]; then
 		# in middle of a rebase, be smarter
 		echo "REBASE DETECTED - PARTIAL SAVE"
@@ -23,17 +24,25 @@ function savePatches {
 		for i in $(seq -f "%04g" 1 1 $last)
 		do
 			if [ $i -lt $next ]; then
-				rm $basedir/patches/$2/${i}-*.patch
+				for patchFile in "$basedir/patches/$2/${i}-"*.patch
+	            do
+	                rm "$patchFile"
+	            done
+				#rm $basedir/patches/$2/${i}-*.patch
 			fi
 		done
 	else
-		rm $basedir/patches/$2/*.patch
+		#rm $(sed 's/ /\\ /g' <<< $basedir)/patches/$2/*.patch
+		for patchFile in "$basedir/patches/$2/"*.patch
+	    do
+	        rm "$patchFile"
+	    done
 	fi
 
-	git format-patch --quiet --no-stat -N -o $basedir/patches/$2 upstream/upstream
-	cd $basedir
-	git add -A $basedir/patches/$2
-	cleanupPatches $basedir/patches/$2/
+	git format-patch --quiet --no-stat -N -o "$basedir/patches/$2" upstream/upstream
+	cd "$basedir"
+	git add -A "$basedir/patches/$2"
+	cleanupPatches "$basedir/patches/$2/"
 	echo "  Patches saved for $what to patches/$2"
 }
 

@@ -10,7 +10,7 @@ done
 SOURCE=$([[ "$SOURCE" = /* ]] && echo "$SOURCE" || echo "$PWD/${SOURCE#./}")
 basedir=$(dirname "$SOURCE")
 
-. $basedir/scripts/init.sh
+. "$basedir/scripts/init.sh"
 
 paperstash() {
 	STASHED=$(git stash)
