@@ -1,4 +1,4 @@
-From 7f68626b03aa6960936d827d81fd031d72dda1c6 Mon Sep 17 00:00:00 2001
+From 026e94097aa9b8486435b612c3219e73e529b0b1 Mon Sep 17 00:00:00 2001
 From: Aikar <aikar@aikar.co>
 Date: Mon, 28 Mar 2016 20:55:47 -0400
 Subject: [PATCH] MC Utils
@@ -62,7 +62,7 @@ index 6a3652524..8766a5396 100644
      }
 diff --git a/src/main/java/net/minecraft/server/MCUtil.java b/src/main/java/net/minecraft/server/MCUtil.java
 new file mode 100644
-index 000000000..4b364a304
+index 000000000..aefc829b0
 --- /dev/null
 +++ b/src/main/java/net/minecraft/server/MCUtil.java
 @@ -0,0 +1,111 @@
@@ -177,7 +177,6 @@ index 000000000..4b364a304
 +        return null;
 +    }
 +}
-\ No newline at end of file
 diff --git a/src/main/java/net/minecraft/server/NBTTagCompound.java b/src/main/java/net/minecraft/server/NBTTagCompound.java
 index 22d7c2ab3..afd594f1a 100644
 --- a/src/main/java/net/minecraft/server/NBTTagCompound.java

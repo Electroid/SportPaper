@@ -1,11 +1,11 @@
-From 48df38f55fba1202c6dc9fcb132295dca9c4a4d6 Mon Sep 17 00:00:00 2001
+From b3df526b6b85cb3a796c83f8a9e96ee52441bbba Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Thu, 16 Aug 2018 15:27:59 -0700
 Subject: [PATCH] String based Action Bar API
 
 
 diff --git a/src/main/java/net/minecraft/server/MCUtil.java b/src/main/java/net/minecraft/server/MCUtil.java
-index 4b364a304..a2eb35447 100644
+index aefc829b0..7f86691a0 100644
 --- a/src/main/java/net/minecraft/server/MCUtil.java
 +++ b/src/main/java/net/minecraft/server/MCUtil.java
 @@ -2,10 +2,13 @@
@@ -62,28 +62,23 @@ index 4b364a304..a2eb35447 100644
 +        return getNMSWorld(entity.getWorld());
 +    }
  }
-\ No newline at end of file
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index dc4e343db..aedac1cb3 100644
+index dc4e343db..712f18fee 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -23,6 +23,8 @@ import java.util.UUID;
- import java.util.WeakHashMap;
- import java.util.logging.Level;
- import java.util.logging.Logger;
-+
-+import net.md_5.bungee.api.ChatMessageType;
- import net.md_5.bungee.api.chat.BaseComponent;
- 
- import net.minecraft.server.*;
-@@ -193,6 +195,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -193,6 +193,23 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
          getHandle().playerConnection.sendPacket(packet);
      }
  
 +    @Override
++    public void sendActionBar(BaseComponent baseComponent) {
++        sendActionBar(baseComponent.toLegacyText());
++    }
++
++    @Override
 +    public void sendActionBar(String message) {
 +        if (getHandle().playerConnection == null || message == null || message.isEmpty()) return;
-+        getHandle().playerConnection.sendPacket(new PacketPlayOutChat(new ChatComponentText(message), (byte)2));
++        getHandle().playerConnection.sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2));
 +    }
 +
 +    @Override

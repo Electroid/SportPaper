@@ -1,11 +1,11 @@
-From ae6f5a147c2c04f99cd8fcda8c2915f4e2449abe Mon Sep 17 00:00:00 2001
+From 28b0faabbcaf4e65289bbb0a8613a3c124574009 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 17:08:31 -0700
 Subject: [PATCH] Potion effect events
 
 
 diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
-index a8f49e4c..7abb458a 100644
+index a8f49e4cf..7abb458a0 100644
 --- a/src/main/java/net/minecraft/server/EntityLiving.java
 +++ b/src/main/java/net/minecraft/server/EntityLiving.java
 @@ -16,11 +16,16 @@ import com.google.common.base.Function;
@@ -155,7 +155,7 @@ index a8f49e4c..7abb458a 100644
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtils.java b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtils.java
 new file mode 100644
-index 00000000..da57eb4f
+index 000000000..0303c265a
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtils.java
 @@ -0,0 +1,34 @@
@@ -193,7 +193,6 @@ index 00000000..da57eb4f
 +        effect.a(cloneWithDuration(effect, duration));
 +    }
 +}
-\ No newline at end of file
 -- 
 2.18.0
 
