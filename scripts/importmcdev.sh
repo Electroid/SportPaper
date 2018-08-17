@@ -37,6 +37,7 @@ function import {
 
 import ChunkCache
 import ChunkCoordIntPair
+import ItemFireworks
 import NBTTagCompound
 import PacketPlayInUseEntity
 import PacketPlayOutEntityMetadata

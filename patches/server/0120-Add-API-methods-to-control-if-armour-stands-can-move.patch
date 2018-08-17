@@ -1,0 +1,54 @@
+From 105a2a2555e40d42e65d762c70037313ba7eca6b Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 14 Aug 2018 23:33:53 -0700
+Subject: [PATCH] Add API methods to control if armour stands can move
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityArmorStand.java b/src/main/java/net/minecraft/server/EntityArmorStand.java
+index 2ea4a5fd3..d3a68e977 100644
+--- a/src/main/java/net/minecraft/server/EntityArmorStand.java
++++ b/src/main/java/net/minecraft/server/EntityArmorStand.java
+@@ -30,6 +30,7 @@ public class EntityArmorStand extends EntityLiving {
+     public Vector3f rightArmPose;
+     public Vector3f leftLegPose;
+     public Vector3f rightLegPose;
++    public boolean canMove = true; // Paper
+ 
+     public EntityArmorStand(World world) {
+         super(world);
+@@ -705,4 +706,13 @@ public class EntityArmorStand extends EntityLiving {
+     public boolean ad() {
+         return super.ad() && !this.s();
+     }
++
++    // Paper start
++    @Override
++    public void move(double x, double y, double z) {
++        if (this.canMove) {
++            super.move(x, y, z);
++        }
++    }
++    // Paper end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftArmorStand.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftArmorStand.java
+index 09443fe14..097a87848 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftArmorStand.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftArmorStand.java
+@@ -216,4 +216,14 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
+         // PAIL
+         getHandle().n(marker);
+     }
++
++    @Override
++    public boolean canMove() {
++        return getHandle().canMove;
++    }
++
++    @Override
++    public void setCanMove(boolean move) {
++        getHandle().canMove = move;
++    }
+ }
+-- 
+2.18.0
+
