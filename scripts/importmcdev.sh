@@ -35,6 +35,7 @@ function import {
 	fi
 )
 
+import BlockBeacon
 import ChunkCache
 import ChunkCoordIntPair
 import ItemFireworks
