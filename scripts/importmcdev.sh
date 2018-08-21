@@ -38,6 +38,7 @@ function import {
 import BlockBeacon
 import ChunkCache
 import ChunkCoordIntPair
+import EntityTypes
 import ItemFireworks
 import NBTTagCompound
 import PacketPlayInUseEntity

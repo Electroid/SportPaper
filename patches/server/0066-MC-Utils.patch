@@ -1,4 +1,4 @@
-From 026e94097aa9b8486435b612c3219e73e529b0b1 Mon Sep 17 00:00:00 2001
+From 8a68123cd948ff2fe2bcebdb95aa33d5c0ba23c7 Mon Sep 17 00:00:00 2001
 From: Aikar <aikar@aikar.co>
 Date: Mon, 28 Mar 2016 20:55:47 -0400
 Subject: [PATCH] MC Utils
@@ -29,6 +29,29 @@ index 652c07975..ca693b028 100644
      public static long a(int i, int j) {
          return (long) i & 4294967295L | ((long) j & 4294967295L) << 32;
      }
+diff --git a/src/main/java/net/minecraft/server/EntityTypes.java b/src/main/java/net/minecraft/server/EntityTypes.java
+index 064d0b204..c0fbb3cc3 100644
+--- a/src/main/java/net/minecraft/server/EntityTypes.java
++++ b/src/main/java/net/minecraft/server/EntityTypes.java
+@@ -12,6 +12,10 @@ import org.apache.logging.log4j.Logger;
+ 
+ public class EntityTypes {
+ 
++    // Paper start
++    public static Map<Class<? extends Entity>, org.bukkit.entity.EntityType> clsToTypeMap = new java.util.HashMap<>();
++    // Paper end
++
+     private static final Logger b = LogManager.getLogger();
+     private static final Map<String, Class<? extends Entity>> c = Maps.newHashMap();
+     private static final Map<Class<? extends Entity>, String> d = Maps.newHashMap();
+@@ -35,6 +39,7 @@ public class EntityTypes {
+             EntityTypes.e.put(Integer.valueOf(i), oclass);
+             EntityTypes.f.put(oclass, Integer.valueOf(i));
+             EntityTypes.g.put(s, Integer.valueOf(i));
++            clsToTypeMap.put(oclass, org.bukkit.entity.EntityType.fromName(s));
+         }
+     }
+ 
 diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
 index 6a3652524..8766a5396 100644
 --- a/src/main/java/net/minecraft/server/ItemStack.java
