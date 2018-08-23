@@ -1,11 +1,11 @@
-From dd9e665124e7dce5c4edc438c9f531e6eac0fef8 Mon Sep 17 00:00:00 2001
+From 7cc264b44f55fc97561f2b654e93466f28d04053 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 4 Aug 2018 16:03:21 -0700
 Subject: [PATCH] Fire ExplosionPrimeEvent properly. Fixes BUKKIT-770
 
 
 diff --git a/src/main/java/net/minecraft/server/BlockTNT.java b/src/main/java/net/minecraft/server/BlockTNT.java
-index 3d1e583f..d8b87305 100644
+index 3d1e583f3..8676196a4 100644
 --- a/src/main/java/net/minecraft/server/BlockTNT.java
 +++ b/src/main/java/net/minecraft/server/BlockTNT.java
 @@ -2,6 +2,8 @@ package net.minecraft.server;
@@ -45,10 +45,12 @@ index 3d1e583f..d8b87305 100644
          if (!world.isClientSide) {
              if (((Boolean) iblockdata.get(BlockTNT.EXPLODE)).booleanValue()) {
                  org.bukkit.Location loc = new org.bukkit.Location(world.getWorld(), blockposition.getX(), blockposition.getY(), blockposition.getZ()); // PaperSpigot
-@@ -55,6 +67,16 @@ public class BlockTNT extends Block {
+@@ -55,8 +67,16 @@ public class BlockTNT extends Block {
                  EntityTNTPrimed entitytntprimed = new EntityTNTPrimed(loc, world, (double) ((float) blockposition.getX() + 0.5F), y, (double) ((float) blockposition.getZ() + 0.5F), entityliving); // PaperSpigot - add loc
                  // PaperSpigot end
  
+-                world.addEntity(entitytntprimed);
+-                world.makeSound(entitytntprimed, "game.tnt.primed", 1.0F, 1.0F);
 +                // CraftBukkit start - fire ExplosionPrimeEvent
 +                org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
 +                world.getServer().getPluginManager().callEvent(event);
@@ -59,10 +61,10 @@ index 3d1e583f..d8b87305 100644
 +                    world.makeSound(entitytntprimed, "game.tnt.primed", 1.0F, 1.0F);
 +                }
 +                // CraftBukkit end
-                 world.addEntity(entitytntprimed);
-                 world.makeSound(entitytntprimed, "game.tnt.primed", 1.0F, 1.0F);
              }
-@@ -68,7 +90,11 @@ public class BlockTNT extends Block {
+ 
+         }
+@@ -68,7 +88,11 @@ public class BlockTNT extends Block {
  
              if (item == Items.FLINT_AND_STEEL || item == Items.FIRE_CHARGE) {
                  this.a(world, blockposition, iblockdata.set(BlockTNT.EXPLODE, Boolean.valueOf(true)), (EntityLiving) entityhuman);
@@ -76,7 +78,7 @@ index 3d1e583f..d8b87305 100644
                      entityhuman.bZ().damage(1, entityhuman);
                  } else if (!entityhuman.abilities.canInstantlyBuild) {
 diff --git a/src/main/java/net/minecraft/server/EntityCreeper.java b/src/main/java/net/minecraft/server/EntityCreeper.java
-index fecf94da..af6df054 100644
+index fecf94da1..af6df0546 100644
 --- a/src/main/java/net/minecraft/server/EntityCreeper.java
 +++ b/src/main/java/net/minecraft/server/EntityCreeper.java
 @@ -89,9 +89,19 @@ public class EntityCreeper extends EntityMonster {
@@ -101,7 +103,7 @@ index fecf94da..af6df054 100644
              this.fuseTicks += i;
              if (this.fuseTicks < 0) {
 diff --git a/src/main/java/net/minecraft/server/EntityTNTPrimed.java b/src/main/java/net/minecraft/server/EntityTNTPrimed.java
-index 872d9659..b1a49452 100644
+index 872d9659c..b1a49452e 100644
 --- a/src/main/java/net/minecraft/server/EntityTNTPrimed.java
 +++ b/src/main/java/net/minecraft/server/EntityTNTPrimed.java
 @@ -108,13 +108,9 @@ public class EntityTNTPrimed extends Entity {

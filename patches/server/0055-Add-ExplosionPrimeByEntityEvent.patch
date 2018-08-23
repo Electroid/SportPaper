@@ -1,11 +1,11 @@
-From f33b6b467fd6cc927ee46906688d3f374eadcfac Mon Sep 17 00:00:00 2001
+From bec287e4abd1fe3a57027512810ff503fa4493b0 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 13:03:10 -0700
 Subject: [PATCH] Add ExplosionPrimeByEntityEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/BlockTNT.java b/src/main/java/net/minecraft/server/BlockTNT.java
-index d8b87305..78fa7371 100644
+index 8676196a4..9fc46d831 100644
 --- a/src/main/java/net/minecraft/server/BlockTNT.java
 +++ b/src/main/java/net/minecraft/server/BlockTNT.java
 @@ -3,6 +3,7 @@ package net.minecraft.server;
@@ -44,7 +44,7 @@ index d8b87305..78fa7371 100644
                  world.getServer().getPluginManager().callEvent(event);
                  if (event.isCancelled()) {
                      removeBlock = false;
-@@ -89,7 +100,9 @@ public class BlockTNT extends Block {
+@@ -87,7 +98,9 @@ public class BlockTNT extends Block {
              Item item = entityhuman.bZ().getItem();
  
              if (item == Items.FLINT_AND_STEEL || item == Items.FIRE_CHARGE) {
@@ -54,7 +54,7 @@ index d8b87305..78fa7371 100644
                  // CraftBukkit start - don't remove block if TNT priming is cancelled
                  if (removeBlock) {
                      world.setAir(blockposition);
-@@ -118,7 +131,9 @@ public class BlockTNT extends Block {
+@@ -116,7 +129,9 @@ public class BlockTNT extends Block {
                      return;
                  }
                  // CraftBukkit end
@@ -65,7 +65,7 @@ index d8b87305..78fa7371 100644
              }
          }
 diff --git a/src/main/java/net/minecraft/server/EntityCreeper.java b/src/main/java/net/minecraft/server/EntityCreeper.java
-index af6df054..8c33db47 100644
+index af6df0546..8c33db47b 100644
 --- a/src/main/java/net/minecraft/server/EntityCreeper.java
 +++ b/src/main/java/net/minecraft/server/EntityCreeper.java
 @@ -3,6 +3,8 @@ package net.minecraft.server;
@@ -122,7 +122,7 @@ index af6df054..8c33db47 100644
              if (!event.isCancelled()) {
                  this.world.createExplosion(this, this.locX, this.locY, this.locZ, event.getRadius(), event.getFire(), flag);
 diff --git a/src/main/java/net/minecraft/server/EntityEnderCrystal.java b/src/main/java/net/minecraft/server/EntityEnderCrystal.java
-index 07533e4a..0e348cf4 100644
+index 07533e4a6..0e348cf4b 100644
 --- a/src/main/java/net/minecraft/server/EntityEnderCrystal.java
 +++ b/src/main/java/net/minecraft/server/EntityEnderCrystal.java
 @@ -3,6 +3,7 @@ package net.minecraft.server;
