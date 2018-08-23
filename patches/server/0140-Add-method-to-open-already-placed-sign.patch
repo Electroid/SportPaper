@@ -1,0 +1,31 @@
+From 4637f2a51509b80b3cde90cc652b32a8426eea6a Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 21 Aug 2018 02:02:25 -0700
+Subject: [PATCH] Add method to open already placed sign
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index 4e5db758a..a12806d41 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -428,4 +428,17 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+     public int getExpToLevel() {
+         return getHandle().getExpToLevel();
+     }
++
++    // Paper start - Add method to open already placed sign
++    @Override
++    public void openSign(org.bukkit.block.Sign sign) {
++        org.apache.commons.lang.Validate.isTrue(sign.getWorld().equals(this.getWorld()), "Sign must be in the same world as player is in");
++        org.bukkit.craftbukkit.block.CraftSign craftSign = (org.bukkit.craftbukkit.block.CraftSign) sign;
++        net.minecraft.server.TileEntitySign teSign = craftSign.getTileEntity();
++        // Make sign editable temporarily, will be set back to false in PlayerConnection later
++        teSign.isEditable = true;
++
++        getHandle().openSign(teSign);
++    }
++    // Paper end
+ }
+-- 
+2.18.0
+
