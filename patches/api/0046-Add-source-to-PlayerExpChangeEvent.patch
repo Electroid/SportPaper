@@ -1,17 +1,33 @@
-From 241d3472a1993a9857270ac404ab47346c920f66 Mon Sep 17 00:00:00 2001
+From 0e9e6ee6c3ecf5727bb0c89cd100703b7080d8d4 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 14 Aug 2018 20:39:14 -0700
 Subject: [PATCH] Add source to PlayerExpChangeEvent
 
 
+diff --git a/pom.xml b/pom.xml
+index 70aa3ad0..8a304559 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -30,6 +30,11 @@
+     </pluginRepositories>
+ 
+     <dependencies>
++        <dependency>
++            <groupId>com.google.code.findbugs</groupId>
++            <artifactId>jsr305</artifactId>
++            <version>3.0.2</version>
++        </dependency>
+         <dependency>
+             <groupId>net.sf.trove4j</groupId>
+             <artifactId>trove4j</artifactId>
 diff --git a/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java b/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java
-index f37491d7..97a0f6b7 100644
+index f37491d7..204ead34 100644
 --- a/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java
 +++ b/src/main/java/org/bukkit/event/player/PlayerExpChangeEvent.java
 @@ -1,5 +1,7 @@
  package org.bukkit.event.player;
  
-+import com.sun.istack.internal.Nullable;
++import javax.annotation.Nullable;
 +import org.bukkit.entity.Entity;
  import org.bukkit.entity.Player;
  import org.bukkit.event.HandlerList;

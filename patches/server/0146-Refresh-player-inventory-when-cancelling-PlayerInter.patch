@@ -1,7 +1,7 @@
-From 17f30321a7a23deec1701ec553e26eaa866aeead Mon Sep 17 00:00:00 2001
+From dc01d388f2790600de27847b0c692ec947b52492 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 21 Aug 2018 16:08:41 -0700
-Subject: [PATCH] Refresh player inventory when cancelling 
+Subject: [PATCH] Refresh player inventory when cancelling
  PlayerInteractEntityEvent and PlayerBucket events
 
 When interacting with entities with an item, the client will assume
