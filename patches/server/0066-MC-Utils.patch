@@ -1,4 +1,4 @@
-From 8a68123cd948ff2fe2bcebdb95aa33d5c0ba23c7 Mon Sep 17 00:00:00 2001
+From 6e4bd86b9f9fb7931631d36f2a7842e15d38e2c5 Mon Sep 17 00:00:00 2001
 From: Aikar <aikar@aikar.co>
 Date: Mon, 28 Mar 2016 20:55:47 -0400
 Subject: [PATCH] MC Utils
@@ -200,19 +200,6 @@ index 000000000..aefc829b0
 +        return null;
 +    }
 +}
-diff --git a/src/main/java/net/minecraft/server/NBTTagCompound.java b/src/main/java/net/minecraft/server/NBTTagCompound.java
-index 22d7c2ab3..afd594f1a 100644
---- a/src/main/java/net/minecraft/server/NBTTagCompound.java
-+++ b/src/main/java/net/minecraft/server/NBTTagCompound.java
-@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
- 
- public class NBTTagCompound extends NBTBase {
- 
--    private Map<String, NBTBase> map = Maps.newHashMap();
-+    public Map<String, NBTBase> map = Maps.newHashMap(); // Paper
- 
-     public NBTTagCompound() {}
- 
 diff --git a/src/main/java/net/minecraft/server/NBTTagList.java b/src/main/java/net/minecraft/server/NBTTagList.java
 index a0e6b0ff5..cb102811b 100644
 --- a/src/main/java/net/minecraft/server/NBTTagList.java

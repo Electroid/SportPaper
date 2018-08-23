@@ -40,7 +40,6 @@ import ChunkCache
 import ChunkCoordIntPair
 import EntityTypes
 import ItemFireworks
-import NBTTagCompound
 import PacketPlayInUseEntity
 import PacketPlayOutEntityMetadata
 import PacketPlayOutPlayerInfo
