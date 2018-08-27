@@ -1,13 +1,22 @@
 #!/bin/bash
 
+# get base dir regardless of execution location
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+	SOURCE="$(readlink "$SOURCE")"
+	[[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+SOURCE=$([[ "$SOURCE" = /* ]] && echo "$SOURCE" || echo "$PWD/${SOURCE#./}")
+basedir=$(dirname "$SOURCE")
+
 PS1="$"
-basedir=`pwd`
 echo "Rebuilding Forked projects.... "
 
 function applyPatch {
-    what=$1
-    target=$2
-    branch=$3
+    what="$1"
+    target="$2"
+    branch="$3"
     cd "$basedir/$what"
     git fetch
     git branch -f upstream "$branch" >/dev/null

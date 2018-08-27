@@ -1,15 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# get base dir regardless of execution location
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+	SOURCE="$(readlink "$SOURCE")"
+	[[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+SOURCE=$([[ "$SOURCE" = /* ]] && echo "$SOURCE" || echo "$PWD/${SOURCE#./}")
+basedir=$(dirname "$SOURCE")
 
 PS1="$"
-basedir=`pwd`
-workdir=$basedir/work
-minecraftversion=$(cat BuildData/info.json | grep minecraftVersion | cut -d '"' -f 4)
-minecrafthash=$(cat BuildData/info.json | grep minecraftHash | cut -d '"' -f 4)
-accesstransforms=BuildData/mappings/$(cat BuildData/info.json | grep accessTransforms | cut -d '"' -f 4)
-classmappings=BuildData/mappings/$(cat BuildData/info.json | grep classMappings | cut -d '"' -f 4)
-membermappings=BuildData/mappings/$(cat BuildData/info.json | grep memberMappings | cut -d '"' -f 4)
-packagemappings=BuildData/mappings/$(cat BuildData/info.json | grep packageMappings | cut -d '"' -f 4)
-jarpath=$workdir/$minecraftversion/$minecraftversion
+workdir="$basedir/work"
+minecraftversion="$(cat BuildData/info.json | grep minecraftVersion | cut -d '"' -f 4)"
+minecrafthash="$(cat BuildData/info.json | grep minecraftHash | cut -d '"' -f 4)"
+accesstransforms="BuildData/mappings/$(cat BuildData/info.json | grep accessTransforms | cut -d '"' -f 4)"
+classmappings="BuildData/mappings/$(cat BuildData/info.json | grep classMappings | cut -d '"' -f 4)"
+membermappings="BuildData/mappings/$(cat BuildData/info.json | grep memberMappings | cut -d '"' -f 4)"
+packagemappings="BuildData/mappings/$(cat BuildData/info.json | grep packageMappings | cut -d '"' -f 4)"
+jarpath="$workdir/$minecraftversion/$minecraftversion"
 
 echo "Downloading unmapped vanilla jar..."
 if [ ! -f  "$jarpath.jar" ]; then
@@ -28,7 +37,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
    echo "Using an alias for md5sum on OS X"
 fi
 
-checksum=$(md5sum "$jarpath.jar" | cut -d ' ' -f 1)
+checksum="$(md5sum "$jarpath.jar" | cut -d ' ' -f 1)"
 if [ "$checksum" != "$minecrafthash" ]; then
     echo "The MD5 checksum of the downloaded server jar does not match the BuildData hash."
     exit 1
