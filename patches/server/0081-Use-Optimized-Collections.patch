@@ -1,4 +1,4 @@
-From 810eb99c2701190e81b725d64e22098af5afed72 Mon Sep 17 00:00:00 2001
+From 40d6e2f8f070a95f1813b2ec99023107a9dd5347 Mon Sep 17 00:00:00 2001
 From: Aikar <aikar@aikar.co>
 Date: Wed, 30 Mar 2016 02:13:24 -0400
 Subject: [PATCH] Use Optimized Collections
@@ -29,7 +29,7 @@ index 092ca7df8..ee562d2e5 100644
              <groupId>net.sf.trove4j</groupId>
              <artifactId>trove4j</artifactId>
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 573303e3e..f0cf045c6 100644
+index 573303e3e..7c81324d9 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -8,6 +8,8 @@ import java.util.Iterator;
@@ -46,7 +46,7 @@ index 573303e3e..f0cf045c6 100644
      // Paper start
      protected Chunk lastChunkByPos = null;
 -    public LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<Chunk>() {
-+    public Long2ObjectOpenHashMap<Chunk> chunks = new Long2ObjectOpenHashMap<Chunk>() {
++    public Long2ObjectOpenHashMap<Chunk> chunks = new Long2ObjectOpenHashMap<Chunk>(8192) {
          @Override
          public Chunk get(long key) {
              if (lastChunkByPos != null && key == lastChunkByPos.chunkKey) {
