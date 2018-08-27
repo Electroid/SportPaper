@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # get base dir regardless of execution location
 SOURCE="${BASH_SOURCE[0]}"
