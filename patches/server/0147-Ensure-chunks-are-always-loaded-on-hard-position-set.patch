@@ -1,4 +1,4 @@
-From 897e7e183965ece5e74976b2deab2abb292f5c8f Mon Sep 17 00:00:00 2001
+From 8ae2c5b9067e538731d3306fd387f9f8d3de3677 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 21 Aug 2018 16:41:09 -0700
 Subject: [PATCH] Ensure chunks are always loaded on hard position sets

@@ -1,4 +1,4 @@
-From 5d9c8561989ede503700836831fdf20d28084e60 Mon Sep 17 00:00:00 2001
+From 4dfb8017978a4bec9dbaa35e0c8ab4eb8ab67714 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Fri, 24 Aug 2018 02:22:49 -0700
 Subject: [PATCH] Add option to not tick empty worlds

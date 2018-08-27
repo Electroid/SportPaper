@@ -1,4 +1,4 @@
-From 964a8188295010d76491e3aff70f65e5b0fe369c Mon Sep 17 00:00:00 2001
+From 758e196ae79f525ee87eb6bf8db8f4c06cc349a4 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 21 Aug 2018 16:15:30 -0700
 Subject: [PATCH] Don't change the Entity Random seed for squids
