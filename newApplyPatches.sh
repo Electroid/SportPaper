@@ -11,7 +11,7 @@ SOURCE=$([[ "$SOURCE" = /* ]] && echo "$SOURCE" || echo "$PWD/${SOURCE#./}")
 basedir=$(dirname "$SOURCE")
 
 PS1="$"
-applycmd="$gitcmd am --3way --ignore-whitespace"
+applycmd="git am --3way --ignore-whitespace"
 # Windows detection to workaround ARG_MAX limitation
 windows="$([[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" ]] && echo "true" || echo "false")"
 echo "Rebuilding Forked projects.... "
