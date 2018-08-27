@@ -45,6 +45,8 @@ import PacketPlayOutEntityMetadata
 import PacketPlayOutPlayerInfo
 import PacketPlayOutScoreboardTeam
 import PersistentScoreboard
+import SlotResult
+import StatisticList
 
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1
