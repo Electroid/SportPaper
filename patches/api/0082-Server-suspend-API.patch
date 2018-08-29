@@ -1,4 +1,4 @@
-From 24021dcc70ba5ab60be0b072364ff5233d5d78a5 Mon Sep 17 00:00:00 2001
+From c677d91abfdec9c8637ce62d8efc9f0e692e80bb Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 21:43:24 -0700
 Subject: [PATCH] Server suspend API
@@ -191,6 +191,18 @@ index 00000000..bec311ed
 +        return true;
 +    }
 +}
+diff --git a/src/main/java/org/bukkit/event/EventCallback.java b/src/main/java/org/bukkit/event/EventCallback.java
+index 306fd4e3..c63ec819 100644
+--- a/src/main/java/org/bukkit/event/EventCallback.java
++++ b/src/main/java/org/bukkit/event/EventCallback.java
+@@ -3,6 +3,7 @@ package org.bukkit.event;
+ /**
+  * Something that is called with an {@link Event}, has several uses.
+  */
++@FunctionalInterface
+ public interface EventCallback {
+     void callEvent(Event event) throws Exception;
+ }
 diff --git a/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java b/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java
 new file mode 100644
 index 00000000..31a7cd21
@@ -213,6 +225,87 @@ index 00000000..31a7cd21
 +public class ServerSuspendEvent extends ServerEvent {
 +    private static final HandlerList handlers = new HandlerList();
 +}
+diff --git a/src/test/java/org/bukkit/BukkitMirrorTest.java b/src/test/java/org/bukkit/BukkitMirrorTest.java
+deleted file mode 100644
+index 219788fb..00000000
+--- a/src/test/java/org/bukkit/BukkitMirrorTest.java
++++ /dev/null
+@@ -1,75 +0,0 @@
+-package org.bukkit;
+-
+-import static org.hamcrest.Matchers.*;
+-import static org.junit.Assert.*;
+-
+-import java.lang.reflect.Method;
+-import java.lang.reflect.Modifier;
+-import java.util.Arrays;
+-import java.util.List;
+-
+-import org.junit.Before;
+-import org.junit.Test;
+-import org.junit.runner.RunWith;
+-import org.junit.runners.Parameterized;
+-import org.junit.runners.Parameterized.Parameter;
+-import org.junit.runners.Parameterized.Parameters;
+-
+-import com.google.common.base.Function;
+-import com.google.common.collect.Lists;
+-
+-@RunWith(Parameterized.class)
+-public class BukkitMirrorTest {
+-
+-    @Parameters(name="{index}: {1}")
+-    public static List<Object[]> data() {
+-        return Lists.transform(Arrays.asList(Server.class.getDeclaredMethods()), new Function<Method, Object[]>() {
+-            @Override
+-            public Object[] apply(Method input) {
+-                return new Object[] {
+-                    input,
+-                    input.toGenericString().substring("public abstract ".length()).replace("(", "{").replace(")", "}")
+-                    };
+-            }
+-        });
+-    }
+-
+-    @Parameter(0)
+-    public Method server;
+-
+-    @Parameter(1)
+-    public String name;
+-
+-    private Method bukkit;
+-
+-    @Before
+-    public void makeBukkit() throws Throwable {
+-        bukkit = Bukkit.class.getDeclaredMethod(server.getName(), server.getParameterTypes());
+-    }
+-
+-    @Test
+-    public void isStatic() throws Throwable {
+-        assertThat(Modifier.isStatic(bukkit.getModifiers()), is(true));
+-    }
+-
+-    @Test
+-    public void isDeprecated() throws Throwable {
+-        assertThat(bukkit.isAnnotationPresent(Deprecated.class), is(server.isAnnotationPresent(Deprecated.class)));
+-    }
+-
+-    @Test
+-    public void returnType() throws Throwable {
+-        assertThat(bukkit.getReturnType(), is((Object) server.getReturnType()));
+-        assertThat(bukkit.getGenericReturnType(), is(server.getGenericReturnType()));
+-    }
+-
+-    @Test
+-    public void parameterTypes() throws Throwable {
+-        assertThat(bukkit.getGenericParameterTypes(), is(server.getGenericParameterTypes()));
+-    }
+-
+-    @Test
+-    public void declaredException() throws Throwable {
+-        assertThat(bukkit.getGenericExceptionTypes(), is(server.getGenericExceptionTypes()));
+-    }
+-}
 -- 
 2.18.0
 
