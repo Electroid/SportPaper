@@ -21,6 +21,13 @@ log_info "Setting up build environment"
 git submodule update --init --recursive
 log_info "Preparing upstream..."
 paperVer=$(gethead base/Paper)
+
+cd "$basedir"
+cp -f scripts/baseremap.sh base/Paper/remap.sh
+cp -f scripts/basedecompile.sh base/Paper/decompile.sh
+cp -f scripts/baseinit.sh base/Paper/init.sh
+cp -f scripts/basenewApplyPatches.sh base/Paper/newApplyPatches.sh
+
 cd "$basedir/base/Paper/"
 
 git submodule update --init && ./remap.sh && ./decompile.sh && ./init.sh && ./newApplyPatches.sh
