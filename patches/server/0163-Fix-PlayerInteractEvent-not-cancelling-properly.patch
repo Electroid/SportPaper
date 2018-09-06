@@ -1,14 +1,14 @@
-From d2017c8341cb67e9a9589c4df4e1ea66c47df099 Mon Sep 17 00:00:00 2001
+From 087262ce6875cf5a18ff231b3824ef55449a473b Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Thu, 6 Sep 2018 01:25:56 -0700
 Subject: [PATCH] Fix PlayerInteractEvent not cancelling properly
 
 
 diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
-index 429c1d57b..16df37dc6 100644
+index 429c1d57b..21747b92b 100644
 --- a/src/main/java/net/minecraft/server/PlayerConnection.java
 +++ b/src/main/java/net/minecraft/server/PlayerConnection.java
-@@ -755,7 +755,21 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+@@ -755,7 +755,24 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
                  }
              }
  
@@ -17,8 +17,11 @@ index 429c1d57b..16df37dc6 100644
 +                this.player.getBukkitEntity().updateInventory(); // SPIGOT-2524
 +                // SportPaper start - Fix client desync
 +                if (itemstack.getItem() == Item.getItemOf(Blocks.WATERLILY)) {
-+                    BlockPosition blockPosition = this.player.world.rayTrace(vec3d, vec3d1, true, false, false).a().up();
-+                    org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(worldserver, blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).update(true, false);
++                    MovingObjectPosition movingObjectPosition1 = this.player.world.rayTrace(vec3d, vec3d1, true, false, false);
++                    if (movingObjectPosition1 != null) {
++                        BlockPosition blockPosition = movingObjectPosition1.a().up();
++                        org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(worldserver, blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).update(true, false);
++                    }
 +                } else if (itemstack.getItem() == Items.BUCKET) {
 +                    MovingObjectPosition movingObjectPosition1 = this.player.world.rayTrace(vec3d, vec3d1, true, false, false);
 +                    if (movingObjectPosition1 != null) {
