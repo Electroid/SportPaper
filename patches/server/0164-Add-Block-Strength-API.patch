@@ -1,4 +1,4 @@
-From 43e46f445609d3fd51280ea7b08032b49eedd14d Mon Sep 17 00:00:00 2001
+From 681804c092b227ea99a1a50be4cada22952d7936 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 15 Sep 2018 01:44:04 -0700
 Subject: [PATCH] Add Block Strength API
@@ -27,14 +27,14 @@ index a784e04a0..db09989eb 100644
      }
  
 diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
-index 138b17f30..33f0cb9df 100644
+index 138b17f30..0bb29ec79 100644
 --- a/src/main/java/net/minecraft/server/World.java
 +++ b/src/main/java/net/minecraft/server/World.java
 @@ -144,6 +144,7 @@ public abstract class World implements IBlockAccess {
      public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<Explosion.CacheKey, Float>(); // PaperSpigot - Optimize explosions
      public final CraftingManager craftingManager = new CraftingManager();
      public final RecipesFurnace recipesFurnace = new RecipesFurnace();
-+    public final HashMap<BlockPosition, Float> changedBlockStrengthMap = new HashMap<>(); // SportPaper
++    public final Map<BlockPosition, Float> changedBlockStrengthMap = new HashMap<>(); // SportPaper
  
      public static long chunkToKey(int x, int z)
      {
@@ -62,18 +62,20 @@ index 14b2f0403..7907c983c 100644
                                  count++;
                              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
-index ecef909a5..b19267c82 100644
+index ecef909a5..442a59d4f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
-@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.block;
+@@ -3,7 +3,9 @@ package org.bukkit.craftbukkit.block;
  import java.util.ArrayList;
  import java.util.Collection;
  import java.util.Collections;
 +import java.util.HashMap;
  import java.util.List;
++import java.util.Map;
  
  import net.minecraft.server.*;
-@@ -167,6 +168,31 @@ public class CraftBlock implements Block {
+ 
+@@ -167,6 +169,31 @@ public class CraftBlock implements Block {
      public byte getLightFromBlocks() {
          return (byte) chunk.getHandle().getBrightness(EnumSkyBlock.BLOCK, new BlockPosition(this.x, this.y, this.z));
      }
@@ -82,7 +84,7 @@ index ecef909a5..b19267c82 100644
 +        return new BlockPosition(x, y, z);
 +    }
 +    
-+    private HashMap<net.minecraft.server.BlockPosition, Float> getChangedBlockStrengthMap() {
++    private Map<BlockPosition, Float> getChangedBlockStrengthMap() {
 +        return chunk.getHandle().world.changedBlockStrengthMap;
 +    }
 +    
@@ -100,7 +102,7 @@ index ecef909a5..b19267c82 100644
 +    }
 +
 +    public float getBlockStrength() {
-+        return getNMSBlock().getStrength(chunk.getHandle().world, new BlockPosition(x, y, z));
++        return getNMSBlock().getStrength(chunk.getHandle().world, blockPosition());
 +    }
  
  
