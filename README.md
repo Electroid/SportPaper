@@ -16,8 +16,14 @@ How To
 
 Building, patching, and compiling are all done throught the main `sportpaper` script.
 
-Sportpaper can be built by running `./sportpaper build`  and you will find the final server jar in `SportPaper-Server/target`
+SportPaper can be built by running `./sportpaper build`  and you will find the final server jar in `SportPaper-Server/target`
 
+Other Notes
+-----------
+
+SportPaper uses a shared config for most config settings.
+ 
+ `sportpaper.yml` contains all the settings that were previously in `bukkit.yml`, `spigot.yml`, and `paper.yml`
 
 Contributing
 ------------
