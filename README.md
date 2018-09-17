@@ -1,4 +1,4 @@
-# SportPaper
+# SportPaper [![Build Status](https://travis-ci.org/Electroid/sport-paper.png?branch=master)](https://travis-ci.org/Electroid/sport-paper)
 
 A fork of Paper 1.8 with changes for the Stratus Network using Magnet's build system.
 
