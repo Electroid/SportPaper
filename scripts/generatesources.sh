@@ -20,7 +20,7 @@ mkdir -p base/mc-dev/src/net/minecraft/server
 
 cd base/mc-dev
 if [ ! -d ".git" ]; then
-	git init
+    git init
 fi
 
 #cp $(sed 's/ /\\ /g' <<< $basedir)/$decompile/net/minecraft/server/*.java src/net/minecraft/server
@@ -35,9 +35,9 @@ base="$basedir/base/Paper/PaperSpigot-Server/src/main/java/net/minecraft/server"
 cd "$basedir/base/mc-dev/src/net/minecraft/server/"
 for file in $(/bin/ls "$base")
 do
-	if [ -f "$file" ]; then
-		rm -f "$file"
-	fi
+    if [ -f "$file" ]; then
+        rm -f "$file"
+    fi
 done
 cd "$basedir/base/mc-dev"
 git add . -A

@@ -2,20 +2,20 @@
 # get base dir regardless of execution location
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-	SOURCE="$(readlink "$SOURCE")"
-	[[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
 initScript=$(dirname "$SOURCE")/init.sh
 . "$initScript"
 
 if [[ "$1" == up* ]]; then
-	(
-		cd "$basedir/base/Paper/"
-		git fetch && git reset --hard origin/master
-		cd ../
-		git add Paper
-	)
+    (
+        cd "$basedir/base/Paper/"
+        git fetch && git reset --hard origin/master
+        cd ../
+        git add Paper
+    )
 fi
 log_info "Setting up build environment"
 git submodule update --init --recursive
@@ -47,18 +47,18 @@ tag="${minecraftversion}-${mcVer}-$(echo -e $version | shasum | awk '{print $1}'
 
 function tag {
 (
-	cd "$1"
-	if [ "$2" == "1" ]; then
-		git tag -d "$tag" 2>/dev/null
-	fi
-	echo -e "$(date)\n\n$version" | git tag -a "$tag" -F - 2>/dev/null
+    cd "$1"
+    if [ "$2" == "1" ]; then
+        git tag -d "$tag" 2>/dev/null
+    fi
+    echo -e "$(date)\n\n$version" | git tag -a "$tag" -F - 2>/dev/null
 )
 }
 
 forcetag=0
 upstreamState=$(cat "$basedir/base/.upstream-state")
 if [ "$upstreamState" != "$tag" ]; then
-	forcetag=1
+    forcetag=1
 fi
 
 tag PaperSpigot-API $forcetag

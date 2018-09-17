@@ -13,26 +13,26 @@ decompiledir="$workdir/$minecraftversion"
 
 export importedmcdev=""
 function import {
-	export importedmcdev="$importedmcdev $1"
-	file="${1}.java"
-	target="$basedir/base/Paper/PaperSpigot-Server/src/main/java/$nms/$file"
-	base="$decompiledir/$nms/$file"
+    export importedmcdev="$importedmcdev $1"
+    file="${1}.java"
+    target="$basedir/base/Paper/PaperSpigot-Server/src/main/java/$nms/$file"
+    base="$decompiledir/$nms/$file"
 
-	if [[ ! -f "$target" ]]; then
-		export MODLOG="$MODLOG  Imported $file from mc-dev\n";
-		echo "Copying $base to $target"
-		cp "$base" "$target"
-	else
-		echo "UN-NEEDED IMPORT: $file"
-	fi
+    if [[ ! -f "$target" ]]; then
+        export MODLOG="$MODLOG  Imported $file from mc-dev\n";
+        echo "Copying $base to $target"
+        cp "$base" "$target"
+    else
+        echo "UN-NEEDED IMPORT: $file"
+    fi
 }
 
 (
-	cd "$basedir/base/Paper/PaperSpigot-Server/"
-	lastlog=$(git log -1 --oneline)
-	if [[ "$lastlog" = *"mc-dev Imports"* ]]; then
-		git reset --hard HEAD^
-	fi
+    cd "$basedir/base/Paper/PaperSpigot-Server/"
+    lastlog=$(git log -1 --oneline)
+    if [[ "$lastlog" = *"mc-dev Imports"* ]]; then
+        git reset --hard HEAD^
+    fi
 )
 
 import BlockBeacon

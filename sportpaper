@@ -3,9 +3,9 @@
 # get base dir regardless of execution location
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-	DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-	SOURCE="$(readlink "$SOURCE")"
-	[[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
 SOURCE=$([[ "$SOURCE" = /* ]] && echo "$SOURCE" || echo "$PWD/${SOURCE#./}")
 basedir=$(dirname "$SOURCE")
@@ -13,58 +13,58 @@ basedir=$(dirname "$SOURCE")
 . "$basedir/scripts/init.sh"
 
 paperstash() {
-	STASHED=$(git stash)
+    STASHED=$(git stash)
 }
 
 paperunstash() {
-	if [[ "$STASHED" != "No local changes to save" ]] ; then
-		git stash pop
-	fi
+    if [[ "$STASHED" != "No local changes to save" ]] ; then
+        git stash pop
+    fi
 }
 
 case "$1" in
-	"setup")
-		cd "$basedir"
-		scripts/upstream.sh
-	;;
-	"build")
-	    log_info "Preparing to build SportPaper"
-	    cd "$basedir"
-	    scripts/upstream.sh
-	    scripts/apply.sh "$basedir"
-	    mvn clean install
-	;;
-	"rb" | "rbp" | "rebuild")
-	(
-		set -e
-		cd "$basedir"
-		scripts/rebuildpatches.sh "$basedir"
-	)
-	;;
-	"p" | "patch" | "apply")
-	(
-		set -e
-		cd "$basedir"
-		scripts/apply.sh "$basedir"
-		log_info "    Run './sportpaper jar' to create a runnable JAR."
-	)
-	;;
-	"j" | "jar")
-	(
-		set -e
-		mvn clean install
-	)
-	;;
-	*)
-		echo "SportPaper build tool."
-		echo ""
-		echo " Commands:"
-		echo "  * setup        | Setup the build environment"
-		echo "  * build        | Setup the build environment, apply patches, and create a runnable JAR"
-		echo "  * p, patch     | Apply patches"
-		echo "  * rb, rebuild  | Rebuild patches"
-		echo "  * j, jar       | Create a runnable JAR"
-	;;
+    "setup")
+        cd "$basedir"
+        scripts/upstream.sh
+    ;;
+    "build")
+        log_info "Preparing to build SportPaper"
+        cd "$basedir"
+        scripts/upstream.sh
+        scripts/apply.sh "$basedir"
+        mvn clean install
+    ;;
+    "rb" | "rbp" | "rebuild")
+    (
+        set -e
+        cd "$basedir"
+        scripts/rebuildpatches.sh "$basedir"
+    )
+    ;;
+    "p" | "patch" | "apply")
+    (
+        set -e
+        cd "$basedir"
+        scripts/apply.sh "$basedir"
+        log_info "    Run './sportpaper jar' to create a runnable JAR."
+    )
+    ;;
+    "j" | "jar")
+    (
+        set -e
+        mvn clean install
+    )
+    ;;
+    *)
+        echo "SportPaper build tool."
+        echo ""
+        echo " Commands:"
+        echo "  * setup        | Setup the build environment"
+        echo "  * build        | Setup the build environment, apply patches, and create a runnable JAR"
+        echo "  * p, patch     | Apply patches"
+        echo "  * rb, rebuild  | Rebuild patches"
+        echo "  * j, jar       | Create a runnable JAR"
+    ;;
 esac
 
 unset -f paperstash
