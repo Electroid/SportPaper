@@ -1,4 +1,4 @@
-From 797f0b31d9a893f5e5bcd76fd58bad68d57811da Mon Sep 17 00:00:00 2001
+From a0c1232c6c13a4fde3998bc005e2f3b1b54e52ee Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 19:34:37 -0700
 Subject: [PATCH] Physical interface
@@ -581,5 +581,5 @@ index cf909461..bd2d3a1d 100644
      /**
       * Launches a {@link Projectile} from the ProjectileSource.
 -- 
-2.18.0
+2.19.0
 

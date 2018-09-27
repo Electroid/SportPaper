@@ -1,4 +1,4 @@
-From c677d91abfdec9c8637ce62d8efc9f0e692e80bb Mon Sep 17 00:00:00 2001
+From 1ec5ce679c3e4c819b486a48ac3d5057e88de025 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 21:43:24 -0700
 Subject: [PATCH] Server suspend API
@@ -307,5 +307,5 @@ index 219788fb..00000000
 -    }
 -}
 -- 
-2.18.0
+2.19.0
 

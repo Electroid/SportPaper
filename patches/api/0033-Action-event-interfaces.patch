@@ -1,4 +1,4 @@
-From 5f85c5947a4673ed113a414bf42caf0581b20e43 Mon Sep 17 00:00:00 2001
+From 324d54f2c2d4b9e6ce5af5e93d0252cd11a0577d Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 21:18:26 -0700
 Subject: [PATCH] Action event interfaces
@@ -1560,5 +1560,5 @@ index b206b1f3..ef75e5ac 100644
          trl.callEvent(breakEvent);
          assertThat(trl.getEventClass(), is((Object) Event.class));
 -- 
-2.18.0
+2.19.0
 

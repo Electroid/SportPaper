@@ -1,11 +1,11 @@
-From 26bb4c8c85e2d654bcce9379813367e88e588e46 Mon Sep 17 00:00:00 2001
+From 15d9fa44ef884314c900d0ac391f84274258392d Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 21:42:47 -0700
 Subject: [PATCH] Add CanDestroy and CanPlaceOn to ItemMeta
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
-index eaaa6a11a..16fc76ad8 100644
+index eaaa6a11..16fc76ad 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 @@ -13,6 +13,7 @@ import java.util.List;
@@ -190,5 +190,5 @@ index eaaa6a11a..16fc76ad8 100644
                          REPAIR.NBT,
                          ENCHANTMENTS.NBT,
 -- 
-2.18.0
+2.19.0
 

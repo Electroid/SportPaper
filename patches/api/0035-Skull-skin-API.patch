@@ -1,4 +1,4 @@
-From 49e2cce6d788158423368b52a7797c9d939fd9b9 Mon Sep 17 00:00:00 2001
+From e5553b4f5e909ab454fbb3154d98e4bee2b4bcc2 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 22:02:36 -0700
 Subject: [PATCH] Skull skin API
@@ -76,5 +76,5 @@ index fab31190..cc5497a0 100644
 +    void clearOwner();
  }
 -- 
-2.18.0
+2.19.0
 

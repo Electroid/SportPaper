@@ -1,4 +1,4 @@
-From 48a4fb18776140d820e759b274586ba741326567 Mon Sep 17 00:00:00 2001
+From 6fb8bafb7703e1577217c5a94a88b69611c0ee97 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 25 Aug 2018 18:36:56 -0700
 Subject: [PATCH] Remove the reload command
@@ -51,5 +51,5 @@ index c70d5129..fc8d1895 100644
          return true;
      }
 -- 
-2.18.0
+2.19.0
 

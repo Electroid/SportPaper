@@ -1,4 +1,4 @@
-From 97048ce31262c541485187d19fd1185d646200dd Mon Sep 17 00:00:00 2001
+From e2c48ce1564b84e7d366693a7755e872ba2364eb Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 6 Aug 2018 13:49:22 -0700
 Subject: [PATCH] Fake name and skin API
@@ -393,5 +393,5 @@ index 00000000..a222f21e
 +    }
 +}
 -- 
-2.18.0
+2.19.0
 

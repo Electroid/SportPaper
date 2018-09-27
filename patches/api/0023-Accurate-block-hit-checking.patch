@@ -1,4 +1,4 @@
-From a33230447689cf8669a889a63fe86723da0e453b Mon Sep 17 00:00:00 2001
+From c479e04d1398651b1ffa0de93d27385e322b57e9 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 22:30:26 -0700
 Subject: [PATCH] Accurate block hit checking
@@ -167,5 +167,5 @@ index 00000000..b1ba1d8d
 +    }
 +}
 -- 
-2.18.0
+2.19.0
 

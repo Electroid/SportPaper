@@ -1,11 +1,11 @@
-From 4a591f691fabd17b74bedebbba404e347223b3fb Mon Sep 17 00:00:00 2001
+From a12b63e4ae6df490c7780851d45ea26c548318bc Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 22:06:30 -0700
 Subject: [PATCH] Skull skin API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java b/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
-index 77f5dcc67..9a405665a 100644
+index 77f5dcc6..9a405665 100644
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
 @@ -5,11 +5,15 @@ import net.minecraft.server.MinecraftServer;
@@ -44,7 +44,7 @@ index 77f5dcc67..9a405665a 100644
      	return getBlockFace(rotation);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
-index 55bbad76b..ee1fd938b 100644
+index 55bbad76..ee1fd938 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
 @@ -1,6 +1,7 @@
@@ -85,5 +85,5 @@ index 55bbad76b..ee1fd938b 100644
      int applyHash() {
          final int original;
 -- 
-2.18.0
+2.19.0
 

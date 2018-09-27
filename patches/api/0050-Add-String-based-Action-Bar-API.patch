@@ -1,4 +1,4 @@
-From 3dd47f35f2a20f96e269d7e3def5ca7192abf12d Mon Sep 17 00:00:00 2001
+From 8649db8be4a5022222c889c90f85973052e7a6e5 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 15 Aug 2018 00:00:29 -0700
 Subject: [PATCH] Add String based Action Bar API
@@ -52,5 +52,5 @@ index d9473594..3cd5a669 100644
       * Sends the component to the player
       *
 -- 
-2.18.0
+2.19.0
 

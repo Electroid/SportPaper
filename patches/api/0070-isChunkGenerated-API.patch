@@ -1,4 +1,4 @@
-From 190a5b33d558fb9edbfbe342c8eb016e9d7ac07a Mon Sep 17 00:00:00 2001
+From 57d8e2111d19942a322a8d95574269b6bd2cac22 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Fri, 24 Aug 2018 02:27:23 -0700
 Subject: [PATCH] isChunkGenerated API
@@ -66,5 +66,5 @@ index ff2b8154..b72cf4f8 100644
       * Gets an array of all loaded {@link Chunk}s
       *
 -- 
-2.18.0
+2.19.0
 

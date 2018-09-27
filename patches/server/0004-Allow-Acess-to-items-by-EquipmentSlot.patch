@@ -1,4 +1,4 @@
-From bdaa7dcd2449c36ebee731356285edc098d2ca03 Mon Sep 17 00:00:00 2001
+From 1b7dc16ec220f9299081f2c74af1cecbb9fdc087 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 4 Aug 2018 00:05:26 -0700
 Subject: [PATCH] Allow Acess to items by EquipmentSlot
@@ -48,5 +48,5 @@ index dba8d5ba..f341f759 100644
      public void setItem(int index, ItemStack item) {
          super.setItem(index, item);
 -- 
-2.18.0
+2.19.0
 
