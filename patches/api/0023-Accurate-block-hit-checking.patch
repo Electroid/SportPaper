@@ -1,11 +1,11 @@
-From 64b6926bf522c004f2789540babeacaba633c1b8 Mon Sep 17 00:00:00 2001
+From c479e04d1398651b1ffa0de93d27385e322b57e9 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 22:30:26 -0700
 Subject: [PATCH] Accurate block hit checking
 
 
 diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
-index 325d65a..b94879f 100644
+index 325d65a3..b94879f2 100644
 --- a/src/main/java/org/bukkit/World.java
 +++ b/src/main/java/org/bukkit/World.java
 @@ -15,6 +15,7 @@ import org.bukkit.generator.BlockPopulator;
@@ -16,10 +16,11 @@ index 325d65a..b94879f 100644
  import org.bukkit.util.Vector;
  
  /**
-@@ -105,6 +106,26 @@ public interface World extends PluginMessageRecipient, Metadatable {
+@@ -104,6 +105,26 @@ public interface World extends PluginMessageRecipient, Metadatable {
+      */
      public Block getHighestBlockAt(Location location);
  
-     /**
++    /**
 +     * Find the first block intersecting the given ray
 +     * @param start             Origin AND direction of the ray
 +     * @param distance          Length of the ray (so it's not strictly a ray, but whatever)
@@ -39,12 +40,11 @@ index 325d65a..b94879f 100644
 +     */
 +    RayBlockIntersection rayTraceBlock(Vector start, Vector end, boolean nonSolids, boolean liquids);
 +
-+    /**
+     /**
       * Gets the {@link Chunk} at the given coordinates
       *
-      * @param x X-coordinate of the chunk
 diff --git a/src/main/java/org/bukkit/block/Block.java b/src/main/java/org/bukkit/block/Block.java
-index 235c15b..fe32537 100644
+index 235c15bd..fe325374 100644
 --- a/src/main/java/org/bukkit/block/Block.java
 +++ b/src/main/java/org/bukkit/block/Block.java
 @@ -8,6 +8,8 @@ import org.bukkit.World;
@@ -77,7 +77,7 @@ index 235c15b..fe32537 100644
 +    RayBlockIntersection rayTrace(Location start, double distance);
  }
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 2156211..d947359 100644
+index 2156211f..d9473594 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -22,6 +22,7 @@ import org.bukkit.map.MapView;
@@ -122,7 +122,7 @@ index 2156211..d947359 100644
      {
 diff --git a/src/main/java/org/bukkit/util/RayBlockIntersection.java b/src/main/java/org/bukkit/util/RayBlockIntersection.java
 new file mode 100644
-index 0000000..b1ba1d8
+index 00000000..b1ba1d8d
 --- /dev/null
 +++ b/src/main/java/org/bukkit/util/RayBlockIntersection.java
 @@ -0,0 +1,40 @@
@@ -167,5 +167,5 @@ index 0000000..b1ba1d8
 +    }
 +}
 -- 
-2.6.4
+2.19.0
 

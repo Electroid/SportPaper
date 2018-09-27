@@ -1,11 +1,11 @@
-From 67edcf7eaf781b5e6ff2b665d0c1b23d60900c08 Mon Sep 17 00:00:00 2001
+From 5b09f2963d90ed76896698d629263f6af057c802 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Thu, 16 Aug 2018 15:27:59 -0700
 Subject: [PATCH] String based Action Bar API
 
 
 diff --git a/src/main/java/net/minecraft/server/MCUtil.java b/src/main/java/net/minecraft/server/MCUtil.java
-index aefc829..7f86691 100644
+index aefc829b..7f86691a 100644
 --- a/src/main/java/net/minecraft/server/MCUtil.java
 +++ b/src/main/java/net/minecraft/server/MCUtil.java
 @@ -2,10 +2,13 @@
@@ -63,13 +63,14 @@ index aefc829..7f86691 100644
 +    }
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index dc4e343..712f18f 100644
+index dc4e343d..712f18fe 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -194,6 +194,23 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -193,6 +193,23 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         getHandle().playerConnection.sendPacket(packet);
      }
  
-     @Override
++    @Override
 +    public void sendActionBar(BaseComponent baseComponent) {
 +        sendActionBar(baseComponent.toLegacyText());
 +    }
@@ -86,10 +87,9 @@ index dc4e343..712f18f 100644
 +        sendActionBar(org.bukkit.ChatColor.translateAlternateColorCodes(alternateChar, message));
 +    }
 +
-+    @Override
+     @Override
      public void setPlayerListHeaderFooter(BaseComponent[] header, BaseComponent[] footer) {
          PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
-         packet.header = header;
 -- 
-2.6.4
+2.19.0
 

@@ -1,11 +1,11 @@
-From 2f4716e0377ce85ab77f318c4c2dcd2818b4b402 Mon Sep 17 00:00:00 2001
+From fd39d30f6cbb56973759e5fb8532b14318a29d2e Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 19:38:37 -0700
 Subject: [PATCH] Physical interface
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 52646b1..9549a76 100644
+index 52646b16..9549a763 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -88,6 +88,11 @@ public class CraftWorld implements World {
@@ -21,7 +21,7 @@ index 52646b1..9549a76 100644
          return getChunkAt(x >> 4, z >> 4).getBlock(x & 0xF, y, z & 0xF);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
-index e9a3c50..694da65 100644
+index e9a3c501..694da655 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
 @@ -17,6 +17,7 @@ import net.minecraft.server.TileEntityDropper;
@@ -45,7 +45,7 @@ index e9a3c50..694da65 100644
          return inventory.getMaxStackSize();
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/projectiles/CraftBlockProjectileSource.java b/src/main/java/org/bukkit/craftbukkit/projectiles/CraftBlockProjectileSource.java
-index b8bf754..70a1023 100644
+index b8bf7541..70a1023f 100644
 --- a/src/main/java/org/bukkit/craftbukkit/projectiles/CraftBlockProjectileSource.java
 +++ b/src/main/java/org/bukkit/craftbukkit/projectiles/CraftBlockProjectileSource.java
 @@ -4,6 +4,7 @@ import java.util.Random;
@@ -56,18 +56,18 @@ index b8bf754..70a1023 100644
  import org.bukkit.block.Block;
  import org.bukkit.craftbukkit.inventory.CraftItemStack;
  import org.bukkit.entity.Arrow;
-@@ -52,6 +53,11 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
+@@ -51,6 +52,11 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
+         return dispenserBlock.getWorld().getWorld().getBlockAt(dispenserBlock.getPosition().getX(), dispenserBlock.getPosition().getY(), dispenserBlock.getPosition().getZ());
      }
  
-     @Override
++    @Override
 +    public World getWorld() {
 +        return getBlock().getWorld();
 +    }
 +
-+    @Override
+     @Override
      public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
          return launchProjectile(projectile, null);
-     }
 -- 
-2.6.4
+2.19.0
 

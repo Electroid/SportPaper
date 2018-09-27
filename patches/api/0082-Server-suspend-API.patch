@@ -1,11 +1,11 @@
-From e37c30426283f4ac58e027b660c5404eecff9270 Mon Sep 17 00:00:00 2001
+From 1ec5ce679c3e4c819b486a48ac3d5057e88de025 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 21:43:24 -0700
 Subject: [PATCH] Server suspend API
 
 
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index fddd7be..6777fbc 100644
+index fddd7bed..6777fbc6 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
 @@ -3,6 +3,8 @@ package org.bukkit;
@@ -26,33 +26,33 @@ index fddd7be..6777fbc 100644
  /**
   * Represents a server implementation.
   */
-@@ -130,6 +134,12 @@ public interface Server extends PluginMessageRecipient {
+@@ -129,6 +133,12 @@ public interface Server extends PluginMessageRecipient {
+      */
      public Collection<? extends Player> getOnlinePlayers();
  
-     /**
++    /**
 +     * If the server is currently empty of players, return the {@link Instant}
 +     * that the last player disconnected. If the server is not empty, return null.
 +     */
 +    @Nullable Instant emptySince();
 +
-+    /**
+     /**
       * Get the maximum amount of players which can login to this server.
       *
-      * @return the amount of players this server allows
-@@ -323,6 +333,13 @@ public interface Server extends PluginMessageRecipient {
+@@ -322,6 +332,13 @@ public interface Server extends PluginMessageRecipient {
+      */
      public int getTicksPerMonsterSpawns();
  
-     /**
++    /**
 +     * Time to wait before automatically suspending an empty server.
 +     *
 +     * @see #setSuspended(boolean)
 +     */
 +    @Nullable Duration getEmptyServerSuspendDelay();
 +
-+    /**
+     /**
       * Gets a player object by the given username.
       * <p>
-      * This method may not return objects for offline players.
 @@ -1006,6 +1023,66 @@ public interface Server extends PluginMessageRecipient {
       */
      boolean runOnMainThread(Plugin plugin, boolean priority, Runnable task);
@@ -121,7 +121,7 @@ index fddd7be..6777fbc 100644
      public class Spigot
      {
 diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
-index f35bc09..10d0711 100644
+index f35bc092..10d07114 100644
 --- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
 +++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
 @@ -36,6 +36,7 @@ public class SimpleCommandMap implements CommandMap {
@@ -134,7 +134,7 @@ index f35bc09..10d0711 100644
      public void setFallbackCommands() {
 diff --git a/src/main/java/org/bukkit/command/defaults/SuspendCommand.java b/src/main/java/org/bukkit/command/defaults/SuspendCommand.java
 new file mode 100644
-index 0000000..bec311e
+index 00000000..bec311ed
 --- /dev/null
 +++ b/src/main/java/org/bukkit/command/defaults/SuspendCommand.java
 @@ -0,0 +1,53 @@
@@ -192,7 +192,7 @@ index 0000000..bec311e
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/event/EventCallback.java b/src/main/java/org/bukkit/event/EventCallback.java
-index 306fd4e..c63ec81 100644
+index 306fd4e3..c63ec819 100644
 --- a/src/main/java/org/bukkit/event/EventCallback.java
 +++ b/src/main/java/org/bukkit/event/EventCallback.java
 @@ -3,6 +3,7 @@ package org.bukkit.event;
@@ -205,7 +205,7 @@ index 306fd4e..c63ec81 100644
  }
 diff --git a/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java b/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java
 new file mode 100644
-index 0000000..31a7cd2
+index 00000000..31a7cd21
 --- /dev/null
 +++ b/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java
 @@ -0,0 +1,16 @@
@@ -227,7 +227,7 @@ index 0000000..31a7cd2
 +}
 diff --git a/src/test/java/org/bukkit/BukkitMirrorTest.java b/src/test/java/org/bukkit/BukkitMirrorTest.java
 deleted file mode 100644
-index 219788f..0000000
+index 219788fb..00000000
 --- a/src/test/java/org/bukkit/BukkitMirrorTest.java
 +++ /dev/null
 @@ -1,75 +0,0 @@
@@ -307,5 +307,5 @@ index 219788f..0000000
 -    }
 -}
 -- 
-2.6.4
+2.19.0
 

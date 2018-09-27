@@ -1,11 +1,11 @@
-From 0da4d28675f268b5b0b6a9270a1e947faf0c6228 Mon Sep 17 00:00:00 2001
+From 8649db8be4a5022222c889c90f85973052e7a6e5 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 15 Aug 2018 00:00:29 -0700
 Subject: [PATCH] Add String based Action Bar API
 
 
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index d947359..3cd5a66 100644
+index d9473594..3cd5a669 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
 @@ -3,6 +3,7 @@ package org.bukkit.entity;
@@ -16,10 +16,11 @@ index d947359..3cd5a66 100644
  import org.bukkit.Achievement;
  import org.bukkit.ChatColor;
  import org.bukkit.Effect;
-@@ -460,6 +461,34 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+@@ -459,6 +460,34 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     public void sendMap(MapView map);
  
      // Paper start
-     /**
++    /**
 +     * Sends an Action Bar message to the client.
 +     *
 +     * Use Section symbols for legacy color codes to send formatting.
@@ -47,10 +48,9 @@ index d947359..3cd5a66 100644
 +     */
 +    public void sendActionBar(char alternateChar, String message);
 +
-+    /**
+     /**
       * Sends the component to the player
       *
-      * @param component the components to send
 -- 
-2.6.4
+2.19.0
 

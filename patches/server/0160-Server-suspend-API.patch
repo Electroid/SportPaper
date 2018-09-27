@@ -1,11 +1,11 @@
-From 0bc6b5de061659ec20eaf03080b89e51f2e017b0 Mon Sep 17 00:00:00 2001
+From 777cfd121ea95ef11aba897bc6e4ac39e4a95656 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 23:39:11 -0700
 Subject: [PATCH] Server suspend API
 
 
 diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
-index edc6e27..9d0656f 100644
+index edc6e270..9d0656f5 100644
 --- a/src/main/java/net/minecraft/server/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/DedicatedServer.java
 @@ -295,6 +295,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
@@ -25,7 +25,7 @@ index edc6e27..9d0656f 100644
  
      // SportBukkit start
 diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
-index 5bfad62..d2b51ee 100644
+index 5bfad62e..d2b51eed 100644
 --- a/src/main/java/net/minecraft/server/LoginListener.java
 +++ b/src/main/java/net/minecraft/server/LoginListener.java
 @@ -290,7 +290,7 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
@@ -38,7 +38,7 @@ index 5bfad62..d2b51ee 100644
          }
      }
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index 40cd53a..242d058 100644
+index 40cd53ab..242d0582 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -21,6 +21,7 @@ import java.io.IOException;
@@ -242,7 +242,7 @@ index 40cd53a..242d058 100644
  
      public void addMainThreadTask(Runnable task) {
 diff --git a/src/main/java/net/minecraft/server/ServerConnection.java b/src/main/java/net/minecraft/server/ServerConnection.java
-index 5b1bcb0..cc6f993 100644
+index 5b1bcb0e..cc6f993b 100644
 --- a/src/main/java/net/minecraft/server/ServerConnection.java
 +++ b/src/main/java/net/minecraft/server/ServerConnection.java
 @@ -207,4 +207,10 @@ public class ServerConnection {
@@ -257,7 +257,7 @@ index 5b1bcb0..cc6f993 100644
 +    // SportBukkit end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 3305d18..ce0cb9e 100644
+index 3305d189..ce0cb9eb 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -5,6 +5,8 @@ import java.io.File;
@@ -302,10 +302,11 @@ index 3305d18..ce0cb9e 100644
      private final class BooleanWrapper {
          private boolean value = true;
      }
-@@ -554,6 +561,16 @@ public final class CraftServer implements Server {
+@@ -553,6 +560,16 @@ public final class CraftServer implements Server {
+         return BukkitConfig.ticksPerMonsterSpawn;
      }
  
-     @Override
++    @Override
 +    public @Nullable Duration getEmptyServerSuspendDelay() {
 +        try {
 +            return Duration.parse(PaperSpigotConfig.emptyServerSuspendDelay);
@@ -315,10 +316,9 @@ index 3305d18..ce0cb9e 100644
 +        }
 +    }
 +
-+    @Override
+     @Override
      public PluginManager getPluginManager() {
          return pluginManager;
-     }
 @@ -1671,6 +1688,59 @@ public final class CraftServer implements Server {
          return task instanceof Wrapped ? task : new Wrapped();
      }
@@ -380,7 +380,7 @@ index 3305d18..ce0cb9e 100644
      {
  
 diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
-index 9e3cdff..3127998 100644
+index 9e3cdff8..31279983 100644
 --- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
 +++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
 @@ -122,6 +122,11 @@ public class PaperSpigotConfig
@@ -396,7 +396,7 @@ index 9e3cdff..3127998 100644
      public static double weaknessEffectModifier;
      private static void effectModifiers()
 diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
-index 06ad382..8eba42e 100644
+index 06ad3826..8eba42e3 100644
 --- a/src/main/java/org/spigotmc/WatchdogThread.java
 +++ b/src/main/java/org/spigotmc/WatchdogThread.java
 @@ -16,6 +16,7 @@ public class WatchdogThread extends Thread
@@ -435,5 +435,5 @@ index 06ad382..8eba42e 100644
              {
                  Logger log = Bukkit.getServer().getLogger();
 -- 
-2.6.4
+2.19.0
 

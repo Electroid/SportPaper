@@ -1,11 +1,11 @@
-From 25fe822fe50772c2a696f3abb31f8c6548704670 Mon Sep 17 00:00:00 2001
+From 15d9fa44ef884314c900d0ac391f84274258392d Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 21:42:47 -0700
 Subject: [PATCH] Add CanDestroy and CanPlaceOn to ItemMeta
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
-index eaaa6a1..16fc76a 100644
+index eaaa6a11..16fc76ad 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
 @@ -13,6 +13,7 @@ import java.util.List;
@@ -131,10 +131,11 @@ index eaaa6a1..16fc76a 100644
      }
  
      public String getDisplayName() {
-@@ -769,6 +821,30 @@ class CraftMetaItem implements ItemMeta, Repairable {
+@@ -768,6 +820,30 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         repairCost = cost;
      }
  
-     @Override
++    @Override
 +    public ImmutableMaterialSet getCanDestroy() {
 +        return canDestroy;
 +    }
@@ -158,10 +159,9 @@ index eaaa6a1..16fc76a 100644
 +    public void setCanPlaceOn(Material...materials) {
 +        canPlaceOn = ImmutableMaterialSet.of(materials);
 +    }
-+    @Override
+     @Override
      public final boolean equals(Object object) {
          if (object == null) {
-             return false;
 @@ -821,6 +897,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
          hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
          hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
@@ -190,5 +190,5 @@ index eaaa6a1..16fc76a 100644
                          REPAIR.NBT,
                          ENCHANTMENTS.NBT,
 -- 
-2.6.4
+2.19.0
 

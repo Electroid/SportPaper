@@ -1,11 +1,11 @@
-From c86b6a7175c213a898560b5a8d0339e4254dd9fe Mon Sep 17 00:00:00 2001
+From a12b63e4ae6df490c7780851d45ea26c548318bc Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 22:06:30 -0700
 Subject: [PATCH] Skull skin API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java b/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
-index 77f5dcc..9a40566 100644
+index 77f5dcc6..9a405665 100644
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
 @@ -5,11 +5,15 @@ import net.minecraft.server.MinecraftServer;
@@ -44,7 +44,7 @@ index 77f5dcc..9a40566 100644
      	return getBlockFace(rotation);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
-index 55bbad7..ee1fd93 100644
+index 55bbad76..ee1fd938 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
 @@ -1,6 +1,7 @@
@@ -66,10 +66,11 @@ index 55bbad7..ee1fd93 100644
  import org.bukkit.inventory.meta.SkullMeta;
  
  import com.google.common.collect.ImmutableMap.Builder;
-@@ -147,6 +150,17 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
+@@ -146,6 +149,17 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
+         return true;
      }
  
-     @Override
++    @Override
 +    public void setOwner(String name, UUID uuid, Skin skin) {
 +        profile = new GameProfile(uuid, name);
 +        Skins.setProperties(skin, profile.getProperties());
@@ -80,10 +81,9 @@ index 55bbad7..ee1fd93 100644
 +        profile = null;
 +    }
 +
-+    @Override
+     @Override
      int applyHash() {
          final int original;
-         int hash = original = super.applyHash();
 -- 
-2.6.4
+2.19.0
 

@@ -1,11 +1,11 @@
-From ff3ed55a509038ab74ff52de95c99dc596b940c7 Mon Sep 17 00:00:00 2001
+From 57d8e2111d19942a322a8d95574269b6bd2cac22 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Fri, 24 Aug 2018 02:27:23 -0700
 Subject: [PATCH] isChunkGenerated API
 
 
 diff --git a/src/main/java/org/bukkit/Location.java b/src/main/java/org/bukkit/Location.java
-index bef4379..834a861 100644
+index bef4379c..834a8614 100644
 --- a/src/main/java/org/bukkit/Location.java
 +++ b/src/main/java/org/bukkit/Location.java
 @@ -5,6 +5,7 @@ import java.util.HashMap;
@@ -16,10 +16,11 @@ index bef4379..834a861 100644
  import org.bukkit.block.Block;
  import org.bukkit.configuration.serialization.ConfigurationSerializable;
  import org.bukkit.entity.Entity;
-@@ -542,6 +543,16 @@ public class Location implements Cloneable, ConfigurationSerializable, Physical
+@@ -541,6 +542,16 @@ public class Location implements Cloneable, ConfigurationSerializable, Physical
+         return world.isChunkLoaded(locToBlock(x) >> 4, locToBlock(z) >> 4);
      }
  
-     /**
++    /**
 +     * Checks if a {@link Chunk} has been generated at this location.
 +     *
 +     * @return true if a chunk has been generated at this location
@@ -29,18 +30,18 @@ index bef4379..834a861 100644
 +        return world.isChunkGenerated(locToBlock(x) >> 4, locToBlock(z) >> 4);
 +    }
 +
-+    /**
+     /**
       * @return A new location where X/Y/Z are on the Block location (integer value of X/Y/Z)
       */
-     public Location toBlockLocation() {
 diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
-index ff2b815..b72cf4f 100644
+index ff2b8154..b72cf4f8 100644
 --- a/src/main/java/org/bukkit/World.java
 +++ b/src/main/java/org/bukkit/World.java
-@@ -193,6 +193,27 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+@@ -192,6 +192,27 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+      */
      public boolean isChunkLoaded(Chunk chunk);
  
-     /**
++    /**
 +     * Checks if a {@link Chunk} has been generated at the specified chunk key,
 +     * which is the X and Z packed into a long.
 +     *
@@ -61,10 +62,9 @@ index ff2b815..b72cf4f 100644
 +    public boolean isChunkGenerated(int x, int z);
 +
 +
-+    /**
+     /**
       * Gets an array of all loaded {@link Chunk}s
       *
-      * @return Chunk[] containing all loaded chunks
 -- 
-2.6.4
+2.19.0
 

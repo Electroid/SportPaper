@@ -1,4 +1,4 @@
-From 5bc97655cf8a0c17edec2e3a5b79a92c1a47eb46 Mon Sep 17 00:00:00 2001
+From 9245ec9dbe3e9e65a796c6380add7ccd49da203b Mon Sep 17 00:00:00 2001
 From: Aikar <aikar@aikar.co>
 Date: Wed, 30 Mar 2016 02:13:24 -0400
 Subject: [PATCH] Use Optimized Collections
@@ -13,23 +13,23 @@ These collections are super fast as seen
 http://java-performance.info/hashmap-overview-jdk-fastutil-goldman-sachs-hppc-koloboke-trove-january-2015/
 
 diff --git a/pom.xml b/pom.xml
-index 092ca7d..ee562d2 100644
+index 092ca7df..ee562d2e 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -28,6 +28,11 @@
+@@ -27,6 +27,11 @@
+     </parent>
  
      <dependencies>
-         <dependency>
++        <dependency>
 +            <groupId>it.unimi.dsi</groupId>
 +            <artifactId>fastutil</artifactId>
 +            <version>8.1.0</version>
 +        </dependency>
-+        <dependency>
+         <dependency>
              <groupId>net.sf.trove4j</groupId>
              <artifactId>trove4j</artifactId>
-             <version>3.0.3</version>
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 573303e..7c81324 100644
+index 573303e3..7c81324d 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -8,6 +8,8 @@ import java.util.Iterator;
@@ -51,5 +51,5 @@ index 573303e..7c81324 100644
          public Chunk get(long key) {
              if (lastChunkByPos != null && key == lastChunkByPos.chunkKey) {
 -- 
-2.6.4
+2.19.0
 

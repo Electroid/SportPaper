@@ -1,17 +1,18 @@
-From 396a73fcb07ecc1a53af5e6b5d54dc3761d4191d Mon Sep 17 00:00:00 2001
+From eaa00fcb9d0e49f9ba0d38beb052b55881356976 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 00:03:13 -0700
 Subject: [PATCH] Add world broadcast API
 
 
 diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
-index b72cf4f..9e9d2d2 100644
+index b72cf4f8..9e9d2d27 100644
 --- a/src/main/java/org/bukkit/World.java
 +++ b/src/main/java/org/bukkit/World.java
-@@ -750,6 +750,27 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+@@ -749,6 +749,27 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+      */
      public List<Player> getPlayers();
  
-     /**
++    /**
 +     * Broadcast a message to all players in a world.
 +     *
 +     * @param message the message
@@ -32,10 +33,9 @@ index b72cf4f..9e9d2d2 100644
 +     */
 +    public void broadcast(net.md_5.bungee.api.chat.BaseComponent... components);
 +
-+    /**
+     /**
       * Returns a list of entities within a bounding box centered around a Location.
       *
-      * Some implementations may impose artificial restrictions on the size of the search bounding box.
 -- 
-2.6.4
+2.19.0
 
