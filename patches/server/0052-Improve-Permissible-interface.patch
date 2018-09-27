@@ -1,11 +1,11 @@
-From 265a0c9c5448ed1a636d465b913c6c046fd8d66a Mon Sep 17 00:00:00 2001
+From bfd19bbf9a23197859a3b4f940d2be432fdb83f6 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 00:49:37 -0700
 Subject: [PATCH] Improve Permissible interface
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
-index 12fb6156f..be7f7d8e4 100644
+index 12fb615..be7f7d8 100644
 --- a/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
 +++ b/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
 @@ -1,6 +1,7 @@
@@ -16,11 +16,10 @@ index 12fb6156f..be7f7d8e4 100644
  import java.util.Set;
  import net.minecraft.server.ICommandListener;
  
-@@ -118,6 +119,66 @@ public class ProxiedNativeCommandSender implements ProxiedCommandSender {
-         return getCaller().getEffectivePermissions();
+@@ -119,6 +120,66 @@ public class ProxiedNativeCommandSender implements ProxiedCommandSender {
      }
  
-+    @Override
+     @Override
 +    public boolean removeAttachments(Plugin plugin) {
 +        return getCaller().removeAttachments(plugin);
 +    }
@@ -80,11 +79,12 @@ index 12fb6156f..be7f7d8e4 100644
 +        return getCaller().getAttachments(plugin, permission);
 +    }
 +
-     @Override
++    @Override
      public boolean isOp() {
          return getCaller().isOp();
+     }
 diff --git a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
-index 5abc00b79..c32dee208 100644
+index 5abc00b..c32dee2 100644
 --- a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
 +++ b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
 @@ -9,6 +9,7 @@ import org.bukkit.permissions.PermissionAttachment;
@@ -163,14 +163,13 @@ index 5abc00b79..c32dee208 100644
          return false;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-index 93a6ddfe9..2fb74590d 100644
+index 93a6ddf..2fb7459 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
-@@ -564,6 +564,66 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
-         return perm.getEffectivePermissions();
+@@ -565,6 +565,66 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
      }
  
-+    @Override
+     @Override
 +    public boolean removeAttachments(Plugin plugin) {
 +        return perm.removeAttachments(plugin);
 +    }
@@ -230,11 +229,12 @@ index 93a6ddfe9..2fb74590d 100644
 +        return perm.getAttachments(plugin, permission);
 +    }
 +
-     @Override
++    @Override
      public boolean isOp() {
          return perm.isOp();
+     }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
-index 8a08babc1..d165d5c63 100644
+index 8a08bab..d165d5c 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
 @@ -1,5 +1,6 @@
@@ -312,7 +312,7 @@ index 8a08babc1..d165d5c63 100644
          return mode;
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java
-index f2c30225e..1498bec6c 100644
+index f2c3022..1498bec 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java
 @@ -1,5 +1,6 @@
@@ -322,11 +322,10 @@ index f2c30225e..1498bec6c 100644
  import java.util.Set;
  
  import net.minecraft.server.EntityMinecartCommandBlock;
-@@ -125,6 +126,66 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
-         return perm.getEffectivePermissions();
+@@ -126,6 +127,66 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
      }
  
-+    @Override
+     @Override
 +    public boolean removeAttachments(Plugin plugin) {
 +        return perm.removeAttachments(plugin);
 +    }
@@ -386,9 +385,10 @@ index f2c30225e..1498bec6c 100644
 +        return perm.getAttachments(plugin, permission);
 +    }
 +
-     @Override
++    @Override
      public Server getServer() {
          return Bukkit.getServer();
+     }
 -- 
-2.18.0
+2.6.4
 

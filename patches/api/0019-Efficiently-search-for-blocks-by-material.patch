@@ -1,11 +1,11 @@
-From e27b49d9119b36cb60ae0c6fb3a65decff398f06 Mon Sep 17 00:00:00 2001
+From ef2469daca97e864a0be7c905de7232fff98ddbe Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 01:38:03 -0700
 Subject: [PATCH] Efficiently search for blocks by material
 
 
 diff --git a/src/main/java/org/bukkit/Chunk.java b/src/main/java/org/bukkit/Chunk.java
-index b7bc5632..d9311090 100644
+index b7bc563..d931109 100644
 --- a/src/main/java/org/bukkit/Chunk.java
 +++ b/src/main/java/org/bukkit/Chunk.java
 @@ -5,6 +5,8 @@ import org.bukkit.block.BlockState;
@@ -17,11 +17,10 @@ index b7bc5632..d9311090 100644
  /**
   * Represents a chunk of blocks
   */
-@@ -41,6 +43,14 @@ public interface Chunk {
-      */
+@@ -42,6 +44,14 @@ public interface Chunk {
      Block getBlock(int x, int y, int z);
  
-+    /**
+     /**
 +     * Get all blocks in this chunk that are made of the given {@link Material}
 +     *
 +     * @param material type of block to search for
@@ -29,9 +28,10 @@ index b7bc5632..d9311090 100644
 +     */
 +    Set<Block> getBlocks(Material material);
 +
-     /**
++    /**
       * Capture thread-safe read-only snapshot of chunk data
       *
+      * @return ChunkSnapshot
 -- 
-2.18.0
+2.6.4
 

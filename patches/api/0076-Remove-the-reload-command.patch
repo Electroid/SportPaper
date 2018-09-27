@@ -1,11 +1,11 @@
-From 48a4fb18776140d820e759b274586ba741326567 Mon Sep 17 00:00:00 2001
+From f366c2302a235195bb9f41b068cc05058f4afe78 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 25 Aug 2018 18:36:56 -0700
 Subject: [PATCH] Remove the reload command
 
 
 diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
-index a2eb9bdb..e1cf3885 100644
+index a2eb9bd..e1cf388 100644
 --- a/src/main/java/org/bukkit/Bukkit.java
 +++ b/src/main/java/org/bukkit/Bukkit.java
 @@ -582,7 +582,7 @@ public final class Bukkit {
@@ -18,23 +18,23 @@ index a2eb9bdb..e1cf3885 100644
  
      /**
 diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
-index 693b21be..53484fd2 100644
+index 693b21b..53484fd 100644
 --- a/src/main/java/org/bukkit/Server.java
 +++ b/src/main/java/org/bukkit/Server.java
-@@ -489,11 +489,6 @@ public interface Server extends PluginMessageRecipient {
-      */
+@@ -490,11 +490,6 @@ public interface Server extends PluginMessageRecipient {
      public MapView createMap(World world);
  
--    /**
+     /**
 -     * Reloads the server, refreshing settings and plugin information.
 -     */
 -    public void reload();
 -
-     /**
+-    /**
       * Returns the primary logger associated with this server instance.
       *
+      * @return Logger associated with this server
 diff --git a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
-index c70d5129..fc8d1895 100644
+index c70d512..fc8d189 100644
 --- a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
 +++ b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
 @@ -19,11 +19,7 @@ public class ReloadCommand extends BukkitCommand {
@@ -51,5 +51,5 @@ index c70d5129..fc8d1895 100644
          return true;
      }
 -- 
-2.18.0
+2.6.4
 

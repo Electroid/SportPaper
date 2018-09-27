@@ -1,11 +1,11 @@
-From d2eb41e430419348732c9da8478a0ec829475a62 Mon Sep 17 00:00:00 2001
+From af8d7ea1a46ac0084828dc104fbc57380e4f767c Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 7 Aug 2018 01:17:15 -0700
 Subject: [PATCH] Add invis override API
 
 
 diff --git a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
-index 62492650a..043ce6626 100644
+index 6249265..043ce66 100644
 --- a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
 +++ b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
 @@ -5,8 +5,8 @@ import java.util.List;
@@ -20,7 +20,7 @@ index 62492650a..043ce6626 100644
      public PacketPlayOutEntityMetadata() {}
  
 diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
-index b6c0be789..b46ac6abc 100644
+index b6c0be7..b46ac6a 100644
 --- a/src/main/java/net/minecraft/server/PlayerConnection.java
 +++ b/src/main/java/net/minecraft/server/PlayerConnection.java
 @@ -990,7 +990,28 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
@@ -54,7 +54,7 @@ index b6c0be789..b46ac6abc 100644
  
          // CraftBukkit end
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 2c2666497..462fb45e7 100644
+index 2c26664..462fb45 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 @@ -86,6 +86,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
@@ -65,11 +65,10 @@ index 2c2666497..462fb45e7 100644
  
      private final Map<CommandSender, String> fakeNames = new WeakHashMap<CommandSender, String>();
      private final Map<CommandSender, String> fakeDisplayNames = new WeakHashMap<CommandSender, String>();
-@@ -1277,6 +1278,27 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
-         return !hiddenPlayers.contains(player.getUniqueId());
+@@ -1278,6 +1279,27 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
      }
  
-+    @Override
+     @Override
 +    public boolean canSeeInvisibles() {
 +        return this.showInvisibles;
 +    }
@@ -90,9 +89,10 @@ index 2c2666497..462fb45e7 100644
 +        }
 +    }
 +
-     @Override
++    @Override
      public Map<String, Object> serialize() {
          Map<String, Object> result = new LinkedHashMap<String, Object>();
+ 
 -- 
-2.18.0
+2.6.4
 

@@ -1,11 +1,11 @@
-From cc9e3c4f6a4d4e04283615592acba7634defbd88 Mon Sep 17 00:00:00 2001
+From 15407b98981fa87fa4494f6360b2a642988a5b81 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Wed, 8 Aug 2018 00:38:11 -0700
 Subject: [PATCH] Improve Permissible interface
 
 
 diff --git a/src/main/java/org/bukkit/permissions/Permissible.java b/src/main/java/org/bukkit/permissions/Permissible.java
-index 5cd3cff0..a7c0ef58 100644
+index 5cd3cff..a7c0ef5 100644
 --- a/src/main/java/org/bukkit/permissions/Permissible.java
 +++ b/src/main/java/org/bukkit/permissions/Permissible.java
 @@ -1,5 +1,6 @@
@@ -15,11 +15,10 @@ index 5cd3cff0..a7c0ef58 100644
  import java.util.Set;
  import org.bukkit.plugin.Plugin;
  
-@@ -104,6 +105,38 @@ public interface Permissible extends ServerOperator {
-      */
+@@ -105,6 +106,38 @@ public interface Permissible extends ServerOperator {
      public void removeAttachment(PermissionAttachment attachment);
  
-+    /**
+     /**
 +     * Remove from this object all of the {@link PermissionAttachment}s belonging to the given {@link Plugin}.
 +     * @return true if anything was removed, false if nothing changed
 +     */
@@ -51,9 +50,10 @@ index 5cd3cff0..a7c0ef58 100644
 +     */
 +    boolean removeAttachments(Plugin plugin, Permission permission);
 +
-     /**
++    /**
       * Recalculates the permissions for this object, if the attachments have
       * changed values.
+      * <p>
 @@ -119,4 +152,38 @@ public interface Permissible extends ServerOperator {
       * @return Set of currently effective permissions
       */
@@ -94,7 +94,7 @@ index 5cd3cff0..a7c0ef58 100644
 +    Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin, Permission permission);
  }
 diff --git a/src/main/java/org/bukkit/permissions/PermissibleBase.java b/src/main/java/org/bukkit/permissions/PermissibleBase.java
-index 3b95061a..7a617309 100644
+index 3b95061..7a61730 100644
 --- a/src/main/java/org/bukkit/permissions/PermissibleBase.java
 +++ b/src/main/java/org/bukkit/permissions/PermissibleBase.java
 @@ -1,12 +1,19 @@
@@ -263,5 +263,5 @@ index 3b95061a..7a617309 100644
  
      private class RemoveAttachmentRunnable implements Runnable {
 -- 
-2.18.0
+2.6.4
 
