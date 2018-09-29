@@ -1,0 +1,201 @@
+From 3c0293edf40dab7500d166fbcfa0839952e1c697 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Sat, 29 Sep 2018 17:22:39 -0500
+Subject: [PATCH] Simple Guice support
+
+
+diff --git a/pom.xml b/pom.xml
+index 8a304559..efafb99c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -87,6 +87,11 @@
+             <type>jar</type>
+             <scope>compile</scope>
+         </dependency>
++        <dependency>
++            <groupId>network.stratus</groupId>
++            <artifactId>ubique</artifactId>
++            <version>1.0.0-SNAPSHOT</version>
++        </dependency>
+ 
+         <!-- testing -->
+         <dependency>
+diff --git a/src/main/java/org/bukkit/PluginInstanceModule.java b/src/main/java/org/bukkit/PluginInstanceModule.java
+new file mode 100644
+index 00000000..ee56ac8e
+--- /dev/null
++++ b/src/main/java/org/bukkit/PluginInstanceModule.java
+@@ -0,0 +1,22 @@
++package org.bukkit;
++
++import network.stratus.ubique.inject.ProtectedModule;
++import org.bukkit.plugin.Plugin;
++
++/**
++ * Configures a {@link Plugin} instance
++ */
++public class PluginInstanceModule extends ProtectedModule {
++
++  private final Plugin plugin;
++
++  public PluginInstanceModule(Plugin plugin) {
++    this.plugin = plugin;
++  }
++
++  @Override
++  protected void configure() {
++    bind(Plugin.class).toInstance(plugin);
++    plugin.configure(binder());
++  }
++}
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index e7878915..849b322a 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1,5 +1,6 @@
+ package org.bukkit;
+ 
++import com.google.inject.Injector;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+ import java.io.Serializable;
+@@ -1096,6 +1097,15 @@ public interface Server extends PluginMessageRecipient {
+             player.sendMessage(translatable.translate(player.getLocale()));
+         }
+     }
++
++    /**
++     * Return the global {@link Injector}.
++     *
++     * Note that direct injector use is considered bad form,
++     * and is only provided to assist in migrating legacy code.
++     * Nice code should @Inject its dependencies.
++     */
++    Injector injector();
+     // SportPaper end
+ 
+     public class Spigot
+diff --git a/src/main/java/org/bukkit/ServerInstanceModule.java b/src/main/java/org/bukkit/ServerInstanceModule.java
+new file mode 100644
+index 00000000..172cb239
+--- /dev/null
++++ b/src/main/java/org/bukkit/ServerInstanceModule.java
+@@ -0,0 +1,31 @@
++package org.bukkit;
++
++import java.util.Collection;
++import network.stratus.ubique.inject.KeyedModule;
++import network.stratus.ubique.inject.ProtectedBinder;
++import org.bukkit.plugin.Plugin;
++
++/**
++ * Configures a {@link Server} instance and a collection of {@link Plugin}s.
++ */
++public class ServerInstanceModule extends KeyedModule {
++
++  private final Server server;
++  private final Collection<Plugin> plugins;
++
++  public ServerInstanceModule(Server server, Collection<Plugin> plugins) {
++    super(server);
++    this.server = server;
++    this.plugins = plugins;
++  }
++
++  @Override
++  protected void configure() {
++    bind(Server.class).toInstance(server);
++
++    for(Plugin plugin : plugins) {
++      ProtectedBinder.newProtectedBinder(binder())
++          .install(new PluginInstanceModule(plugin));
++    }
++  }
++}
+diff --git a/src/main/java/org/bukkit/plugin/Plugin.java b/src/main/java/org/bukkit/plugin/Plugin.java
+index 7bdc809c..709848f6 100644
+--- a/src/main/java/org/bukkit/plugin/Plugin.java
++++ b/src/main/java/org/bukkit/plugin/Plugin.java
+@@ -1,9 +1,11 @@
+ package org.bukkit.plugin;
+ 
++import com.google.inject.Injector;
+ import java.io.File;
+ import java.io.InputStream;
+ import java.util.logging.Logger;
+ 
++import network.stratus.ubique.inject.ProtectedBinder;
+ import org.bukkit.Server;
+ import org.bukkit.command.TabExecutor;
+ import org.bukkit.configuration.file.FileConfiguration;
+@@ -186,4 +188,28 @@ public interface Plugin extends TabExecutor {
+      * @return name of the plugin
+      */
+     public String getName();
++
++    // SportPaper start
++
++    /**
++     * Return the private {@link Injector} for this plugin.
++     *
++     * Note that direct injector use is considered bad form,
++     * and is only provided to assist in migrating legacy code.
++     * Nice code should @Inject its dependencies.
++     */
++    Injector injector();
++
++    /**
++     * Called during {@link Injector} creation to configure this plugin. This happens
++     * during server startup, before {@link #onLoad()} is called.
++     *
++     * The given {@link ProtectedBinder} belongs to this plugin's private environment,
++     * and the binder returned from {@link ProtectedBinder#publicBinder()} is the global
++     * environment shared by all plugins, and the server itself.
++     *
++     */
++    default void configure(ProtectedBinder binder) {}
++
++    // SportPaper end
+ }
+diff --git a/src/main/java/org/bukkit/plugin/PluginBase.java b/src/main/java/org/bukkit/plugin/PluginBase.java
+index 6031af11..9dadbc04 100644
+--- a/src/main/java/org/bukkit/plugin/PluginBase.java
++++ b/src/main/java/org/bukkit/plugin/PluginBase.java
+@@ -1,5 +1,8 @@
+ package org.bukkit.plugin;
+ 
++import com.google.inject.Inject;
++import com.google.inject.Injector;
++
+ /**
+  * Represents a base {@link Plugin}
+  * <p>
+@@ -7,6 +10,8 @@ package org.bukkit.plugin;
+  * org.bukkit.plugin.java.JavaPlugin}
+  */
+ public abstract class PluginBase implements Plugin {
++    @Inject private Injector injector;
++
+     @Override
+     public final int hashCode() {
+         return getName().hashCode();
+@@ -29,4 +34,16 @@ public abstract class PluginBase implements Plugin {
+     public final String getName() {
+         return getDescription().getName();
+     }
++
++    protected void assertInjected() {
++        if(injector == null) {
++            throw new IllegalStateException("Not available until plugin has been injected");
++        }
++    }
++
++    @Override
++    public Injector injector() {
++        assertInjected();
++        return injector;
++    }
+ }
+-- 
+2.19.0
+

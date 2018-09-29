@@ -1,0 +1,110 @@
+From 8d489414e1989a32ce46037d96e077a367c173ef Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Sat, 29 Sep 2018 17:22:49 -0500
+Subject: [PATCH] Simple Guice support
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index dba05d97..340f573f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1,5 +1,8 @@
+ package org.bukkit.craftbukkit;
+ 
++import com.google.inject.Guice;
++import com.google.inject.Injector;
++import com.google.inject.Stage;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+ import java.io.FileInputStream;
+@@ -34,6 +37,7 @@ import org.bukkit.GameMode;
+ import org.bukkit.Location;
+ import org.bukkit.OfflinePlayer;
+ import org.bukkit.Server;
++import org.bukkit.ServerInstanceModule;
+ import org.bukkit.UnsafeValues;
+ import org.bukkit.Warning.WarningState;
+ import org.bukkit.World;
+@@ -169,6 +173,8 @@ public final class CraftServer implements Server {
+     private final List<CraftPlayer> playerView;
+ 
+     private @Nullable Instant emptySince;
++    protected @Nullable Injector injector;
++
+ 
+     private final class BooleanWrapper {
+         private boolean value = true;
+@@ -243,6 +249,17 @@ public final class CraftServer implements Server {
+ 
+         if (pluginFolder.exists()) {
+             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
++
++            final Stage stage = console.options.valueOf(Main.GUICE_STAGE_OPTION);
++            logger.info("Creating injector in stage " + stage);
++
++            try {
++                injector = Guice.createInjector(stage, new ServerInstanceModule(this, Arrays.asList(plugins)));
++            } catch(RuntimeException ex) {
++                logger.log(Level.SEVERE, "Injector creation failed, server will shut down", ex);
++                throw ex;
++            }
++
+             for (Plugin plugin : plugins) {
+                 try {
+                     String message = String.format("Loading %s", plugin.getDescription().getFullName());
+@@ -1811,6 +1828,16 @@ public final class CraftServer implements Server {
+         }
+     };
+ 
++    // SportPaper start
++    @Override
++    public Injector injector() {
++        if(injector == null) {
++            throw new IllegalStateException("Injector has not been created yet");
++        }
++        return injector;
++    }
++    // Sportpaper end
++
+     public Spigot spigot()
+     {
+         return spigot;
+diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
+index d1ce7a86..4d8492e0 100644
+--- a/src/main/java/org/bukkit/craftbukkit/Main.java
++++ b/src/main/java/org/bukkit/craftbukkit/Main.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.craftbukkit;
+ 
++import com.google.inject.Stage;
+ import java.io.File;
+ import java.io.IOException;
+ import java.text.SimpleDateFormat;
+@@ -9,10 +10,13 @@ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import joptsimple.OptionParser;
+ import joptsimple.OptionSet;
++import joptsimple.OptionSpec;
+ import net.minecraft.server.MinecraftServer;
+ import org.fusesource.jansi.AnsiConsole;
+ 
+ public class Main {
++    public static OptionSpec<Stage> GUICE_STAGE_OPTION;
++
+     public static boolean useJline = true;
+     public static boolean useConsole = true;
+ 
+@@ -155,6 +159,10 @@ public class Main {
+                         .ofType(File.class)
+                         .defaultsTo(new File("sportpaper.yml"))
+                         .describedAs("Yml file");
++                GUICE_STAGE_OPTION = acceptsAll(asList("stage"), "Guice run stage (development/production)")
++                    .withRequiredArg()
++                    .ofType(com.google.inject.Stage.class)
++                    .defaultsTo(com.google.inject.Stage.PRODUCTION);
+                 // SportPaper end
+ 
+                 // Paper start
+-- 
+2.19.0
+
