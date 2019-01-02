@@ -1,0 +1,96 @@
+From 31e6319cd9ff86300a72848ee249bf425cdf92e6 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Tue, 1 Jan 2019 18:39:52 -0600
+Subject: [PATCH] Support plugins that are just Guice modules
+
+
+diff --git a/src/main/java/org/bukkit/plugin/java/JavaPlugin.java b/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
+index 12d797f4..e244afac 100644
+--- a/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
++++ b/src/main/java/org/bukkit/plugin/java/JavaPlugin.java
+@@ -14,7 +14,7 @@ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-
++import javax.annotation.Nullable;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Server;
+ import org.bukkit.Warning.WarningState;
+@@ -59,7 +59,13 @@ public abstract class JavaPlugin extends PluginBase {
+     private PluginLogger logger = null;
+ 
+     public JavaPlugin() {
+-        final ClassLoader classLoader = this.getClass().getClassLoader();
++        this(null);
++    }
++
++    JavaPlugin(@Nullable ClassLoader classLoader) {
++        if(classLoader == null) {
++            classLoader = getClass().getClassLoader();
++        }
+         if (!(classLoader instanceof PluginClassLoader)) {
+             throw new IllegalStateException("JavaPlugin requires " + PluginClassLoader.class.getName());
+         }
+diff --git a/src/main/java/org/bukkit/plugin/java/ModularPlugin.java b/src/main/java/org/bukkit/plugin/java/ModularPlugin.java
+new file mode 100644
+index 00000000..dae095a9
+--- /dev/null
++++ b/src/main/java/org/bukkit/plugin/java/ModularPlugin.java
+@@ -0,0 +1,18 @@
++package org.bukkit.plugin.java;
++
++import com.google.inject.Module;
++import network.stratus.ubique.inject.ProtectedBinder;
++
++class ModularPlugin extends JavaPlugin {
++
++    private final Module module;
++
++    ModularPlugin(Module module) {
++        super(module.getClass().getClassLoader());
++        this.module = module;
++    }
++
++    public void configure(ProtectedBinder binder) {
++        binder.install(module);
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
+index b2cbf9e4..f9d079e1 100644
+--- a/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
++++ b/src/main/java/org/bukkit/plugin/java/PluginClassLoader.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.plugin.java;
+ 
++import com.google.inject.Module;
+ import java.io.File;
+ import java.net.MalformedURLException;
+ import java.net.URL;
+@@ -67,14 +68,15 @@ public final class PluginClassLoader extends URLClassLoader { // Spigot
+                 throw new InvalidPluginException("Cannot find main class `" + description.getMain() + "'", ex);
+             }
+ 
+-            Class<? extends JavaPlugin> pluginClass;
+-            try {
+-                pluginClass = jarClass.asSubclass(JavaPlugin.class);
+-            } catch (ClassCastException ex) {
+-                throw new InvalidPluginException("main class `" + description.getMain() + "' does not extend JavaPlugin", ex);
++            if(JavaPlugin.class.isAssignableFrom(jarClass)) {
++                plugin = jarClass.asSubclass(JavaPlugin.class).newInstance();
++            } else if(Module.class.isAssignableFrom(jarClass)) {
++                plugin = new ModularPlugin(jarClass.asSubclass(Module.class).newInstance());
++            } else {
++                throw new InvalidPluginException("main class `" + jarClass.getName() +
++                                                 "' must extend either " + JavaPlugin.class.getName() +
++                                                 " or " + Module.class.getName());
+             }
+-
+-            plugin = pluginClass.newInstance();
+         } catch (IllegalAccessException ex) {
+             throw new InvalidPluginException("No public constructor", ex);
+         } catch (InstantiationException ex) {
+-- 
+2.19.0
+
