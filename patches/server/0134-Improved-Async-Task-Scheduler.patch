@@ -1,4 +1,4 @@
-From 0651004cf91744990eabc416cdd345c3cee95ef0 Mon Sep 17 00:00:00 2001
+From 66e4a2e2fee71ee759ab0d2a2d9f69a5de4ef608 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 21 Aug 2018 01:56:21 -0700
 Subject: [PATCH] Improved Async Task Scheduler
@@ -32,10 +32,10 @@ operations are decoupled from the sync tasks queue.
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftAsyncScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftAsyncScheduler.java
 new file mode 100644
-index 00000000..70bfc32a
+index 00000000..12b40e07
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftAsyncScheduler.java
-@@ -0,0 +1,128 @@
+@@ -0,0 +1,127 @@
 +/*
 + * Copyright (c) 2018 Daniel Ennis (Aikar) MIT License
 + *
@@ -163,7 +163,6 @@ index 00000000..70bfc32a
 +        return runningTask.getPeriod() >= CraftTask.NO_REPEATING;
 +    }
 +}
-+
 diff --git a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java b/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
 index f036709c..1e97d460 100644
 --- a/src/main/java/org/bukkit/craftbukkit/scheduler/CraftScheduler.java
@@ -381,5 +380,5 @@ index 4b1e3523..44cbcdac 100644
       * -1 means no repeating <br>
       * -2 means cancel <br>
 -- 
-2.19.0
+2.20.1
 

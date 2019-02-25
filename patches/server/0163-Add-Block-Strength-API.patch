@@ -1,4 +1,4 @@
-From 9133417d4afd5aae6865ee3f33ea937d37c79b8a Mon Sep 17 00:00:00 2001
+From 34105ebdcaa7f4776a25ba954f701fe640a16230 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 15 Sep 2018 01:44:04 -0700
 Subject: [PATCH] Add Block Strength API
@@ -62,7 +62,7 @@ index 14b2f040..7907c983 100644
                                  count++;
                              }
 diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
-index ecef909a..442a59d4 100644
+index ecef909a..9897e0b4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
 +++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
 @@ -3,7 +3,9 @@ package org.bukkit.craftbukkit.block;
@@ -75,19 +75,18 @@ index ecef909a..442a59d4 100644
  
  import net.minecraft.server.*;
  
-@@ -167,6 +169,31 @@ public class CraftBlock implements Block {
-     public byte getLightFromBlocks() {
+@@ -168,6 +170,31 @@ public class CraftBlock implements Block {
          return (byte) chunk.getHandle().getBrightness(EnumSkyBlock.BLOCK, new BlockPosition(this.x, this.y, this.z));
      }
-+    
+ 
 +    private net.minecraft.server.BlockPosition blockPosition() {
 +        return new BlockPosition(x, y, z);
 +    }
-+    
++
 +    private Map<BlockPosition, Float> getChangedBlockStrengthMap() {
 +        return chunk.getHandle().world.changedBlockStrengthMap;
 +    }
-+    
++
 +    public void resetBlockStrength() {
 +        getChangedBlockStrengthMap().remove(blockPosition());
 +    }
@@ -104,9 +103,10 @@ index ecef909a..442a59d4 100644
 +    public float getBlockStrength() {
 +        return getNMSBlock().getStrength(chunk.getHandle().world, blockPosition());
 +    }
- 
++
  
      public Block getFace(final BlockFace face) {
+         return getRelative(face, 1);
 -- 
-2.19.0
+2.20.1
 

@@ -1,4 +1,4 @@
-From 10ac77fb766b2732f050a04d5f3f3c0467d19e1f Mon Sep 17 00:00:00 2001
+From 33667a388ca40867323c9908219ecf6aed2a82d4 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Tue, 21 Aug 2018 02:44:03 -0700
 Subject: [PATCH] Add EntityKnockbackByEntityEvent
@@ -6,10 +6,10 @@ Subject: [PATCH] Add EntityKnockbackByEntityEvent
 
 diff --git a/src/main/java/org/github/paperspigot/event/entity/EntityKnockbackByEntityEvent.java b/src/main/java/org/github/paperspigot/event/entity/EntityKnockbackByEntityEvent.java
 new file mode 100644
-index 00000000..d8d9ff7d
+index 00000000..c34fb1a3
 --- /dev/null
 +++ b/src/main/java/org/github/paperspigot/event/entity/EntityKnockbackByEntityEvent.java
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,76 @@
 +package org.github.paperspigot.event.entity;
 +
 +import org.bukkit.entity.Entity;
@@ -86,7 +86,6 @@ index 00000000..d8d9ff7d
 +        return acceleration;
 +    }
 +}
-+
 -- 
-2.18.0
+2.20.1
 
