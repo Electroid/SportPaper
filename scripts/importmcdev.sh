@@ -48,6 +48,8 @@ import PersistentScoreboard
 import SlotResult
 import StatisticList
 import PacketPlayOutSpawnEntity
+import ItemGoldenApple
+import ItemPotion
 
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1
