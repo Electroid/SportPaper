@@ -1,0 +1,32 @@
+From 3c13ca031cbe5954f69311222803183d4c3b7c83 Mon Sep 17 00:00:00 2001
+From: Rafi Baum <rafi@ukbaums.com>
+Date: Sun, 21 Apr 2019 22:52:42 -0400
+Subject: [PATCH] Add cave frequency API
+
+
+diff --git a/src/main/java/org/bukkit/generator/ChunkGenerator.java b/src/main/java/org/bukkit/generator/ChunkGenerator.java
+index 51370245..095d2fea 100644
+--- a/src/main/java/org/bukkit/generator/ChunkGenerator.java
++++ b/src/main/java/org/bukkit/generator/ChunkGenerator.java
+@@ -305,6 +305,18 @@ public abstract class ChunkGenerator {
+         return null;
+     }
+ 
++    /**
++     * Gets the frequency of cave spawns in the world.
++     * <p>
++     * This is represented as a number from 1 to infinity and is the inverse of the chance that
++     * a cave will spawn in any given chunk. The vanilla default is 7.
++     *
++     * @return the inverse of the chance a cave will spawn in any given chunk
++     */
++    public int getCaveFrequency() {
++        return 7;
++    }
++
+     /**
+      * Data for a Chunk.
+      */
+-- 
+2.17.1
+

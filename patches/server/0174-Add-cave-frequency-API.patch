@@ -1,0 +1,22 @@
+From 8bbb82311f466f2442ab8e5af4184fe2c000c1ef Mon Sep 17 00:00:00 2001
+From: Rafi Baum <rafi@ukbaums.com>
+Date: Sun, 21 Apr 2019 22:53:07 -0400
+Subject: [PATCH] Add cave frequency API
+
+
+diff --git a/src/main/java/net/minecraft/server/WorldGenCaves.java b/src/main/java/net/minecraft/server/WorldGenCaves.java
+index 2cdd0237..68f413a6 100644
+--- a/src/main/java/net/minecraft/server/WorldGenCaves.java
++++ b/src/main/java/net/minecraft/server/WorldGenCaves.java
+@@ -184,7 +184,7 @@ public class WorldGenCaves extends WorldGenBase {
+     protected void a(World world, int i, int j, int k, int l, ChunkSnapshot chunksnapshot) {
+         int i1 = this.b.nextInt(this.b.nextInt(this.b.nextInt(15) + 1) + 1);
+ 
+-        if (this.b.nextInt(7) != 0) {
++        if (this.b.nextInt(world.generator.getCaveFrequency()) != 0) { // SportBukkit - Pull cave frequency from chunk generator
+             i1 = 0;
+         }
+ 
+-- 
+2.17.1
+
