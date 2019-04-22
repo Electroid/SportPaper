@@ -1,0 +1,50 @@
+From 90f09886745613f65e8fc6daca3c1960af24fae5 Mon Sep 17 00:00:00 2001
+From: Rafi Baum <rafi@ukbaums.com>
+Date: Sun, 21 Apr 2019 23:30:23 -0400
+Subject: [PATCH] Add cave frequency API
+
+
+diff --git a/src/main/java/org/bukkit/WorldCreator.java b/src/main/java/org/bukkit/WorldCreator.java
+index 81c95d1f..0edbb217 100644
+--- a/src/main/java/org/bukkit/WorldCreator.java
++++ b/src/main/java/org/bukkit/WorldCreator.java
+@@ -17,6 +17,7 @@ public class WorldCreator {
+     private boolean generateStructures = true;
+     private String generatorSettings = "";
+     private boolean hardcore;
++    private int caveFrequency = 7;
+ 
+     /**
+      * Creates an empty WorldCreationOptions for the given world name
+@@ -259,6 +260,28 @@ public class WorldCreator {
+         return hardcore;
+     }
+ 
++    /**
++     * Gets how frequently caves are generated, as the inverse of the percent chance that a cave
++     * (system) will start in any given chunk. For example, 7 would represent a 1/7 (14.8%) chance
++     * that a cave spawns in a chunk.
++     *
++     * @return the inverse of the chance a cave will spawn in a chunk
++     */
++    public int getCaveFrequency() {
++        return caveFrequency;
++    }
++
++    /**
++     * Sets how frequently caves are generated, as the inverse of the percent chance that a cave
++     * (system) will start in any given chunk. For example, 7 would represent a 1/7 (14.8%) chance
++     * that a cave spawns in a chunk.
++     *
++     * @return the inverse of the chance a cave will spawn in a chunk
++     */
++    public void setCaveFrequency(int caveFrequency) {
++        this.caveFrequency = caveFrequency;
++    }
++
+     /**
+      * Creates a world with the specified options.
+      * <p>
+-- 
+2.17.1
+

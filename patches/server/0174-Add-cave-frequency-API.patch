@@ -1,0 +1,127 @@
+From be91e53118d29552634a61bf52f3a6ae8f8feded Mon Sep 17 00:00:00 2001
+From: Rafi Baum <rafi@ukbaums.com>
+Date: Mon, 22 Apr 2019 00:04:49 -0400
+Subject: [PATCH] Add cave frequency API
+
+
+diff --git a/src/main/java/net/minecraft/server/WorldData.java b/src/main/java/net/minecraft/server/WorldData.java
+index 3a7b22b9..d7740416 100644
+--- a/src/main/java/net/minecraft/server/WorldData.java
++++ b/src/main/java/net/minecraft/server/WorldData.java
+@@ -47,6 +47,7 @@ public class WorldData {
+     private int J;
+     private GameRules K;
+     public WorldServer world; // CraftBukkit
++    private int caveFrequency = 7; // SportPaper
+ 
+     protected WorldData() {
+         this.c = WorldType.NORMAL;
+@@ -190,6 +191,12 @@ public class WorldData {
+             this.J = nbttagcompound.getInt("BorderWarningTime");
+         }
+ 
++        // SportPaper start
++        if (nbttagcompound.hasKey("CaveFrequency")) {
++            this.caveFrequency = nbttagcompound.getInt("CaveFrequency");
++        }
++        // SportPaper end
++
+     }
+ 
+     public WorldData(WorldSettings worldsettings, String s) {
+@@ -219,6 +226,7 @@ public class WorldData {
+         this.c = worldsettings.h();
+         this.d = worldsettings.j();
+         this.x = worldsettings.i();
++        this.caveFrequency = worldsettings.getCaveFrequency(); // SportPaper
+     }
+ 
+     public WorldData(WorldData worlddata) {
+@@ -269,6 +277,7 @@ public class WorldData {
+         this.H = worlddata.H;
+         this.J = worlddata.J;
+         this.I = worlddata.I;
++        this.caveFrequency = worlddata.caveFrequency; // SportPaper
+     }
+ 
+     public NBTTagCompound a() {
+@@ -328,6 +337,8 @@ public class WorldData {
+             nbttagcompound.set("Player", nbttagcompound1);
+         }
+ 
++        nbttagcompound.setInt("CaveFrequency", this.caveFrequency); // SportPaper
++
+     }
+ 
+     public long getSeed() {
+@@ -602,6 +613,12 @@ public class WorldData {
+         this.A = flag;
+     }
+ 
++    // SportPaper start
++    public int getCaveFrequency() {
++        return caveFrequency;
++    }
++    // SportPaper end
++
+     public void a(CrashReportSystemDetails crashreportsystemdetails) {
+         crashreportsystemdetails.a("Level seed", new Callable() {
+             public String a() throws Exception {
+diff --git a/src/main/java/net/minecraft/server/WorldGenCaves.java b/src/main/java/net/minecraft/server/WorldGenCaves.java
+index 2cdd0237..6d39e29a 100644
+--- a/src/main/java/net/minecraft/server/WorldGenCaves.java
++++ b/src/main/java/net/minecraft/server/WorldGenCaves.java
+@@ -184,7 +184,7 @@ public class WorldGenCaves extends WorldGenBase {
+     protected void a(World world, int i, int j, int k, int l, ChunkSnapshot chunksnapshot) {
+         int i1 = this.b.nextInt(this.b.nextInt(this.b.nextInt(15) + 1) + 1);
+ 
+-        if (this.b.nextInt(7) != 0) {
++        if (this.b.nextInt(world.getWorldData().getCaveFrequency()) != 0) { // SportPaper
+             i1 = 0;
+         }
+ 
+diff --git a/src/main/java/net/minecraft/server/WorldSettings.java b/src/main/java/net/minecraft/server/WorldSettings.java
+index 122780a7..2ea8c5dc 100644
+--- a/src/main/java/net/minecraft/server/WorldSettings.java
++++ b/src/main/java/net/minecraft/server/WorldSettings.java
+@@ -10,6 +10,7 @@ public final class WorldSettings {
+     private boolean f;
+     private boolean g;
+     private String h;
++    private int caveFrequency = 7; // SportPaper
+ 
+     public WorldSettings(long i, WorldSettings.EnumGamemode worldsettings_enumgamemode, boolean flag, boolean flag1, WorldType worldtype) {
+         this.h = "";
+@@ -70,6 +71,17 @@ public final class WorldSettings {
+         return this.h;
+     }
+ 
++    // SportPaper start
++    public int getCaveFrequency() {
++        return caveFrequency;
++    }
++
++    public void setCaveFrequency(int caveFrequency) {
++        this.caveFrequency = caveFrequency;
++    }
++
++    // SportPaper end
++
+     public static enum EnumGamemode {
+ 
+         NOT_SET(-1, ""), SURVIVAL(0, "survival"), CREATIVE(1, "creative"), ADVENTURE(2, "adventure"), SPECTATOR(3, "spectator");
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 7ffc5f5b..0316392f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -818,6 +818,7 @@ public final class CraftServer implements Server {
+         } while(used);
+         WorldSettings worldSettings = new WorldSettings(creator.seed(), WorldSettings.EnumGamemode.getById(getDefaultGameMode().getValue()), generateStructures, creator.hardcore(), type);
+         worldSettings.setGeneratorSettings(creator.generatorSettings());
++        worldSettings.setCaveFrequency(creator.getCaveFrequency()); // SportPaper
+ 
+         IDataManager sdm = new ServerNBTManager(getWorldContainer(), name, true);
+         WorldData worlddata = sdm.getWorldData();
+-- 
+2.17.1
+
