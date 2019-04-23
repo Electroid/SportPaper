@@ -1,11 +1,11 @@
-From 39ac54cb82c38aaca0934ab8a06f80b832fdedf8 Mon Sep 17 00:00:00 2001
+From e97d36b00b596ad15793ac86f0d32bc19e77b8de Mon Sep 17 00:00:00 2001
 From: Rafi Baum <rafi@ukbaums.com>
-Date: Tue, 23 Apr 2019 17:24:23 -0400
+Date: Tue, 23 Apr 2019 17:32:11 -0400
 Subject: [PATCH] Add world generation customization API
 
 
 diff --git a/src/main/java/net/minecraft/server/WorldData.java b/src/main/java/net/minecraft/server/WorldData.java
-index 3a7b22b9..3f211344 100644
+index 3a7b22b9..4c011acf 100644
 --- a/src/main/java/net/minecraft/server/WorldData.java
 +++ b/src/main/java/net/minecraft/server/WorldData.java
 @@ -2,6 +2,8 @@ package net.minecraft.server;
@@ -21,11 +21,19 @@ index 3a7b22b9..3f211344 100644
      private int J;
      private GameRules K;
      public WorldServer world; // CraftBukkit
-+    private WorldGenSettingsManager customSettings = new WorldGenSettingsManager(); // SportPaper
++    private WorldGenSettingsManager customSettings; // SportPaper
  
      protected WorldData() {
          this.c = WorldType.NORMAL;
-@@ -190,6 +193,8 @@ public class WorldData {
+@@ -61,6 +64,7 @@ public class WorldData {
+         this.I = 5;
+         this.J = 15;
+         this.K = new GameRules();
++        this.customSettings = new WorldGenSettingsManager(); // SportPaper
+     }
+ 
+     public WorldData(NBTTagCompound nbttagcompound) {
+@@ -190,6 +194,8 @@ public class WorldData {
              this.J = nbttagcompound.getInt("BorderWarningTime");
          }
  
@@ -34,7 +42,7 @@ index 3a7b22b9..3f211344 100644
      }
  
      public WorldData(WorldSettings worldsettings, String s) {
-@@ -219,6 +224,7 @@ public class WorldData {
+@@ -219,6 +225,7 @@ public class WorldData {
          this.c = worldsettings.h();
          this.d = worldsettings.j();
          this.x = worldsettings.i();
@@ -42,7 +50,7 @@ index 3a7b22b9..3f211344 100644
      }
  
      public WorldData(WorldData worlddata) {
-@@ -269,6 +275,7 @@ public class WorldData {
+@@ -269,6 +276,7 @@ public class WorldData {
          this.H = worlddata.H;
          this.J = worlddata.J;
          this.I = worlddata.I;
@@ -50,7 +58,7 @@ index 3a7b22b9..3f211344 100644
      }
  
      public NBTTagCompound a() {
-@@ -328,6 +335,8 @@ public class WorldData {
+@@ -328,6 +336,8 @@ public class WorldData {
              nbttagcompound.set("Player", nbttagcompound1);
          }
  
@@ -59,7 +67,7 @@ index 3a7b22b9..3f211344 100644
      }
  
      public long getSeed() {
-@@ -602,6 +611,16 @@ public class WorldData {
+@@ -602,6 +612,16 @@ public class WorldData {
          this.A = flag;
      }
  
@@ -154,7 +162,7 @@ index 2cdd0237..18dba121 100644
          }
  
 diff --git a/src/main/java/net/minecraft/server/WorldSettings.java b/src/main/java/net/minecraft/server/WorldSettings.java
-index 122780a7..cacdad2f 100644
+index 122780a7..0acf487d 100644
 --- a/src/main/java/net/minecraft/server/WorldSettings.java
 +++ b/src/main/java/net/minecraft/server/WorldSettings.java
 @@ -1,5 +1,7 @@
@@ -169,7 +177,7 @@ index 122780a7..cacdad2f 100644
      private boolean f;
      private boolean g;
      private String h;
-+    private WorldGenSettingsManager customGenSettings; // SportPaper
++    private WorldGenSettingsManager customGenSettings = new WorldGenSettingsManager(); // SportPaper
  
      public WorldSettings(long i, WorldSettings.EnumGamemode worldsettings_enumgamemode, boolean flag, boolean flag1, WorldType worldtype) {
          this.h = "";
