@@ -1,11 +1,11 @@
-From e2cb75fa00c8908273820b1065e879b68a168808 Mon Sep 17 00:00:00 2001
+From 39ac54cb82c38aaca0934ab8a06f80b832fdedf8 Mon Sep 17 00:00:00 2001
 From: Rafi Baum <rafi@ukbaums.com>
-Date: Tue, 23 Apr 2019 16:33:03 -0400
-Subject: [PATCH] Add world generation customization API for caves
+Date: Tue, 23 Apr 2019 17:24:23 -0400
+Subject: [PATCH] Add world generation customization API
 
 
 diff --git a/src/main/java/net/minecraft/server/WorldData.java b/src/main/java/net/minecraft/server/WorldData.java
-index 3a7b22b9..1ec6fa0d 100644
+index 3a7b22b9..3f211344 100644
 --- a/src/main/java/net/minecraft/server/WorldData.java
 +++ b/src/main/java/net/minecraft/server/WorldData.java
 @@ -2,6 +2,8 @@ package net.minecraft.server;
@@ -59,12 +59,16 @@ index 3a7b22b9..1ec6fa0d 100644
      }
  
      public long getSeed() {
-@@ -602,6 +611,12 @@ public class WorldData {
+@@ -602,6 +611,16 @@ public class WorldData {
          this.A = flag;
      }
  
 +    // SportPaper start
 +    public CustomizedGenerationSettings getCustomSettings() {
++        if (customSettings == null) {
++            customSettings = new WorldGenSettingsManager();
++        }
++
 +        return customSettings.getSettings();
 +    }
 +    // SportPaper end
@@ -189,10 +193,10 @@ index 122780a7..cacdad2f 100644
          NOT_SET(-1, ""), SURVIVAL(0, "survival"), CREATIVE(1, "creative"), ADVENTURE(2, "adventure"), SPECTATOR(3, "spectator");
 diff --git a/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java b/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java
 new file mode 100644
-index 00000000..3fe9336b
+index 00000000..1933225e
 --- /dev/null
 +++ b/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java
-@@ -0,0 +1,59 @@
+@@ -0,0 +1,64 @@
 +package network.stratus.sportpaper.server;
 +
 +import net.minecraft.server.NBTTagCompound;
@@ -234,6 +238,10 @@ index 00000000..3fe9336b
 +      settings.setCaveFrequency(nbtTagCompound.getInt("CaveFrequency"));
 +    }
 +
++    if (nbtTagCompound.hasKey("CaveMinLengthFactor")) {
++      settings.setCaveLengthMin(nbtTagCompound.getInt("CaveMinLengthFactor"));
++    }
++
 +  }
 +
 +  /**
@@ -249,6 +257,7 @@ index 00000000..3fe9336b
 +   */
 +  public void save(NBTTagCompound nbtTagCompound) {
 +    nbtTagCompound.setInt("CaveFrequency", settings.getCaveFrequency());
++    nbtTagCompound.setInt("CaveMinLengthFactor", settings.getCaveLengthMin());
 +  }
 +
 +}
