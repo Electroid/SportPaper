@@ -372,7 +372,7 @@ paper:
     save-player-data: false
 
     # Whether to actively tick worlds with no players.
-    tick-empty-worlds: true
+    tick-empty-worlds: false
 
     # Whether to abort server startup if at least one
     # plugin fails to load.
@@ -388,7 +388,7 @@ paper:
 
     # Duration to wait before suspending an server
     # with no players online.
-    empty-server-suspend: PT1M
+    empty-server-suspend: PT0S
 
     # Whether arrow projectiles should have a random factor.
     include-randomness-in-arrow-trajectory: false
