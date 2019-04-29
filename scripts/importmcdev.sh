@@ -44,6 +44,9 @@ import PacketPlayInUseEntity
 import PacketPlayOutEntityMetadata
 import PacketPlayOutPlayerInfo
 import PacketPlayOutScoreboardTeam
+import PacketPlayOutNamedEntitySpawn
+import PacketPlayOutSpawnEntityLiving
+import PacketPlayOutAttachEntity
 import PersistentScoreboard
 import SlotResult
 import StatisticList
