@@ -1,0 +1,269 @@
+From de5bd8a87dbecae8dff6a4ebbfd69c874fe05623 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Sat, 4 May 2019 14:17:14 -0700
+Subject: [PATCH] Add Velocity proxy support
+
+
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+index 98c7734c4..e7abeb692 100644
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -40,6 +40,7 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+     private SecretKey loginKey;
+     private EntityPlayer l;
+     public String hostname = ""; // CraftBukkit - add field
++    private int velocityLoginMessageId = -1; // SportPaper - Velocity support
+ 
+     public LoginListener(MinecraftServer minecraftserver, NetworkManager networkmanager) {
+         this.g = LoginListener.EnumProtocolState.HELLO;
+@@ -179,6 +180,14 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+             this.g = LoginListener.EnumProtocolState.KEY;
+             this.networkManager.handle(new PacketLoginOutEncryptionBegin(this.j, this.server.Q().getPublic(), this.e));
+         } else {
++            // SportPaper start - Velocity support
++            if (org.github.paperspigot.PaperSpigotConfig.velocitySupport) {
++                this.velocityLoginMessageId = java.util.concurrent.ThreadLocalRandom.current().nextInt();
++                PacketLoginOutCustomPayload packet = new PacketLoginOutCustomPayload(this.velocityLoginMessageId, org.github.paperspigot.VelocityProxy.PLAYER_INFO_CHANNEL, new PacketDataSerializer(io.netty.buffer.Unpooled.EMPTY_BUFFER));
++                this.networkManager.handle(packet);
++                return;
++            }
++            // SportPaper end
+             // Spigot start
+             initUUID();
+             new Thread(new Runnable() {
+@@ -256,6 +265,31 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+     // SportPaper start - handle custom login payloads for 1.13+ clients
+     @Override
+     public void a(PacketLoginInCustomPayload packetloginincustompayload) {
++        // SportPaper start - Velocity support
++        if (org.github.paperspigot.PaperSpigotConfig.velocitySupport && packetloginincustompayload.getId() == this.velocityLoginMessageId) {
++            PacketDataSerializer buf = packetloginincustompayload.getBuf();
++            if (buf == null) {
++                this.disconnect("This server requires you to connect with Velocity.");
++                return;
++            }
++            if (!org.github.paperspigot.VelocityProxy.checkIntegrity(buf)) {
++                this.disconnect("Unable to verify player details from Velocity.");
++                return;
++            }
++            this.networkManager.setSpoofedRemoteAddress(new java.net.InetSocketAddress(org.github.paperspigot.VelocityProxy.readAddress(buf), ((java.net.InetSocketAddress) this.networkManager.getSocketAddress()).getPort()));
++            this.setGameProfile(org.github.paperspigot.VelocityProxy.createProfile(buf));
++            // Proceed with login
++            authenticatorPool.execute(() -> {
++                try {
++                    new LoginHandler().fireEvents();
++                } catch (Exception ex) {
++                    this.disconnect("Failed to verify username!");
++                    server.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + i.getName(), ex);
++                }
++            });
++            return;
++        }
++        // SportPaper end
+         this.disconnect("Unexpected custom data from client");
+     }
+     // SportPaper end
+@@ -295,6 +329,12 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+ 
+         public void fireEvents() throws Exception {
+                             LoginListener.checkStartupAndBlock(); // Paper - Delay async login events until plugins are ready
++                            // SportPaper start - Velocity support
++                            if (LoginListener.this.velocityLoginMessageId == -1 && org.github.paperspigot.PaperSpigotConfig.velocitySupport) {
++                                disconnect("This server requires you to connect with Velocity.");
++                                return;
++                            }
++                            // SportPaper end
+                             String playerName = i.getName();
+                             java.net.InetAddress address = ((java.net.InetSocketAddress) networkManager.getSocketAddress()).getAddress();
+                             java.util.UUID uniqueId = i.getId();
+@@ -334,6 +374,7 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+     }
+     // Spigot end
+ 
++    protected GameProfile setGameProfile(GameProfile gameprofile) { return this.a(gameprofile); } // SportPaper - OBFHELPER
+     protected GameProfile a(GameProfile gameprofile) {
+         UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + gameprofile.getName()).getBytes(Charsets.UTF_8));
+ 
+diff --git a/src/main/java/net/minecraft/server/NameReferencingFileConverter.java b/src/main/java/net/minecraft/server/NameReferencingFileConverter.java
+index 40291094e..ed07fcd2c 100644
+--- a/src/main/java/net/minecraft/server/NameReferencingFileConverter.java
++++ b/src/main/java/net/minecraft/server/NameReferencingFileConverter.java
+@@ -66,7 +66,7 @@ public class NameReferencingFileConverter {
+             }
+         }), String.class);
+ 
+-        if (minecraftserver.getOnlineMode() || org.spigotmc.SpigotConfig.bungee) { // Spigot: bungee = online mode, for now.
++        if (minecraftserver.getOnlineMode() || org.spigotmc.SpigotConfig.bungee || org.github.paperspigot.PaperSpigotConfig.velocityOnlineMode) { // SportPaper - Velocity support
+             minecraftserver.getGameProfileRepository().findProfilesByNames(astring, Agent.MINECRAFT, profilelookupcallback);
+         } else {
+             String[] astring1 = astring;
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index 9e35715a3..cb1078b37 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -65,7 +65,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+     private final ReentrantReadWriteLock j = new ReentrantReadWriteLock();
+     public Channel channel;
+     // Spigot Start // PAIL
+-    public SocketAddress l;
++    public SocketAddress l; public void setSpoofedRemoteAddress(SocketAddress address) { this.l = address; } // SportPaper - OBFHELPER
+     public java.util.UUID spoofedUUID;
+     public com.mojang.authlib.properties.Property[] spoofedProfile;
+     public boolean preparing = true;
+diff --git a/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java b/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java
+index fcdb388ad..c53fdcaa6 100644
+--- a/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java
++++ b/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java
+@@ -4,8 +4,8 @@ import java.io.IOException;
+ 
+ public class PacketLoginInCustomPayload implements Packet<PacketLoginInListener> {
+ 
+-    private int a;
+-    private PacketDataSerializer b;
++    private int a; public int getId() { return this.a; } // SportPaper - OBFHELPER
++    private PacketDataSerializer b; public PacketDataSerializer getBuf() { return this.b; } // SportPaper - OBFHELPER
+ 
+     public PacketLoginInCustomPayload() {}
+ 
+diff --git a/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java b/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java
+index 611fd8bcc..eccb4bb1f 100644
+--- a/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java
++++ b/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java
+@@ -10,6 +10,14 @@ public class PacketLoginOutCustomPayload implements Packet<PacketLoginOutListene
+ 
+     public PacketLoginOutCustomPayload() {}
+ 
++    // SportPaper start
++    public PacketLoginOutCustomPayload(int id, MinecraftKey channel, PacketDataSerializer buf) {
++        this.a = id;
++        this.b = channel;
++        this.c = buf;
++    }
++    // SportPaper end
++
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+         this.a = packetdataserializer.readVarInt();
+         this.b = packetdataserializer.readKey();
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 613582cc4..5b3840a7b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -546,7 +546,7 @@ public final class CraftServer implements Server {
+     @Override
+     public long getConnectionThrottle() {
+         // Spigot Start - Automatically set connection throttle for bungee configurations
+-        if (org.spigotmc.SpigotConfig.bungee) {
++        if (org.spigotmc.SpigotConfig.bungee || org.github.paperspigot.PaperSpigotConfig.velocitySupport) { // SportPaper - Velocity support
+             return -1;
+         } else {
+             return BukkitConfig.connectionThrottle;
+@@ -1224,7 +1224,7 @@ public final class CraftServer implements Server {
+             // Spigot Start
+             GameProfile profile = null;
+             // Only fetch an online UUID in online mode
+-            if ( MinecraftServer.getServer().getOnlineMode() || org.spigotmc.SpigotConfig.bungee )
++            if ( MinecraftServer.getServer().getOnlineMode() || org.spigotmc.SpigotConfig.bungee || org.github.paperspigot.PaperSpigotConfig.velocityOnlineMode ) // SportPaper - Velocity support
+             {
+                 profile = MinecraftServer.getServer().getUserCache().getProfile( name );
+             }
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 9360eac7f..dc59c674d 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -200,4 +200,20 @@ public class PaperSpigotConfig
+     private static void firePhysicsEventForRedstone() {
+         firePhysicsEventForRedstone = getBoolean("fire-physics-event-for-redstone", firePhysicsEventForRedstone);
+     }
++
++    public static boolean velocitySupport;
++    public static boolean velocityOnlineMode;
++    public static byte[] velocitySecretKey;
++    private static void velocitySupport() {
++        velocitySupport = getBoolean("settings.velocity-support.enabled", false);
++        velocityOnlineMode = getBoolean("settings.velocity-support.online-mode", false);
++        if (!velocitySupport) {
++            velocityOnlineMode = false;
++        }
++        String secret = getString("settings.velocity-support.secret", "");
++        if (velocitySupport && secret.isEmpty()) {
++            Bukkit.getLogger().warning("Velocity support is enabled, but no secret key was specified. A secret key is required!");
++        }
++        velocitySecretKey = secret.getBytes(java.nio.charset.StandardCharsets.UTF_8);
++    }
+ }
+diff --git a/src/main/java/org/github/paperspigot/VelocityProxy.java b/src/main/java/org/github/paperspigot/VelocityProxy.java
+new file mode 100644
+index 000000000..cdf1b7984
+--- /dev/null
++++ b/src/main/java/org/github/paperspigot/VelocityProxy.java
+@@ -0,0 +1,66 @@
++package org.github.paperspigot;
++
++import com.google.common.net.InetAddresses;
++import com.mojang.authlib.GameProfile;
++import com.mojang.authlib.properties.Property;
++import net.minecraft.server.MinecraftKey;
++import net.minecraft.server.PacketDataSerializer;
++
++import java.net.InetAddress;
++import java.security.InvalidKeyException;
++import java.security.MessageDigest;
++import java.security.NoSuchAlgorithmException;
++
++import javax.crypto.Mac;
++import javax.crypto.spec.SecretKeySpec;
++
++public class VelocityProxy {
++    private static final int SUPPORTED_FORWARDING_VERSION = 1;
++    public static final MinecraftKey PLAYER_INFO_CHANNEL = new MinecraftKey("velocity:player_info");
++
++    public static boolean checkIntegrity(final PacketDataSerializer buf) {
++        final byte[] signature = new byte[32];
++        buf.readBytes(signature);
++
++        final byte[] data = new byte[buf.readableBytes()];
++        buf.getBytes(buf.readerIndex(), data);
++
++        try {
++            final Mac mac = Mac.getInstance("HmacSHA256");
++            mac.init(new SecretKeySpec(PaperSpigotConfig.velocitySecretKey, "HmacSHA256"));
++            final byte[] mySignature = mac.doFinal(data);
++            if (!MessageDigest.isEqual(signature, mySignature)) {
++                return false;
++            }
++        } catch (final InvalidKeyException | NoSuchAlgorithmException e) {
++            throw new AssertionError(e);
++        }
++
++        int version = buf.readVarInt();
++        if (version != SUPPORTED_FORWARDING_VERSION) {
++            throw new IllegalStateException("Unsupported forwarding version " + version + ", wanted " + SUPPORTED_FORWARDING_VERSION);
++        }
++
++        return true;
++    }
++
++    public static InetAddress readAddress(final PacketDataSerializer buf) {
++        return InetAddresses.forString(buf.readUTF(Short.MAX_VALUE));
++    }
++
++    public static GameProfile createProfile(final PacketDataSerializer buf) {
++        final GameProfile profile = new GameProfile(buf.readUUID(), buf.readUTF(16));
++        readProperties(buf, profile);
++        return profile;
++    }
++
++    private static void readProperties(final PacketDataSerializer buf, final GameProfile profile) {
++        final int properties = buf.readVarInt();
++        for (int i1 = 0; i1 < properties; i1++) {
++            final String name = buf.readUTF(Short.MAX_VALUE);
++            final String value = buf.readUTF(Short.MAX_VALUE);
++            final String signature = buf.readBoolean() ? buf.readUTF(Short.MAX_VALUE) : null;
++            profile.getProperties().put(name, new Property(name, value, signature));
++        }
++    }
++}
+\ No newline at end of file
+-- 
+2.20.1
+

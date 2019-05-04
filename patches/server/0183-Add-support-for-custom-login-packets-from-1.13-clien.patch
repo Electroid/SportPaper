@@ -1,0 +1,282 @@
+From c29690732399472b1c3b352f042d7e9b4a601ce3 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Sat, 4 May 2019 13:34:34 -0700
+Subject: [PATCH] Add support for custom login packets from 1.13+ clients
+
+
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+index 1160f45eb..98c7734c4 100644
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -253,6 +253,13 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+         }
+     }
+ 
++    // SportPaper start - handle custom login payloads for 1.13+ clients
++    @Override
++    public void a(PacketLoginInCustomPayload packetloginincustompayload) {
++        this.disconnect("Unexpected custom data from client");
++    }
++    // SportPaper end
++
+     // Paper start - Delay async prelogin until plugins are ready
+     private static volatile Object blockingLogins = new Object();
+ 
+diff --git a/src/main/java/net/minecraft/server/PacketDataSerializer.java b/src/main/java/net/minecraft/server/PacketDataSerializer.java
+index e2eb30546..297692711 100644
+--- a/src/main/java/net/minecraft/server/PacketDataSerializer.java
++++ b/src/main/java/net/minecraft/server/PacketDataSerializer.java
+@@ -69,22 +69,27 @@ public class PacketDataSerializer extends ByteBuf {
+         this.writeLong(blockposition.asLong());
+     }
+ 
+-    public IChatBaseComponent d() throws IOException {
++    public IChatBaseComponent readChat() { return this.d(); } // SportPaper - OBFHELPER
++    public IChatBaseComponent d() {
+         return IChatBaseComponent.ChatSerializer.a(this.c(32767));
+     }
+ 
++    public void writeChat(IChatBaseComponent ichatbasecomponent) throws IOException { this.a(ichatbasecomponent); } // SportPaper - OBFHELPER
+     public void a(IChatBaseComponent ichatbasecomponent) throws IOException {
+         this.a(IChatBaseComponent.ChatSerializer.a(ichatbasecomponent));
+     }
+ 
++    public <T extends Enum<T>> T readEnum(Class<T> oclass) { return this.a(oclass); } // SportPaper - OBFHELPER
+     public <T extends Enum<T>> T a(Class<T> oclass) {
+         return ((T[]) oclass.getEnumConstants())[this.e()]; // CraftBukkit - fix decompile error
+     }
+ 
++    public void writeEnum(Enum<?> oenum) { this.a(oenum); } // SportPaper - OBFHELPER
+     public void a(Enum<?> oenum) {
+         this.b(oenum.ordinal());
+     }
+ 
++    public int readVarInt() { return this.e(); } // SportPaper - OBFHELPER
+     public int e() {
+         int i = 0;
+         int j = 0;
+@@ -102,6 +107,7 @@ public class PacketDataSerializer extends ByteBuf {
+         return i;
+     }
+ 
++    public long readVarLong() { return this.f(); } // SportPaper - OBFHELPER
+     public long f() {
+         long i = 0L;
+         int j = 0;
+@@ -119,15 +125,18 @@ public class PacketDataSerializer extends ByteBuf {
+         return i;
+     }
+ 
++    public void writeUUID(UUID uuid) { this.a(uuid); } // SportPaper - OBFHELPER
+     public void a(UUID uuid) {
+         this.writeLong(uuid.getMostSignificantBits());
+         this.writeLong(uuid.getLeastSignificantBits());
+     }
+ 
++    public UUID readUUID() { return this.g(); } // SportPaper - OBFHELPER
+     public UUID g() {
+         return new UUID(this.readLong(), this.readLong());
+     }
+ 
++    public void writeVarInt(int i) { this.b(i); } // SportPaper - OBFHELPER
+     public void b(int i) {
+         while ((i & -128) != 0) {
+             this.writeByte(i & 127 | 128);
+@@ -137,6 +146,7 @@ public class PacketDataSerializer extends ByteBuf {
+         this.writeByte(i);
+     }
+ 
++    public void writeVarLong(long i) { this.b(i); } // SportPaper - OBFHELPER
+     public void b(long i) {
+         while ((i & -128L) != 0L) {
+             this.writeByte((int) (i & 127L) | 128);
+@@ -146,6 +156,7 @@ public class PacketDataSerializer extends ByteBuf {
+         this.writeByte((int) i);
+     }
+ 
++    public void writeNBT(NBTTagCompound nbttagcompound) { this.a(nbttagcompound); } // SportPaper - OBFHELPER
+     public void a(NBTTagCompound nbttagcompound) {
+         if (nbttagcompound == null) {
+             this.writeByte(0);
+@@ -159,6 +170,7 @@ public class PacketDataSerializer extends ByteBuf {
+ 
+     }
+ 
++    public NBTTagCompound readNBT() throws IOException { return this.h(); } // SportPaper - OBFHELPER
+     public NBTTagCompound h() throws IOException {
+         int i = this.readerIndex();
+         byte b0 = this.readByte();
+@@ -171,6 +183,7 @@ public class PacketDataSerializer extends ByteBuf {
+         }
+     }
+ 
++    public void writeItemStack(ItemStack itemstack) { this.a(itemstack); } // SportPaper - OBFHELPER
+     public void a(ItemStack itemstack) {
+         if (itemstack == null || itemstack.getItem() == null) { // CraftBukkit - NPE fix itemstack.getItem()
+             this.writeShort(-1);
+@@ -193,6 +206,7 @@ public class PacketDataSerializer extends ByteBuf {
+ 
+     }
+ 
++    public ItemStack readItemStack() throws IOException { return this.i(); } // SportPaper - OBFHELPER
+     public ItemStack i() throws IOException {
+         ItemStack itemstack = null;
+         short short0 = this.readShort();
+@@ -213,6 +227,7 @@ public class PacketDataSerializer extends ByteBuf {
+         return itemstack;
+     }
+ 
++    public String readUTF(int maxLength) { return this.c(maxLength); } // SportPaper - OBFHELPER
+     public String c(int i) {
+         int j = this.e();
+ 
+@@ -231,6 +246,7 @@ public class PacketDataSerializer extends ByteBuf {
+         }
+     }
+ 
++    public PacketDataSerializer writeUTF(String s) { return this.a(s); } // SportPaper - OBFHELPER
+     public PacketDataSerializer a(String s) {
+         byte[] abyte = s.getBytes(Charsets.UTF_8);
+ 
+@@ -243,6 +259,26 @@ public class PacketDataSerializer extends ByteBuf {
+         }
+     }
+ 
++    // SportPaper - add serialization methods from 1.13+
++    public MinecraftKey readKey() {
++        return new MinecraftKey(this.readUTF(32767));
++    }
++
++    public PacketDataSerializer writeKey(MinecraftKey minecraftkey) {
++        this.writeUTF(minecraftkey.toString());
++        return this;
++    }
++
++    public java.util.Date m() {
++        return new java.util.Date(this.readLong());
++    }
++
++    public PacketDataSerializer a(java.util.Date date) {
++        this.writeLong(date.getTime());
++        return this;
++    }
++    // SportPaper - end
++
+     public int capacity() {
+         return this.a.capacity();
+     }
+diff --git a/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java b/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java
+new file mode 100644
+index 000000000..fcdb388ad
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/PacketLoginInCustomPayload.java
+@@ -0,0 +1,42 @@
++package net.minecraft.server;
++
++import java.io.IOException;
++
++public class PacketLoginInCustomPayload implements Packet<PacketLoginInListener> {
++
++    private int a;
++    private PacketDataSerializer b;
++
++    public PacketLoginInCustomPayload() {}
++
++    public void a(PacketDataSerializer packetdataserializer) throws IOException {
++        this.a = packetdataserializer.readVarInt();
++        if (packetdataserializer.readBoolean()) {
++            int i = packetdataserializer.readableBytes();
++
++            if (i < 0 || i > 1048576) {
++                throw new IOException("Payload may not be larger than 1048576 bytes");
++            }
++
++            this.b = new PacketDataSerializer(packetdataserializer.readBytes(i));
++        } else {
++            this.b = null;
++        }
++
++    }
++
++    public void b(PacketDataSerializer packetdataserializer) throws IOException {
++        packetdataserializer.writeVarInt(this.a);
++        if (this.b != null) {
++            packetdataserializer.writeBoolean(true);
++            packetdataserializer.writeBytes(this.b.copy());
++        } else {
++            packetdataserializer.writeBoolean(false);
++        }
++
++    }
++
++    public void a(PacketLoginInListener packetlogininlistener) {
++        packetlogininlistener.a(this);
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/PacketLoginInListener.java b/src/main/java/net/minecraft/server/PacketLoginInListener.java
+index 96689a07f..c4eaa7cf4 100644
+--- a/src/main/java/net/minecraft/server/PacketLoginInListener.java
++++ b/src/main/java/net/minecraft/server/PacketLoginInListener.java
+@@ -5,4 +5,7 @@ public interface PacketLoginInListener extends PacketListener {
+     void a(PacketLoginInStart packetlogininstart);
+ 
+     void a(PacketLoginInEncryptionBegin packetlogininencryptionbegin);
++
++    // SportPaper - add custom payload packet from 1.13+
++    void a(PacketLoginInCustomPayload packetloginincustompayload);
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java b/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java
+new file mode 100644
+index 000000000..611fd8bcc
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/PacketLoginOutCustomPayload.java
+@@ -0,0 +1,34 @@
++package net.minecraft.server;
++
++import java.io.IOException;
++
++public class PacketLoginOutCustomPayload implements Packet<PacketLoginOutListener> {
++
++    private int a;
++    private MinecraftKey b;
++    private PacketDataSerializer c;
++
++    public PacketLoginOutCustomPayload() {}
++
++    public void a(PacketDataSerializer packetdataserializer) throws IOException {
++        this.a = packetdataserializer.readVarInt();
++        this.b = packetdataserializer.readKey();
++        int i = packetdataserializer.readableBytes();
++
++        if (i >= 0 && i <= 1048576) {
++            this.c = new PacketDataSerializer(packetdataserializer.readBytes(i));
++        } else {
++            throw new IOException("Payload may not be larger than 1048576 bytes");
++        }
++    }
++
++    public void b(PacketDataSerializer packetdataserializer) throws IOException {
++        packetdataserializer.writeVarInt(this.a);
++        packetdataserializer.writeKey(this.b);
++        packetdataserializer.writeBytes(this.c.copy());
++    }
++
++    public void a(PacketLoginOutListener packetloginoutlistener) {
++        packetloginoutlistener.a(this);
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/PacketLoginOutListener.java b/src/main/java/net/minecraft/server/PacketLoginOutListener.java
+index 2067b0564..a6e625e32 100644
+--- a/src/main/java/net/minecraft/server/PacketLoginOutListener.java
++++ b/src/main/java/net/minecraft/server/PacketLoginOutListener.java
+@@ -9,4 +9,7 @@ public interface PacketLoginOutListener extends PacketListener {
+     void a(PacketLoginOutDisconnect packetloginoutdisconnect);
+ 
+     void a(PacketLoginOutSetCompression packetloginoutsetcompression);
++
++    // SportPaper - add custom payload packet from 1.13+
++    void a(PacketLoginOutCustomPayload packetloginoutcustompayload);
+ }
+-- 
+2.20.1
+

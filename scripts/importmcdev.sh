@@ -40,6 +40,8 @@ import ChunkCache
 import ChunkCoordIntPair
 import EntityTypes
 import ItemFireworks
+import PacketLoginOutListener
+import PacketLoginInListener
 import PacketPlayInUseEntity
 import PacketPlayOutEntityMetadata
 import PacketPlayOutPlayerInfo
