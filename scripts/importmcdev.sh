@@ -53,6 +53,7 @@ import StatisticList
 import PacketPlayOutSpawnEntity
 import ItemGoldenApple
 import ItemPotion
+import ServerPing
 import WorldGenCaves
 import WorldSettings
 
