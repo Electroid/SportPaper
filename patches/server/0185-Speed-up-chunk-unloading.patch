@@ -1,11 +1,11 @@
-From f326bb52cc772753bbe01fbec2ee05ab937ae0a6 Mon Sep 17 00:00:00 2001
+From 53f4d7358181c42a28c36d949cf87d8160461d36 Mon Sep 17 00:00:00 2001
 From: Austin Mayes <austin@avicus.net>
 Date: Fri, 14 Feb 2020 18:11:36 -0600
 Subject: [PATCH] Speed up chunk unloading
 
 
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 775cbd48..df837d95 100644
+index 775cbd48..a9720aa6 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -9,7 +9,7 @@ import java.util.List;
@@ -36,6 +36,38 @@ index 775cbd48..df837d95 100644
      public Chunk emptyChunk;
      public IChunkProvider chunkProvider;
      private IChunkLoader chunkLoader;
+@@ -152,7 +148,6 @@ public class ChunkProviderServer implements IChunkProvider {
+     }
+ 
+     public Chunk getChunkAt(int i, int j, Runnable runnable) {
+-        unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
+         Chunk chunk = chunks.get(LongHash.toLong(i, j));
+         ChunkRegionLoader loader = null;
+ 
+@@ -172,6 +167,7 @@ public class ChunkProviderServer implements IChunkProvider {
+             chunk = originalGetChunkAt(i, j);
+         }
+ 
++        unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
+         // If we didn't load the chunk async and have a callback run it now
+         if (runnable != null) {
+             runnable.run();
+@@ -180,7 +176,6 @@ public class ChunkProviderServer implements IChunkProvider {
+         return chunk;
+     }
+     public Chunk originalGetChunkAt(int i, int j) {
+-        this.unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
+         Chunk chunk = (Chunk) this.chunks.get(LongHash.toLong(i, j));
+         boolean newChunk = false;
+         // CraftBukkit end
+@@ -241,6 +236,7 @@ public class ChunkProviderServer implements IChunkProvider {
+             world.timings.syncChunkLoadTimer.stopTiming(); // Spigot
+         }
+ 
++        this.unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
+         return chunk;
+     }
+ 
 @@ -408,6 +404,10 @@ public class ChunkProviderServer implements IChunkProvider {
      }
  
@@ -70,6 +102,26 @@ index 775cbd48..df837d95 100644
 +                unloadChunk(chunk, true); // SportPaper - Move to own method
              }
              // CraftBukkit end
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 87cb3be2..b2eaf0c7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -338,7 +338,6 @@ public class CraftWorld implements World {
+             return world.chunkProviderServer.getChunkAt(x, z) != null;
+         }
+ 
+-        world.chunkProviderServer.unloadQueue.remove(LongHash.toLong(x, z));
+         net.minecraft.server.Chunk chunk = world.chunkProviderServer.chunks.get(LongHash.toLong(x, z));
+ 
+         if (chunk == null) {
+@@ -348,6 +347,7 @@ public class CraftWorld implements World {
+             chunkLoadPostProcess(chunk, x, z);
+             world.timings.syncChunkLoadTimer.stopTiming(); // Spigot
+         }
++        world.chunkProviderServer.unloadQueue.remove(LongHash.toLong(x, z));
+         return chunk != null;
+     }
  
 -- 
 2.23.0
