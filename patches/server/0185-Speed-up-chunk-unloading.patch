@@ -1,0 +1,76 @@
+From f326bb52cc772753bbe01fbec2ee05ab937ae0a6 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Fri, 14 Feb 2020 18:11:36 -0600
+Subject: [PATCH] Speed up chunk unloading
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 775cbd48..df837d95 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -9,7 +9,7 @@ import java.util.List;
+ import java.util.Set;
+ import java.util.concurrent.ConcurrentHashMap;
+ 
+-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
++import it.unimi.dsi.fastutil.longs.*;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -28,17 +28,13 @@ import org.github.paperspigot.event.ServerExceptionEvent;
+ import org.github.paperspigot.exception.ServerInternalException;
+ // CraftBukkit end
+ // SportPaper start
+-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+-import it.unimi.dsi.fastutil.longs.LongArraySet;
+-import it.unimi.dsi.fastutil.longs.LongIterator;
+-import it.unimi.dsi.fastutil.longs.LongSet;
+ // SportPaper end
+ 
+ public class ChunkProviderServer implements IChunkProvider {
+ 
+     private static final Logger b = LogManager.getLogger();
+-    public LongSet unloadQueue = new LongArraySet(); // SportPaper
++    public LongSet unloadQueue = new LongOpenHashSet(20); // SportPaper
+     public Chunk emptyChunk;
+     public IChunkProvider chunkProvider;
+     private IChunkLoader chunkLoader;
+@@ -408,6 +404,10 @@ public class ChunkProviderServer implements IChunkProvider {
+     }
+ 
+     public void unloadChunk(Chunk chunk) {
++        unloadChunk(chunk, false);
++    }
++
++    private void unloadChunk(Chunk chunk, boolean auto) {
+         Server server = this.world.getServer();
+         ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
+         server.getPluginManager().callEvent(event);
+@@ -417,7 +417,7 @@ public class ChunkProviderServer implements IChunkProvider {
+             this.saveChunk(chunk);
+             this.saveChunkNOP(chunk);
+             this.chunks.remove(chunk.chunkKey); // CraftBukkit
+-            if (this.unloadQueue.contains(chunk.chunkKey)) {
++            if (!auto && this.unloadQueue.contains(chunk.chunkKey)) {
+                 this.unloadQueue.remove(chunk.chunkKey);
+             }
+ 
+@@ -446,12 +446,12 @@ public class ChunkProviderServer implements IChunkProvider {
+             // SportPaper start
+             LongIterator iterator = unloadQueue.iterator();
+             for (int i = 0; i < 100 && iterator.hasNext(); ++i) {
+-                long chunkcoordinates = iterator.next();
++                long chunkcoordinates = iterator.nextLong();
+                 iterator.remove();
+                 // SportPaper end
+                 Chunk chunk = this.chunks.get(chunkcoordinates);
+                 if (chunk == null) continue;
+-                unloadChunk(chunk); // SportPaper - Move to own method
++                unloadChunk(chunk, true); // SportPaper - Move to own method
+             }
+             // CraftBukkit end
+ 
+-- 
+2.23.0
+
