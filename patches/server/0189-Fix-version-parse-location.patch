@@ -1,0 +1,22 @@
+From 6a4fc550c524ab00748a28c60054dc1ae6a97287 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Mon, 22 Jun 2020 11:40:12 -0500
+Subject: [PATCH] Fix version parse location
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 36bb612a..ccf0673b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/network.stratus/sportpaper-api/pom.properties");
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/app.ashcon/sportpaper-api/pom.properties");
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
+-- 
+2.23.0
+

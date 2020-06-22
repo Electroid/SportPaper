@@ -1,0 +1,27 @@
+From a554fba51376bf1d93cad196a4731e8f555ea5cf Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Mon, 22 Jun 2020 11:39:34 -0500
+Subject: [PATCH] Add SportPaper version check
+
+
+diff --git a/src/main/java/org/bukkit/command/defaults/VersionCommand.java b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+index e91e1d8c..45dce10e 100644
+--- a/src/main/java/org/bukkit/command/defaults/VersionCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/VersionCommand.java
+@@ -185,8 +185,12 @@ public class VersionCommand extends BukkitCommand {
+     private void obtainVersion() {
+         String version = Bukkit.getVersion();
+         if (version == null) version = "Custom";
++        // SportPaper start
++        if (version.startsWith("git-SportPaper-")) {
++            setVersionMessage("Unable to check for updates at this time. Visit https://github.com/Electroid/SportPaper/releases for newer versions"); // TODO: Obtain version list and warn of updates
++        // SportPaper end
+         // PaperSpigot start
+-        if (version.startsWith("git-PaperSpigot-")) {
++        } else if (version.startsWith("git-PaperSpigot-")) {
+             String[] parts = version.substring("git-PaperSpigot-".length()).split("[-\\s]");
+             int paperSpigotVersions = getDistance("paperspigot", parts[0]);
+             if (paperSpigotVersions == -1) {
+-- 
+2.23.0
+
