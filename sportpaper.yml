@@ -393,6 +393,9 @@ paper:
     # Whether arrow projectiles should have a random factor.
     include-randomness-in-arrow-trajectory: false
 
+    # Whether arrow projectiles should add a random amount of damage (like in vanilla minecraft)
+    include-randomness-in-arrow-damage: true
+
     # Number of ticks between player data saves to disk.
     player-auto-save-rate: -1
 
