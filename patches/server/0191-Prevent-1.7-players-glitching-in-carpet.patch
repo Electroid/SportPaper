@@ -1,0 +1,71 @@
+From e4c81c3c462d9a6a7d236d11ebef83e4ae198d36 Mon Sep 17 00:00:00 2001
+From: Pablete1234 <pabloherrerapalacio@gmail.com>
+Date: Sun, 9 Aug 2020 08:29:58 +0200
+Subject: [PATCH] Prevent 1.7 players glitching in carpet
+
+Signed-off-by: Pablete1234 <pabloherrerapalacio@gmail.com>
+
+diff --git a/src/main/java/net/minecraft/server/BlockCarpet.java b/src/main/java/net/minecraft/server/BlockCarpet.java
+index b34ff4341..b18bea110 100644
+--- a/src/main/java/net/minecraft/server/BlockCarpet.java
++++ b/src/main/java/net/minecraft/server/BlockCarpet.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.server;
+ 
++import java.util.List;
++
+ public class BlockCarpet extends Block {
+ 
+     public static final BlockStateEnum<EnumColor> COLOR = BlockStateEnum.of("color", EnumColor.class);
+@@ -34,11 +36,17 @@ public class BlockCarpet extends Block {
+     }
+ 
+     protected void b(int i) {
+-        byte b0 = 0;
+-        float f = (float) (1 * (1 + b0)) / 16.0F;
++        this.a(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
++    }
+ 
+-        this.a(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
++    // SportPaper start - No height on carpet in feet height, avoid 1.7 players glitching
++    public void a(World world, BlockPosition blockposition, IBlockData iblockdata, AxisAlignedBB axisalignedbb, List<AxisAlignedBB> list, Entity entity) {
++        if (entity instanceof EntityHuman && blockposition.getY() == (int) entity.getBoundingBox().b) {
++            return;
++        }
++        super.a(world, blockposition, iblockdata, axisalignedbb, list, entity);
+     }
++    // SportPaper end
+ 
+     public boolean canPlace(World world, BlockPosition blockposition) {
+         return super.canPlace(world, blockposition) && this.e(world, blockposition);
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 51fd9d4b3..0e68599d1 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -1817,6 +1817,23 @@ public abstract class EntityHuman extends EntityLiving {
+         }
+     }
+ 
++    public void a(AxisAlignedBB aabb) {
++        //if (shiftUp(aabb)) aabb = aabb.c(0, 0.0625, 0);
++        super.a(aabb);
++    }
++
++    private boolean shiftUp(AxisAlignedBB aabb) {
++        if (aabb.b % 1 > 0.0625) return false;
++
++        List<AxisAlignedBB> collisions = getWorld().getCubes(this, aabb);
++        if (collisions.isEmpty()) return false;
++
++        for (AxisAlignedBB collision : collisions) {
++            if (collision.e % 1 > 0.0625) return false;
++        }
++        return true;
++    }
++
+     static class SyntheticClass_1 {
+ 
+         static final int[] a = new int[EnumDirection.values().length];
+-- 
+2.15.1.windows.2
+

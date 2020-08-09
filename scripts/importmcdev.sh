@@ -56,6 +56,7 @@ import ItemPotion
 import ServerPing
 import WorldGenCaves
 import WorldSettings
+import BlockCarpet
 
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1
