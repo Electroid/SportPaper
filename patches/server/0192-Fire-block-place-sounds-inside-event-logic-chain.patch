@@ -1,0 +1,40 @@
+From c15ba6929156883bd38984ee5dddd4fc6bb1cec3 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Mon, 26 Oct 2020 21:02:04 -0500
+Subject: [PATCH] Fire block place sounds inside event logic chain
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemBlock.java b/src/main/java/net/minecraft/server/ItemBlock.java
+index 0cd41754..c6b313a7 100644
+--- a/src/main/java/net/minecraft/server/ItemBlock.java
++++ b/src/main/java/net/minecraft/server/ItemBlock.java
+@@ -36,7 +36,8 @@ public class ItemBlock extends Item {
+                     this.a.postPlace(world, blockposition, iblockdata1, entityhuman, itemstack);
+                 }
+ 
+-                world.makeSound((double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.5F), (double) ((float) blockposition.getZ() + 0.5F), this.a.stepSound.getPlaceSound(), (this.a.stepSound.getVolume1() + 1.0F) / 2.0F, this.a.stepSound.getVolume2() * 0.8F);
++                // SPIGOT-1288
++                // world.makeSound((double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.5F), (double) ((float) blockposition.getZ() + 0.5F), this.a.stepSound.getPlaceSound(), (this.a.stepSound.getVolume1() + 1.0F) / 2.0F, this.a.stepSound.getVolume2() * 0.8F);
+                 --itemstack.count;
+             }
+ 
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index 55be2b71..c54050bf 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -219,6 +219,12 @@ public final class ItemStack {
+                     }
+                 }
+ 
++                // SPIGOT-1288 - play sound stripped from ItemBlock
++                if (this.getItem() instanceof ItemBlock) {
++                    Block base = ((ItemBlock) this.getItem()).a;
++                    world.makeSound((double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.5F), (double) ((float) blockposition.getZ() + 0.5F), base.stepSound.getPlaceSound(), (base.stepSound.getVolume1() + 1.0F) / 2.0F, base.stepSound.getVolume2() * 0.8F);
++                }
++
+                 entityhuman.b(StatisticList.USE_ITEM_COUNT[Item.getId(this.item)]);
+             }
+         }
+-- 
+2.23.0
+
