@@ -1,4 +1,4 @@
-From ef797fabfea24949b4b7cb64594efcb97074abd1 Mon Sep 17 00:00:00 2001
+From dbb137978871386d0d0e4eb68c9b63734f9dd50e Mon Sep 17 00:00:00 2001
 From: Rafi Baum <rafi@ukbaums.com>
 Date: Mon, 27 Apr 2020 18:25:50 -0400
 Subject: [PATCH] Implement customizable knockback config options and command
@@ -6,18 +6,25 @@ Subject: [PATCH] Implement customizable knockback config options and command
 
 diff --git a/src/main/java/app/ashcon/sportpaper/server/KnockbackModificationCommand.java b/src/main/java/app/ashcon/sportpaper/server/KnockbackModificationCommand.java
 new file mode 100644
-index 00000000..ebc859b6
+index 00000000..142f4268
 --- /dev/null
 +++ b/src/main/java/app/ashcon/sportpaper/server/KnockbackModificationCommand.java
-@@ -0,0 +1,133 @@
+@@ -0,0 +1,148 @@
 +package app.ashcon.sportpaper.server;
 +
++import com.google.common.collect.ImmutableList;
 +import org.bukkit.ChatColor;
 +import org.bukkit.command.Command;
 +import org.bukkit.command.CommandSender;
++import org.bukkit.util.StringUtil;
 +import org.github.paperspigot.PaperSpigotConfig;
 +
++import java.util.ArrayList;
++import java.util.List;
++
 +public class KnockbackModificationCommand extends Command {
++
++    private static final List<String> ARGUMENTS = ImmutableList.of("friction", "horizontal", "vertical", "vertical-limit", "extra-horizontal", "extra-vertical", "reset", "show");
 +
 +    // Default values
 +    private final double knockbackFriction, knockbackHorizontal, knockbackVertical, knockbackVerticalLimit,
@@ -120,6 +127,14 @@ index 00000000..ebc859b6
 +        }
 +
 +        return true;
++    }
++
++    @Override
++    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
++        if (args.length == 1) {
++            return StringUtil.copyPartialMatches(args[0], ARGUMENTS, new ArrayList<>(ARGUMENTS.size()));
++        }
++        return ImmutableList.of();
 +    }
 +
 +    private double parseValue(String[] args) {
@@ -269,5 +284,5 @@ index 9360eac7..038137dc 100644
 +
  }
 -- 
-2.26.2
+2.17.1
 
