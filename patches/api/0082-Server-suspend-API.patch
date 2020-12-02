@@ -1,4 +1,4 @@
-From 1ec5ce679c3e4c819b486a48ac3d5057e88de025 Mon Sep 17 00:00:00 2001
+From fbd51d82e1b284c0da204c7104a4e0dd8a68891e Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 21:43:24 -0700
 Subject: [PATCH] Server suspend API
@@ -134,22 +134,28 @@ index f35bc092..10d07114 100644
      public void setFallbackCommands() {
 diff --git a/src/main/java/org/bukkit/command/defaults/SuspendCommand.java b/src/main/java/org/bukkit/command/defaults/SuspendCommand.java
 new file mode 100644
-index 00000000..bec311ed
+index 00000000..9125330b
 --- /dev/null
 +++ b/src/main/java/org/bukkit/command/defaults/SuspendCommand.java
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,67 @@
 +package org.bukkit.command.defaults;
 +
 +import java.time.Duration;
 +import java.time.Instant;
++import java.util.ArrayList;
 +import java.util.Collections;
++import java.util.List;
 +
++import com.google.common.collect.ImmutableList;
 +import net.md_5.bungee.api.ChatColor;
 +import net.md_5.bungee.api.chat.ComponentBuilder;
 +import org.bukkit.Server;
 +import org.bukkit.command.CommandSender;
++import org.bukkit.util.StringUtil;
 +
 +public class SuspendCommand extends BukkitCommand {
++
++    private final static List<String> ARGUMENTS = ImmutableList.of("false", "true");
 +
 +    public SuspendCommand() {
 +        super(
@@ -189,6 +195,14 @@ index 00000000..bec311ed
 +            }
 +        }
 +        return true;
++    }
++
++    @Override
++    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
++        if (args.length == 1) {
++            return StringUtil.copyPartialMatches(args[0], ARGUMENTS, new ArrayList<>(ARGUMENTS.size()));
++        }
++        return ImmutableList.of();
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/event/EventCallback.java b/src/main/java/org/bukkit/event/EventCallback.java
@@ -307,5 +321,5 @@ index 219788fb..00000000
 -    }
 -}
 -- 
-2.19.0
+2.17.1
 
