@@ -1,0 +1,70 @@
+From 5db380e00a883c2dbff5747ab8690e5cc0f3836d Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Fri, 4 Dec 2020 13:56:51 +0200
+Subject: [PATCH] Make unknown and internal command messages customisable in
+ PlayerCommandPreprocessEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 21747b92..66e17ecd 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1319,7 +1319,9 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+ 
+         CraftPlayer player = this.getPlayer();
+ 
+-        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet());
++        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet(),
++                org.spigotmc.SpigotConfig.unknownCommandMessage,
++                org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
+         this.server.getPluginManager().callEvent(event);
+ 
+         if (event.isCancelled()) {
+@@ -1328,12 +1330,14 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+         }
+ 
+         try {
+-            if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1))) {
++            if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1), event.getUnknownCommandMessage())) {
+                 SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
+                 return;
+             }
+         } catch (org.bukkit.command.CommandException ex) {
+-            player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
++            if (event.getInternalErrorMessage() != null) {
++                player.sendMessage(event.getInternalErrorMessage());
++            }
+             java.util.logging.Logger.getLogger(PlayerConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+             SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
+             return;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 613582cc..c55a134d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -620,7 +620,11 @@ public final class CraftServer implements Server {
+     }
+ 
+     @Override
+-    public boolean dispatchCommand(CommandSender sender, String commandLine) {
++    public boolean dispatchCommand(CommandSender sender, String commandLine) throws CommandException {
++        return dispatchCommand(sender, commandLine, org.spigotmc.SpigotConfig.unknownCommandMessage);
++    }
++
++    public boolean dispatchCommand(CommandSender sender, String commandLine, String unknownCommandMessage) {
+         Validate.notNull(sender, "Sender cannot be null");
+         Validate.notNull(commandLine, "CommandLine cannot be null");
+ 
+@@ -651,7 +655,9 @@ public final class CraftServer implements Server {
+             return true;
+         }
+ 
+-        sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
++        if (unknownCommandMessage != null) {
++            sender.sendMessage(unknownCommandMessage);
++        }
+ 
+         return false;
+     }
+-- 
+2.25.1
+
