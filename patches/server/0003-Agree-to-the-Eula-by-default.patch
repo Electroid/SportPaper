@@ -1,22 +1,46 @@
-From 5d0bfc587687eb731e0441bf875c6cc7b0c02243 Mon Sep 17 00:00:00 2001
+From 5cc3a14b364df4907d55d046818b9b266b150056 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Fri, 3 Aug 2018 23:52:07 -0700
 Subject: [PATCH] Agree to the Eula by default
 
 
 diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
-index 088beb22..6366031e 100644
+index 088beb22..87f7779e 100644
 --- a/src/main/java/net/minecraft/server/DedicatedServer.java
 +++ b/src/main/java/net/minecraft/server/DedicatedServer.java
-@@ -124,7 +124,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+@@ -33,7 +33,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+     private RemoteStatusListener m;
+     private RemoteControlListener n;
+     public PropertyManager propertyManager;
+-    private EULA p;
++    //private EULA p; // SportPaper
+     private boolean generateStructures;
+     private WorldSettings.EnumGamemode r;
+     private boolean s;
+@@ -122,9 +122,9 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+ 
+         DedicatedServer.LOGGER.info("Loading properties");
          this.propertyManager = new PropertyManager(this.options); // CraftBukkit - CLI argument support
-         this.p = new EULA(new File("eula.txt"));
+-        this.p = new EULA(new File("eula.txt"));
++        //this.p = new EULA(new File("eula.txt")); // SportPaper
          // Spigot Start
 -        boolean eulaAgreed = Boolean.getBoolean( "com.mojang.eula.agree" );
 +        boolean eulaAgreed = true;//SportPaper - Disable check
          if ( eulaAgreed )
          {
              System.err.println( "You have used the Spigot command line EULA agreement flag." );
+@@ -132,9 +132,9 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+             System.err.println( "If you do not agree to the above EULA please stop your server and remove this flag immediately." );
+         }
+         // Spigot End
+-        if (!this.p.a() && !eulaAgreed) { // Spigot
++        if (!eulaAgreed) { // Spigot // SportPaper
+             DedicatedServer.LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+-            this.p.b();
++            //this.p.b(); // SportPaper
+             return false;
+         } else {
+             if (this.T()) {
 -- 
-2.18.0
+2.25.1
 
