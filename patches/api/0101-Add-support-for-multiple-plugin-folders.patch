@@ -1,0 +1,295 @@
+From 1ec2ea2929ccc3415b092ed62d1a6793259b757f Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Tue, 15 Dec 2020 21:51:55 +0200
+Subject: [PATCH] Add support for multiple plugin folders
+
+
+diff --git a/src/main/java/org/bukkit/plugin/PluginManager.java b/src/main/java/org/bukkit/plugin/PluginManager.java
+index 1fd306d1..edb36d81 100644
+--- a/src/main/java/org/bukkit/plugin/PluginManager.java
++++ b/src/main/java/org/bukkit/plugin/PluginManager.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.plugin;
+ 
+ import java.io.File;
++import java.util.List;
+ import java.util.Set;
+ 
+ import org.bukkit.event.Event;
+@@ -83,6 +84,14 @@ public interface PluginManager {
+      */
+     public Plugin[] loadPlugins(File directory);
+ 
++    /**
++     * Loads the plugins contained within the specified directories
++     *
++     * @param directories Directories to check for plugins
++     * @return A list of all plugins loaded
++     */
++    public Plugin[] loadPlugins(List<File> directories);
++
+     /**
+      * Disables all the loaded plugins
+      */
+diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+index 5e58e8f8..d89e003b 100644
+--- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
++++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+@@ -3,22 +3,13 @@ package org.bukkit.plugin;
+ import java.io.File;
+ import java.lang.reflect.Constructor;
+ import java.lang.reflect.Method;
+-import java.util.ArrayList;
+-import java.util.Collection;
+-import java.util.HashMap;
+-import java.util.HashSet;
+-import java.util.Iterator;
+-import java.util.LinkedHashMap;
+-import java.util.LinkedList;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Set;
+-import java.util.WeakHashMap;
++import java.util.*;
+ import java.util.logging.Level;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ 
+ import org.apache.commons.lang.Validate;
++import org.bukkit.Bukkit;
+ import org.bukkit.Server;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.PluginCommandYamlParser;
+@@ -47,7 +38,6 @@ public final class SimplePluginManager implements PluginManager {
+     private final Map<Pattern, PluginLoader> fileAssociations = new HashMap<Pattern, PluginLoader>();
+     private final List<Plugin> plugins = new ArrayList<Plugin>();
+     private final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
+-    private static File updateDirectory = null;
+     private final SimpleCommandMap commandMap;
+     private final Map<String, Permission> permissions = new HashMap<String, Permission>();
+     private final Map<Boolean, Set<Permission>> defaultPerms = new LinkedHashMap<Boolean, Set<Permission>>();
+@@ -105,91 +95,109 @@ public final class SimplePluginManager implements PluginManager {
+      * @param directory Directory to check for plugins
+      * @return A list of all plugins loaded
+      */
++    @Override
+     public Plugin[] loadPlugins(File directory) {
+-        Validate.notNull(directory, "Directory cannot be null");
+-        Validate.isTrue(directory.isDirectory(), "Directory must be a directory");
++        return loadPlugins(Collections.singletonList(directory));
++    }
++
++    /**
++     * Loads the plugins contained within the specified directories
++     *
++     * @param directories Directories to check for plugins
++     * @return A list of all plugins loaded
++     */
++    public Plugin[] loadPlugins(List<File> directories) {
++        Validate.notNull(directories, "Directories cannot be null");
++        if (directories.isEmpty()) {
++            return new Plugin[0];
++        }
++        for (File directory : directories) {
++            Validate.isTrue(directory.isDirectory(), "Directory must be a directory");
++        }
+ 
+         List<Plugin> result = new ArrayList<Plugin>();
+         Set<Pattern> filters = fileAssociations.keySet();
+ 
+-        if (!(server.getUpdateFolder().equals(""))) {
+-            updateDirectory = new File(directory, server.getUpdateFolder());
+-        }
+-
+         Map<String, File> plugins = new HashMap<String, File>();
+         Set<String> loadedPlugins = new HashSet<String>();
+         Map<String, Collection<String>> dependencies = new HashMap<String, Collection<String>>();
+         Map<String, Collection<String>> softDependencies = new HashMap<String, Collection<String>>();
+ 
+         // This is where it figures out all possible plugins
+-        for (File file : directory.listFiles()) {
+-            PluginLoader loader = null;
+-            for (Pattern filter : filters) {
+-                Matcher match = filter.matcher(file.getName());
+-                if (match.find()) {
+-                    loader = fileAssociations.get(filter);
+-                }
+-            }
++        for (File directory : directories) {
++            if (directory.isDirectory()) {
++                for (File file : directory.listFiles()) {
++                    PluginLoader loader = null;
++                    for (Pattern filter : filters) {
++                        Matcher match = filter.matcher(file.getName());
++                        if (match.find()) {
++                            loader = fileAssociations.get(filter);
++                        }
++                    }
+ 
+-            if (loader == null) continue;
++                    if (loader == null) continue;
+ 
+-            PluginDescriptionFile description = null;
+-            try {
+-                description = loader.getPluginDescription(file);
+-                String name = description.getName();
+-                if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")) {
+-                    server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
+-                    continue;
+-                } else if (description.rawName.indexOf(' ') != -1) {
+-                    server.getLogger().warning(String.format(
+-                        "Plugin `%s' uses the space-character (0x20) in its name `%s' - this is discouraged",
+-                        description.getFullName(),
+-                        description.rawName
+-                        ));
+-                }
+-            } catch (InvalidDescriptionException ex) {
+-                server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
+-                continue;
+-            }
++                    PluginDescriptionFile description = null;
++                    try {
++                        description = loader.getPluginDescription(file);
++                        String name = description.getName();
++                        if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")) {
++                            server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
++                            continue;
++                        } else if (description.rawName.indexOf(' ') != -1) {
++                            server.getLogger().warning(String.format(
++                                    "Plugin `%s' uses the space-character (0x20) in its name `%s' - this is discouraged",
++                                    description.getFullName(),
++                                    description.rawName
++                            ));
++                        }
++                    } catch (InvalidDescriptionException ex) {
++                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
++                        continue;
++                    }
+ 
+-            File replacedFile = plugins.put(description.getName(), file);
+-            if (replacedFile != null) {
+-                server.getLogger().severe(String.format(
+-                    "Ambiguous plugin name `%s' for files `%s' and `%s' in `%s'",
+-                    description.getName(),
+-                    file.getPath(),
+-                    replacedFile.getPath(),
+-                    directory.getPath()
+-                    ));
+-            }
++                    File replacedFile = plugins.put(description.getName(), file);
++                    if (replacedFile != null) {
++                        server.getLogger().severe(String.format(
++                                "Ambiguous plugin name `%s' for files `%s' and `%s' in `%s'",
++                                description.getName(),
++                                file.getPath(),
++                                replacedFile.getPath(),
++                                directory.getPath()
++                        ));
++                    }
+ 
+-            Collection<String> softDependencySet = description.getSoftDepend();
+-            if (softDependencySet != null && !softDependencySet.isEmpty()) {
+-                if (softDependencies.containsKey(description.getName())) {
+-                    // Duplicates do not matter, they will be removed together if applicable
+-                    softDependencies.get(description.getName()).addAll(softDependencySet);
+-                } else {
+-                    softDependencies.put(description.getName(), new LinkedList<String>(softDependencySet));
+-                }
+-            }
++                    Collection<String> softDependencySet = description.getSoftDepend();
++                    if (softDependencySet != null && !softDependencySet.isEmpty()) {
++                        if (softDependencies.containsKey(description.getName())) {
++                            // Duplicates do not matter, they will be removed together if applicable
++                            softDependencies.get(description.getName()).addAll(softDependencySet);
++                        } else {
++                            softDependencies.put(description.getName(), new LinkedList<String>(softDependencySet));
++                        }
++                    }
+ 
+-            Collection<String> dependencySet = description.getDepend();
+-            if (dependencySet != null && !dependencySet.isEmpty()) {
+-                dependencies.put(description.getName(), new LinkedList<String>(dependencySet));
+-            }
++                    Collection<String> dependencySet = description.getDepend();
++                    if (dependencySet != null && !dependencySet.isEmpty()) {
++                        dependencies.put(description.getName(), new LinkedList<String>(dependencySet));
++                    }
+ 
+-            Collection<String> loadBeforeSet = description.getLoadBefore();
+-            if (loadBeforeSet != null && !loadBeforeSet.isEmpty()) {
+-                for (String loadBeforeTarget : loadBeforeSet) {
+-                    if (softDependencies.containsKey(loadBeforeTarget)) {
+-                        softDependencies.get(loadBeforeTarget).add(description.getName());
+-                    } else {
+-                        // softDependencies is never iterated, so 'ghost' plugins aren't an issue
+-                        Collection<String> shortSoftDependency = new LinkedList<String>();
+-                        shortSoftDependency.add(description.getName());
+-                        softDependencies.put(loadBeforeTarget, shortSoftDependency);
++                    Collection<String> loadBeforeSet = description.getLoadBefore();
++                    if (loadBeforeSet != null && !loadBeforeSet.isEmpty()) {
++                        for (String loadBeforeTarget : loadBeforeSet) {
++                            if (softDependencies.containsKey(loadBeforeTarget)) {
++                                softDependencies.get(loadBeforeTarget).add(description.getName());
++                            } else {
++                                // softDependencies is never iterated, so 'ghost' plugins aren't an issue
++                                Collection<String> shortSoftDependency = new LinkedList<String>();
++                                shortSoftDependency.add(description.getName());
++                                softDependencies.put(loadBeforeTarget, shortSoftDependency);
++                            }
++                        }
+                     }
+                 }
++            } else {
++                directory.mkdir();
+             }
+         }
+ 
+@@ -220,7 +228,7 @@ public final class SimplePluginManager implements PluginManager {
+ 
+                             server.getLogger().log(
+                                 Level.SEVERE,
+-                                "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'",
++                                "Could not load '" + file.getPath() + "' in folder '" + file.getParentFile().getPath() + "'",
+                                 new UnknownDependencyException(dependency));
+                             break;
+                         }
+@@ -257,7 +265,7 @@ public final class SimplePluginManager implements PluginManager {
+                         loadedPlugins.add(plugin);
+                         continue;
+                     } catch (InvalidPluginException ex) {
+-                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
++                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + file.getParentFile().getPath() + "'", ex);
+                     }
+                 }
+             }
+@@ -281,7 +289,7 @@ public final class SimplePluginManager implements PluginManager {
+                             loadedPlugins.add(plugin);
+                             break;
+                         } catch (InvalidPluginException ex) {
+-                            server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "'", ex);
++                            server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + file.getParentFile().getPath() + "'", ex);
+                         }
+                     }
+                 }
+@@ -294,7 +302,7 @@ public final class SimplePluginManager implements PluginManager {
+                     while (failedPluginIterator.hasNext()) {
+                         File file = failedPluginIterator.next();
+                         failedPluginIterator.remove();
+-                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': circular dependency detected");
++                        server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + file.getParentFile().getPath() + "': circular dependency detected");
+                     }
+                 }
+             }
+@@ -343,7 +351,8 @@ public final class SimplePluginManager implements PluginManager {
+     }
+ 
+     private void checkUpdate(File file) {
+-        if (updateDirectory == null || !updateDirectory.isDirectory()) {
++        File updateDirectory = new File(file.getParentFile(), Bukkit.getUpdateFolder());
++        if (!updateDirectory.isDirectory()) {
+             return;
+         }
+ 
+-- 
+2.25.1
+
