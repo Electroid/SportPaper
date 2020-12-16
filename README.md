@@ -18,6 +18,34 @@ Building, patching, and compiling are all done throught the main `sportpaper` sc
 
 SportPaper can be built by running `./sportpaper build`  and you will find the final server jar in `SportPaper-Server/target`
 
+Maven
+-----------
+Repository:
+```xml
+<repository>
+  <id>ashcon-snapshots</id>
+  <url>https://repo.ashcon.app/nexus/content/repositories/snapshots/</url>
+</repository>
+```
+API:
+```xml
+<dependency>
+  <groupId>app.ashcon</groupId>
+  <artifactId>sportpaper-api</artifactId>
+  <version>1.8.8-R0.1-SNAPSHOT</version>
+  <scope>provided</scope>
+</dependency>
+```
+Server:
+```xml
+<dependency>
+  <groupId>app.ashcon</groupId>
+  <artifactId>sportpaper</artifactId>
+  <version>1.8.8-R0.1-SNAPSHOT</version>
+  <scope>provided</scope>
+</dependency>
+```
+
 Other Notes
 -----------
 
