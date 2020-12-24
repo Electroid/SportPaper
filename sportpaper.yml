@@ -564,6 +564,9 @@ paper:
     # Whether falling blocks should not break when colliding with signs.
     falling-blocks-collide-with-signs: true
 
+    # Whether carpets should have a 0 height to fix issues with versions prior to 1.8.
+    zero-height-carpets: true
+
     # Whether armor stands should be subject to collision checks.
     armor-stands-do-collision-entity-lookups: false
 

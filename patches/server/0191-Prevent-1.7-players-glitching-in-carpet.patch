@@ -1,12 +1,13 @@
-From e4c81c3c462d9a6a7d236d11ebef83e4ae198d36 Mon Sep 17 00:00:00 2001
+From faaea895794229c433d8277bb937c45f8f153eae Mon Sep 17 00:00:00 2001
 From: Pablete1234 <pabloherrerapalacio@gmail.com>
 Date: Sun, 9 Aug 2020 08:29:58 +0200
 Subject: [PATCH] Prevent 1.7 players glitching in carpet
 
 Signed-off-by: Pablete1234 <pabloherrerapalacio@gmail.com>
+Signed-off-by: Austin L Mayes <me@austinlm.me>
 
 diff --git a/src/main/java/net/minecraft/server/BlockCarpet.java b/src/main/java/net/minecraft/server/BlockCarpet.java
-index b34ff4341..b18bea110 100644
+index b34ff434..8cb8defc 100644
 --- a/src/main/java/net/minecraft/server/BlockCarpet.java
 +++ b/src/main/java/net/minecraft/server/BlockCarpet.java
 @@ -1,5 +1,7 @@
@@ -17,6 +18,15 @@ index b34ff4341..b18bea110 100644
  public class BlockCarpet extends Block {
  
      public static final BlockStateEnum<EnumColor> COLOR = BlockStateEnum.of("color", EnumColor.class);
+@@ -7,7 +9,7 @@ public class BlockCarpet extends Block {
+     protected BlockCarpet() {
+         super(Material.WOOL);
+         this.j(this.blockStateList.getBlockData().set(BlockCarpet.COLOR, EnumColor.WHITE));
+-        this.a(0.0F, 0.0F, 0.0F, 1.0F, 0.0625F, 1.0F);
++        this.j();
+         this.a(true);
+         this.a(CreativeModeTab.c);
+         this.b(0);
 @@ -34,11 +36,17 @@ public class BlockCarpet extends Block {
      }
  
@@ -29,17 +39,17 @@ index b34ff4341..b18bea110 100644
 -        this.a(0.0F, 0.0F, 0.0F, 1.0F, f, 1.0F);
 +    // SportPaper start - No height on carpet in feet height, avoid 1.7 players glitching
 +    public void a(World world, BlockPosition blockposition, IBlockData iblockdata, AxisAlignedBB axisalignedbb, List<AxisAlignedBB> list, Entity entity) {
-+        if (entity instanceof EntityHuman && blockposition.getY() == (int) entity.getBoundingBox().b) {
-+            return;
-+        }
++        boolean useNoHeight = entity.world.paperSpigotConfig.zeroHeightCarpets && entity instanceof EntityHuman && blockposition.getY() == (int) entity.getBoundingBox().b;
++        if (useNoHeight) this.a(0.0F, 0.0F, 0.0F, 1f, 0f, 1f);
 +        super.a(world, blockposition, iblockdata, axisalignedbb, list, entity);
++        if (useNoHeight) this.j();
      }
 +    // SportPaper end
  
      public boolean canPlace(World world, BlockPosition blockposition) {
          return super.canPlace(world, blockposition) && this.e(world, blockposition);
 diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
-index 51fd9d4b3..0e68599d1 100644
+index 51fd9d4b..0e68599d 100644
 --- a/src/main/java/net/minecraft/server/EntityHuman.java
 +++ b/src/main/java/net/minecraft/server/EntityHuman.java
 @@ -1817,6 +1817,23 @@ public abstract class EntityHuman extends EntityLiving {
@@ -66,6 +76,23 @@ index 51fd9d4b3..0e68599d1 100644
      static class SyntheticClass_1 {
  
          static final int[] a = new int[EnumDirection.values().length];
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java
+index abe82f36..ba345d6f 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java
+@@ -263,6 +263,12 @@ public class PaperSpigotWorldConfig
+         fallingBlocksCollideWithSigns = getBoolean( "falling-blocks-collide-with-signs", false );
+     }
+ 
++    public static boolean zeroHeightCarpets;
++    private static void zeroHeightCarpets()
++    {
++        zeroHeightCarpets = getBoolean( "zero-height-carpets", false );
++    }
++
+     public static boolean optimizeExplosions;
+     private static void optimizeExplosions()
+     {
 -- 
-2.15.1.windows.2
+2.23.0
 
