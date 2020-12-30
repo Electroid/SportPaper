@@ -154,6 +154,7 @@ spigot:
     restart: Server is restarting!
     whitelist: You are not whitelisted on this server!
     unknown-command: Unknown command. Type "/help" for help.
+    internal-error: '&cAn internal error occurred while attempting to perform this command'
     server-full: The server is full!
     outdated-client: Outdated client! Please use {0}
     outdated-server: Outdated server! Server is on {0}
