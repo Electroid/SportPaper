@@ -1,4 +1,4 @@
-From d3d9feaba2402e8733b271d01ca4100922e23f65 Mon Sep 17 00:00:00 2001
+From 8a9edaee8aeda87c817f490c364958e124397d0e Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Tue, 15 Dec 2020 21:51:55 +0200
 Subject: [PATCH] Add support for multiple plugin folders
@@ -32,25 +32,21 @@ index 1fd306d1..edb36d81 100644
       * Disables all the loaded plugins
       */
 diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-index 5e58e8f8..98ea6728 100644
+index 5e58e8f8..2f52ac4a 100644
 --- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
 +++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
-@@ -2,7 +2,6 @@ package org.bukkit.plugin;
+@@ -2,9 +2,9 @@ package org.bukkit.plugin;
  
  import java.io.File;
  import java.lang.reflect.Constructor;
 -import java.lang.reflect.Method;
  import java.util.ArrayList;
  import java.util.Collection;
++import java.util.Collections;
  import java.util.HashMap;
-@@ -13,12 +12,13 @@ import java.util.LinkedList;
- import java.util.List;
- import java.util.Map;
- import java.util.Set;
--import java.util.WeakHashMap;
-+import java.util.WeakHashMap;import java.util.*;
- import java.util.logging.Level;
- import java.util.regex.Matcher;
+ import java.util.HashSet;
+ import java.util.Iterator;
+@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
  import java.util.regex.Pattern;
  
  import org.apache.commons.lang.Validate;
@@ -58,7 +54,7 @@ index 5e58e8f8..98ea6728 100644
  import org.bukkit.Server;
  import org.bukkit.command.Command;
  import org.bukkit.command.PluginCommandYamlParser;
-@@ -47,12 +47,12 @@ public final class SimplePluginManager implements PluginManager {
+@@ -47,12 +48,12 @@ public final class SimplePluginManager implements PluginManager {
      private final Map<Pattern, PluginLoader> fileAssociations = new HashMap<Pattern, PluginLoader>();
      private final List<Plugin> plugins = new ArrayList<Plugin>();
      private final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
@@ -72,7 +68,7 @@ index 5e58e8f8..98ea6728 100644
      private boolean useTimings = false;
  
      public SimplePluginManager(Server instance, SimpleCommandMap commandMap) {
-@@ -106,90 +106,107 @@ public final class SimplePluginManager implements PluginManager {
+@@ -106,90 +107,107 @@ public final class SimplePluginManager implements PluginManager {
       * @return A list of all plugins loaded
       */
      public Plugin[] loadPlugins(File directory) {
@@ -246,7 +242,7 @@ index 5e58e8f8..98ea6728 100644
              }
          }
  
-@@ -220,7 +237,7 @@ public final class SimplePluginManager implements PluginManager {
+@@ -220,7 +238,7 @@ public final class SimplePluginManager implements PluginManager {
  
                              server.getLogger().log(
                                  Level.SEVERE,
@@ -255,7 +251,7 @@ index 5e58e8f8..98ea6728 100644
                                  new UnknownDependencyException(dependency));
                              break;
                          }
-@@ -257,7 +274,7 @@ public final class SimplePluginManager implements PluginManager {
+@@ -257,7 +275,7 @@ public final class SimplePluginManager implements PluginManager {
                          loadedPlugins.add(plugin);
                          continue;
                      } catch (InvalidPluginException ex) {
@@ -264,7 +260,7 @@ index 5e58e8f8..98ea6728 100644
                      }
                  }
              }
-@@ -281,7 +298,7 @@ public final class SimplePluginManager implements PluginManager {
+@@ -281,7 +299,7 @@ public final class SimplePluginManager implements PluginManager {
                              loadedPlugins.add(plugin);
                              break;
                          } catch (InvalidPluginException ex) {
@@ -273,7 +269,7 @@ index 5e58e8f8..98ea6728 100644
                          }
                      }
                  }
-@@ -294,7 +311,7 @@ public final class SimplePluginManager implements PluginManager {
+@@ -294,7 +312,7 @@ public final class SimplePluginManager implements PluginManager {
                      while (failedPluginIterator.hasNext()) {
                          File file = failedPluginIterator.next();
                          failedPluginIterator.remove();
@@ -282,7 +278,7 @@ index 5e58e8f8..98ea6728 100644
                      }
                  }
              }
-@@ -343,7 +360,12 @@ public final class SimplePluginManager implements PluginManager {
+@@ -343,7 +361,12 @@ public final class SimplePluginManager implements PluginManager {
      }
  
      private void checkUpdate(File file) {
