@@ -46,5 +46,5 @@ jobs:
         
       - uses: actions/upload-artifact@v2
         with:
-          name: server
-          path: SportPaper-Server/target/*.jar
+          name: sportpaper-1.8.8-R0.1-SNAPSHOT
+          path: SportPaper-Server/target/sportpaper-1.8.8-R0.1-SNAPSHOT.jar
