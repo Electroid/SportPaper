@@ -33,6 +33,12 @@ jobs:
         
       - name: Setup Maven
         uses: stCarolas/setup-maven@v4
+      
+      - name: Setup Git identity
+        run: git config --global user.email "ci@example.com"
+      
+      - name: Setup Git name
+        run: git config --global user.name "GitHub CI"
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
