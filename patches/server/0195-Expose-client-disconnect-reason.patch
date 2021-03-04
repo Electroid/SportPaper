@@ -1,0 +1,103 @@
+From 1d40d7bd6f747f7723ed299fb39b2e3f71009155 Mon Sep 17 00:00:00 2001
+From: Austin L Mayes <me@austinlm.me>
+Date: Wed, 17 Feb 2021 16:37:59 -0600
+Subject: [PATCH] Expose client disconnect reason
+
+Signed-off-by: Austin L Mayes <me@austinlm.me>
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 21747b92..65424838 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -722,7 +722,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+             // CraftBukkit start
+             int itemstackAmount = itemstack.count;
+             // Spigot start - skip the event if throttled
+-            if (!throttled) {            
++            if (!throttled) {
+             // Raytrace to look for 'rogue armswings'
+             float f1 = this.player.pitch;
+             float f2 = this.player.yaw;
+@@ -914,7 +914,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+         */
+ 
+         this.player.q();
+-        String quitMessage = this.minecraftServer.getPlayerList().disconnect(this.player);
++        String quitMessage = this.minecraftServer.getPlayerList().disconnect(this.player, ichatbasecomponent.c()); // SportPaper - add reason
+         if ((quitMessage != null) && (quitMessage.length() > 0)) {
+             this.minecraftServer.getPlayerList().sendMessage(CraftChatMessage.fromString(quitMessage));
+         }
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index d09f7453..cb6a3be0 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -75,7 +75,7 @@ public abstract class PlayerList {
+         minecraftserver.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
+         minecraftserver.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(minecraftserver.server));
+         // CraftBukkit end
+-        
++
+         this.k = new GameProfileBanList(PlayerList.a);
+         this.l = new IpBanList(PlayerList.b);
+         this.operators = new OpList(PlayerList.c);
+@@ -136,7 +136,7 @@ public abstract class PlayerList {
+ 
+         entityplayer.spawnIn(world);
+         entityplayer.setPosition(loc.getX(), loc.getY(), loc.getZ());
+-        entityplayer.setYawPitch(loc.getYaw(), loc.getPitch()); 
++        entityplayer.setYawPitch(loc.getYaw(), loc.getPitch());
+         // Spigot end
+ 
+         // CraftBukkit - Moved message to after join
+@@ -363,7 +363,13 @@ public abstract class PlayerList {
+         entityplayer.u().getPlayerChunkMap().movePlayer(entityplayer);
+     }
+ 
+-    public String disconnect(EntityPlayer entityplayer) { // CraftBukkit - return string
++    // SportPaper start - overload method
++    public String disconnect(EntityPlayer player) {
++    	return disconnect(player, null);
++		}
++		// SportPaper end
++
++    public String disconnect(EntityPlayer entityplayer, String disconnectReason) { // CraftBukkit - return string
+         entityplayer.b(StatisticList.f);
+ 
+         ((CraftPlayer) cserver.getPlayer(entityplayer)).startQuitting(); // SportPaper
+@@ -371,11 +377,13 @@ public abstract class PlayerList {
+         // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
+         org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(entityplayer);
+ 
+-        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(entityplayer), "\u00A7e" + entityplayer.getName() + " left the game.");
++        // SportPaper start - expose disconnect reason
++        PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(entityplayer), "\u00A7e" + entityplayer.getName() + " left the game.", disconnectReason);
++        // SportPaper end
+         cserver.getPluginManager().callEvent(playerQuitEvent);
+         entityplayer.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
+         // CraftBukkit end
+-        
++
+         this.savePlayerFile(entityplayer);
+         WorldServer worldserver = entityplayer.u();
+ 
+@@ -528,7 +536,7 @@ public abstract class PlayerList {
+         return new EntityPlayer(this.server, this.server.getWorldServer(0), gameprofile, (PlayerInteractManager) object);
+         */
+         return player;
+-        // CraftBukkit end 
++        // CraftBukkit end
+     }
+ 
+     // CraftBukkit start
+@@ -561,7 +569,7 @@ public abstract class PlayerList {
+         org.bukkit.World fromWorld = entityplayer.getBukkitEntity().getWorld();
+         entityplayer.viewingCredits = false;
+         // CraftBukkit end
+-        
++
+         entityplayer1.playerConnection = entityplayer.playerConnection;
+         entityplayer1.copyTo(entityplayer, flag);
+         entityplayer1.d(entityplayer.getId());
+-- 
+2.23.0
+

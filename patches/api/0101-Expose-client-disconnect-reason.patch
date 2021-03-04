@@ -1,0 +1,49 @@
+From 5264ba7c0bd6272b5112a4686267572ba60bf632 Mon Sep 17 00:00:00 2001
+From: Austin L Mayes <me@austinlm.me>
+Date: Wed, 17 Feb 2021 16:31:29 -0600
+Subject: [PATCH] Expose client disconnect reason
+
+Signed-off-by: Austin L Mayes <me@austinlm.me>
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java b/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java
+index 5c8dc1b9..f9a45c84 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java
+@@ -9,13 +9,31 @@ import org.bukkit.event.HandlerList;
+ public class PlayerQuitEvent extends PlayerEvent {
+     private static final HandlerList handlers = new HandlerList();
+     private String quitMessage;
++    private final String disconnectReason; // SportPaper - expose reason
+ 
+     public PlayerQuitEvent(final Player who, final String quitMessage) {
+-        super(who);
+-        this.quitMessage = quitMessage;
++        this(who, quitMessage, null);
+     }
+ 
+-    /**
++    // SportPaper start - Expose disconnect reason
++		public PlayerQuitEvent(Player who, String quitMessage, String disconnectReason) {
++				super(who);
++				this.quitMessage = quitMessage;
++				this.disconnectReason = disconnectReason;
++		}
++
++		/**
++		 * Gets the exact reason the player disconnected from the server
++		 *
++		 * @return string disconnect reason
++		 */
++		public String getDisconnectReason() {
++				return disconnectReason;
++		}
++
++		// SportPaper end
++
++		/**
+      * Gets the quit message to send to all online players
+      *
+      * @return string quit message
+-- 
+2.23.0
+
