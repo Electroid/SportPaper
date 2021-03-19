@@ -1,0 +1,31 @@
+From 35a180108ff673060c61d6c2ef39aee4d9517167 Mon Sep 17 00:00:00 2001
+From: RoccoDev <hey@rocco.dev>
+Date: Fri, 19 Mar 2021 16:55:19 +0100
+Subject: [PATCH] Optimize head rotation patch
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+index 5fda01c3..45d611f3 100644
+--- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
++++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+@@ -411,9 +411,15 @@ public class EntityTrackerEntry {
+                     }
+ 
+                     // CraftBukkit start - Fix for nonsensical head yaw
+-                    if(this.tracker instanceof EntityLiving) {
++                    if(this.tracker instanceof EntityLiving) { // SportPaper - avoid processing entities that can't change head rotation
+                         this.i = MathHelper.d(this.tracker.getHeadRotation() * 256.0F / 360.0F);
+-                        this.broadcast(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
++                        // SportPaper start
++                        // This was originally introduced by CraftBukkit, though the implementation is wrong since it's broadcasting
++                        // the packet again in a method that is already called for each player. This would create a very serious performance issue
++                        // with high player and entity counts (each sendPacket call involves waking up the event loop and flushing the network stream).
++                        // this.broadcast(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
++                        entityplayer.playerConnection.sendPacket(new PacketPlayOutEntityHeadRotation(this.tracker, (byte) i));
++                        // SportPaper end
+                     }
+                     // CraftBukkit end
+ 
+-- 
+2.28.0
+
