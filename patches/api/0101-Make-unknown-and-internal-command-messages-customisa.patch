@@ -1,0 +1,85 @@
+From cf4e5aab74629c3d8e822c36d96190c87fc72f47 Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Fri, 4 Dec 2020 13:56:52 +0200
+Subject: [PATCH] Make unknown and internal command messages customisable in
+ PlayerCommandPreprocessEvent
+
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerCommandPreprocessEvent.java b/src/main/java/org/bukkit/event/player/PlayerCommandPreprocessEvent.java
+index 1ec81732..649b5654 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerCommandPreprocessEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerCommandPreprocessEvent.java
+@@ -48,7 +48,7 @@ import org.bukkit.event.HandlerList;
+ public class PlayerCommandPreprocessEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+-    private String message;
++    private String message, unknownCommandMessage, internalErrorMessage;
+     private String format = "<%1$s> %2$s";
+     private final Set<Player> recipients;
+ 
+@@ -64,6 +64,12 @@ public class PlayerCommandPreprocessEvent extends PlayerEvent implements Cancell
+         this.message = message;
+     }
+ 
++    public PlayerCommandPreprocessEvent(final Player player, final String message, final Set<Player> recipients, final String unknownCommandMessage, final String internalErrorMessage) {
++        this(player, message, recipients);
++        this.unknownCommandMessage = unknownCommandMessage;
++        this.internalErrorMessage = internalErrorMessage;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -99,6 +105,48 @@ public class PlayerCommandPreprocessEvent extends PlayerEvent implements Cancell
+         this.message = command;
+     }
+ 
++    /**
++     * Gets the message that the player will receive if the command wasn't found.
++     *
++     * @return message that the player will receive if the command wasn't found.
++     */
++    public String getUnknownCommandMessage() {
++        return unknownCommandMessage;
++    }
++
++    /**
++     * Sets the message that the player will receive if the command wasn't found.
++     *
++     * @param unknownCommandMessage new message that the player will receive if the command wasn't found.
++     * @throws IllegalArgumentException if unknown command message is null or empty
++     */
++    public void setUnknownCommandMessage(String unknownCommandMessage) throws IllegalArgumentException {
++        Validate.notNull(unknownCommandMessage, "Unknown command message cannot be null");
++        Validate.notEmpty(unknownCommandMessage, "Unknown command message cannot be empty");
++        this.unknownCommandMessage = unknownCommandMessage;
++    }
++
++    /**
++     * Gets the message that the player will receive if an internal error occurred.
++     *
++     * @return message that the player will receive if an internal error occurred.
++     */
++    public String getInternalErrorMessage() {
++        return internalErrorMessage;
++    }
++
++    /**
++     * Sets the message that the player will receive if an internal error occurred.
++     *
++     * @param internalErrorMessage new message that the player will receive if an internal error occurred.
++     * @throws IllegalArgumentException if internal error message is null or empty
++     */
++    public void setInternalErrorMessage(String internalErrorMessage) throws IllegalArgumentException {
++        Validate.notNull(internalErrorMessage, "Internal error message cannot be null");
++        Validate.notEmpty(internalErrorMessage, "Internal error message cannot be empty");
++        this.internalErrorMessage = internalErrorMessage;
++    }
++
+     /**
+      * Sets the player that this command will be executed as.
+      *
+-- 
+2.25.1
+

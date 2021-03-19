@@ -1,0 +1,95 @@
+From 950e920f95c5399732e7106022222cc34ef7ffbd Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Fri, 4 Dec 2020 13:56:51 +0200
+Subject: [PATCH] Make unknown and internal command messages customisable in
+ PlayerCommandPreprocessEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 21747b92..5267250a 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1319,7 +1319,10 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+ 
+         CraftPlayer player = this.getPlayer();
+ 
+-        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet());
++        // SportPaper - make unknown command and internal error messages customisable
++        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, s, new LazyPlayerSet(),
++                org.spigotmc.SpigotConfig.unknownCommandMessage,
++                org.spigotmc.SpigotConfig.internalErrorMessage);
+         this.server.getPluginManager().callEvent(event);
+ 
+         if (event.isCancelled()) {
+@@ -1328,12 +1331,14 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+         }
+ 
+         try {
+-            if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1))) {
++            if (this.server.dispatchCommand(event.getPlayer(), event.getMessage().substring(1), event.getUnknownCommandMessage())) { // SportPaper
+                 SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
+                 return;
+             }
+         } catch (org.bukkit.command.CommandException ex) {
+-            player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
++            // SportPaper start
++            player.sendMessage(event.getInternalErrorMessage());
++            // SportPaper end
+             java.util.logging.Logger.getLogger(PlayerConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+             SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
+             return;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 613582cc..c90241cd 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -619,8 +619,14 @@ public final class CraftServer implements Server {
+         }
+     }
+ 
++    // SportPaper start
+     @Override
+     public boolean dispatchCommand(CommandSender sender, String commandLine) {
++        return dispatchCommand(sender, commandLine, org.spigotmc.SpigotConfig.unknownCommandMessage);
++    }
++    // SportPaper end
++
++    public boolean dispatchCommand(CommandSender sender, String commandLine, String unknownCommandMessage) { // SportPaper - make unknown command message customisable
+         Validate.notNull(sender, "Sender cannot be null");
+         Validate.notNull(commandLine, "CommandLine cannot be null");
+ 
+@@ -651,7 +657,11 @@ public final class CraftServer implements Server {
+             return true;
+         }
+ 
+-        sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
++        // SportPaper start
++        if (unknownCommandMessage != null) {
++            sender.sendMessage(unknownCommandMessage);
++        }
++        // SportPaper end
+ 
+         return false;
+     }
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index ec995293..2b9358b2 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -84,6 +84,7 @@ public class SpigotConfig
+ 
+     public static String whitelistMessage;
+     public static String unknownCommandMessage;
++    public static String internalErrorMessage;
+     public static String serverFullMessage;
+     public static String outdatedClientMessage = "Outdated client! Please use {0}";
+     public static String outdatedServerMessage = "Outdated server! I\'m still on {0}";
+@@ -95,6 +96,7 @@ public class SpigotConfig
+     {
+         whitelistMessage = transform( getString( "messages.whitelist", "You are not whitelisted on this server!" ) );
+         unknownCommandMessage = transform( getString( "messages.unknown-command", "Unknown command. Type \"/help\" for help." ) );
++        internalErrorMessage = transform( getString( "messages.internal-error", "&cAn internal error occurred while attempting to perform this command" ) );
+         serverFullMessage = transform( getString( "messages.server-full", "The server is full!" ) );
+         outdatedClientMessage = transform( getString( "messages.outdated-client", outdatedClientMessage ) );
+         outdatedServerMessage = transform( getString( "messages.outdated-server", outdatedServerMessage ) );
+-- 
+2.25.1
+
