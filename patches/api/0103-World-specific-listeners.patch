@@ -1,11 +1,11 @@
-From 9cb3e123117054c2a789a3da2a006cc4a63659bb Mon Sep 17 00:00:00 2001
+From 1b39de5b106f1aedc07d73bd56630a3051770913 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 20 Mar 2021 12:16:24 +0200
 Subject: [PATCH] World specific listeners
 
 
 diff --git a/src/main/java/org/bukkit/plugin/PluginLoader.java b/src/main/java/org/bukkit/plugin/PluginLoader.java
-index e7981a1d..0f852d77 100644
+index e7981a1d..cad155a0 100644
 --- a/src/main/java/org/bukkit/plugin/PluginLoader.java
 +++ b/src/main/java/org/bukkit/plugin/PluginLoader.java
 @@ -5,9 +5,12 @@ import java.util.Map;
@@ -26,7 +26,7 @@ index e7981a1d..0f852d77 100644
      public Map<Class<? extends Event>, Set<RegisteredListener>> createRegisteredListeners(Listener listener, Plugin plugin);
  
 +    /**
-+     * Creates and returns world specific registered listeners for the event classes used in
++     * Creates and returns registered listeners for the event classes used in
 +     * this listener
 +     *
 +     * @param listener The object that will handle the eventual call back
