@@ -1,4 +1,4 @@
-From 1b39de5b106f1aedc07d73bd56630a3051770913 Mon Sep 17 00:00:00 2001
+From 055f89aee5073eb9058ea3eaf7c6dee8c39b5c96 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 20 Mar 2021 12:16:24 +0200
 Subject: [PATCH] World specific listeners
@@ -161,7 +161,7 @@ index 00000000..2d7c0318
 +    }
 +}
 diff --git a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
-index 64812133..b39e257f 100644
+index 64812133..d32b02bc 100644
 --- a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
 +++ b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
 @@ -21,6 +21,7 @@ import org.apache.commons.lang.Validate;
@@ -199,7 +199,7 @@ index 64812133..b39e257f 100644
              if (false) { // Spigot - RL handles useTimings check now
                  eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
              } else {
-+                if (world != null) eventSet.add(new WorldSpecificRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled(), world)); else
++                if (world != null) eventSet.add(new WorldSpecificRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled(), world)); else // SportPaper
                  eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
              }
          }
