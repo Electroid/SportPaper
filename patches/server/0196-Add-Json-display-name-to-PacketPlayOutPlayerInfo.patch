@@ -1,0 +1,48 @@
+From 3e00213a4732250411835196bd6925abcc5e7eda Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 6 Apr 2021 15:53:58 -0700
+Subject: [PATCH] Add Json display name to PacketPlayOutPlayerInfo
+
+Faster version of the displayName field if you're not using BaseComponents
+
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
+index 2d699afa..65bdeefb 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
+@@ -144,6 +144,12 @@ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
+                     packetdataserializer.a(net.md_5.bungee.chat.ComponentSerializer.toString(packetplayoutplayerinfo_playerinfodata.displayName));
+                     break;
+                 }
++
++                if (packetplayoutplayerinfo_playerinfodata.jsonDisplayName != null) {
++                    packetdataserializer.writeBoolean(true);
++                    packetdataserializer.a(packetplayoutplayerinfo_playerinfodata.jsonDisplayName);
++                    break;
++                }
+                 // SportBukkit end
+ 
+                 if (packetplayoutplayerinfo_playerinfodata.d() == null) {
+@@ -173,6 +179,12 @@ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
+                     packetdataserializer.a(net.md_5.bungee.chat.ComponentSerializer.toString(packetplayoutplayerinfo_playerinfodata.displayName));
+                     break;
+                 }
++
++                if (packetplayoutplayerinfo_playerinfodata.jsonDisplayName != null) {
++                    packetdataserializer.writeBoolean(true);
++                    packetdataserializer.a(packetplayoutplayerinfo_playerinfodata.jsonDisplayName);
++                    break;
++                }
+                 // SportBukkit end
+ 
+                 if (packetplayoutplayerinfo_playerinfodata.d() == null) {
+@@ -239,6 +251,7 @@ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
+     public class PlayerInfoData {
+ 
+         public net.md_5.bungee.api.chat.BaseComponent[] displayName; // SportBukkit
++        public String jsonDisplayName; // SportPaper
+ 
+         private final int b;
+         private final WorldSettings.EnumGamemode c;
+-- 
+2.30.0
+
