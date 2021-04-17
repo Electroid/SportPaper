@@ -1,0 +1,22 @@
+From 58a263a0d35c497944031b4286ac0fe3b1388f4d Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Sat, 17 Apr 2021 10:41:01 +0300
+Subject: [PATCH] Make PlayerEvent async constructor public
+
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerEvent.java b/src/main/java/org/bukkit/event/player/PlayerEvent.java
+index fc183e74..cabca798 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerEvent.java
+@@ -15,7 +15,7 @@ public abstract class PlayerEvent extends Event implements Physical {
+         player = who;
+     }
+ 
+-    PlayerEvent(final Player who, boolean async) {
++    public PlayerEvent(final Player who, boolean async) {
+         super(async);
+         player = who;
+ 
+-- 
+2.25.1
+
