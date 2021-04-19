@@ -1,0 +1,104 @@
+From 1e114738ed942f22f95f51640cc33700e129de11 Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Sat, 17 Apr 2021 19:20:22 +0300
+Subject: [PATCH] Fix EntityKnockbackByEntityEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/DamageSource.java b/src/main/java/net/minecraft/server/DamageSource.java
+index bc024176..237d9df3 100644
+--- a/src/main/java/net/minecraft/server/DamageSource.java
++++ b/src/main/java/net/minecraft/server/DamageSource.java
+@@ -26,6 +26,7 @@ public class DamageSource {
+     private boolean w;
+     private boolean x;
+     private boolean y;
++    public boolean knockbackEventCalled; // SportPaper
+     public String translationIndex;
+ 
+     public static DamageSource mobAttack(EntityLiving entityliving) {
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index ede4e3e9..f311373f 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -841,7 +841,7 @@ public abstract class EntityLiving extends Entity {
+                         }
+ 
+                         this.aw = (float) (MathHelper.b(d1, d0) * 180.0D / 3.1415927410125732D - (double) this.yaw);
+-                        this.a(entity, f, d0, d1);
++                        damagesource.knockbackEventCalled = this.a(entity, f, d0, d1); // SportPaper
+                     } else {
+                         this.aw = (float) ((int) (Math.random() * 2.0D) * 180);
+                     }
+@@ -932,7 +932,7 @@ public abstract class EntityLiving extends Entity {
+ 
+     protected void dropEquipment(boolean flag, int i) {}
+ 
+-    public void a(Entity entity, float f, double d0, double d1) {
++    public boolean a(Entity entity, float f, double d0, double d1) { // SportPaper - void -> boolean
+         if (this.random.nextDouble() >= this.getAttributeInstance(GenericAttributes.c).getValue()) {
+             this.ai = true;
+ 
+@@ -969,14 +969,16 @@ public abstract class EntityLiving extends Entity {
+             this.motX = oldMotX;
+             this.motY = oldMotY;
+             this.motZ = oldMotZ;
+-            if (entity == null || new EntityKnockbackByEntityEvent((LivingEntity) getBukkitEntity(), entity.getBukkitEntity(), f, delta).callEvent()) {
++            org.bukkit.entity.Entity bukkitEntity = getBukkitEntity(); // SportPaper
++            if (entity == null || new EntityKnockbackByEntityEvent((LivingEntity) bukkitEntity, ((org.bukkit.event.entity.EntityDamageByEntityEvent) bukkitEntity.getLastDamageCause()).getDamager(), f, delta).callEvent()) { // SportPaper - fix EntityKnockbackByEntityEvent
+                 this.motX += delta.getX();
+                 this.motY += delta.getY();
+                 this.motZ += delta.getZ();
+             }
+             // Paper end
+-
++            return true; // SportPaper
+         }
++        return false; // SportPaper
+     }
+ 
+     protected String bo() {
+diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
+index b7d410ee..da8cc0f7 100644
+--- a/src/main/java/net/minecraft/server/Explosion.java
++++ b/src/main/java/net/minecraft/server/Explosion.java
+@@ -135,7 +135,11 @@ public class Explosion {
+                         // entity.damageEntity(DamageSource.explosion(this), (float) ((int) ((d13 * d13 + d13) / 2.0D * 8.0D * (double) f3 + 1.0D)));+                        // CraftBukkit start
+                         CraftEventFactory.entityDamage = source;
+                         entity.forceExplosionKnockback = false;
+-                        boolean wasDamaged = entity.damageEntity(DamageSource.explosion(this), (float) ((int) ((d13 * d13 + d13) / 2.0D * 8.0D * (double) f3 + 1.0D)));
++                        // SportPaper start
++                        DamageSource damageSource = DamageSource.explosion(this);
++                        float f = (float) ((int) ((d13 * d13 + d13) / 2.0D * 8.0D * (double) f3 + 1.0D));
++                        boolean wasDamaged = entity.damageEntity(damageSource, f);
++                        // SportPaper end
+                         CraftEventFactory.entityDamage = null;
+                         if (!wasDamaged && !(entity instanceof EntityTNTPrimed || entity instanceof EntityFallingBlock) && !entity.forceExplosionKnockback) {
+                             continue;
+@@ -150,11 +154,22 @@ public class Explosion {
+                         entity.motZ += d10 * d14;
+                         */
+                         // This impulse method sets the dirty flag, so clients will get an immediate velocity update
+-                        entity.g(d8 * d14, d9 * d14, d10 * d14);
++                        // SportPaper start - Call EntityKnockbackByEntityEvent
++                        org.bukkit.util.Vector vector = new org.bukkit.util.Vector(d8 * d14, d9 * d14, d10 * d14);
++                        if (!damageSource.knockbackEventCalled && entity instanceof EntityLiving && !new org.github.paperspigot.event.entity.EntityKnockbackByEntityEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), source.getBukkitEntity(), f, vector).callEvent()) {
++                            vector.setX(0);
++                            vector.setY(0);
++                            vector.setZ(0);
++                        }
++                        double x = vector.getX();
++                        double y = vector.getY();
++                        double z = vector.getZ();
++                        entity.g(x, y, z);
++                        // SportPaper end
+                         // PaperSpigot end
+ 
+                         if (entity instanceof EntityHuman && !((EntityHuman) entity).abilities.isInvulnerable && !world.paperSpigotConfig.disableExplosionKnockback) { // PaperSpigot
+-                            this.k.put((EntityHuman) entity, new Vec3D(d8 * d13, d9 * d13, d10 * d13));
++                            this.k.put((EntityHuman) entity, new Vec3D(x, y, z)); // SportPaper
+                         }
+                     }
+                 }
+-- 
+2.25.1
+

@@ -1,4 +1,4 @@
-From 0a3e547c29dc5daabdc868eff22d963252dffcda Mon Sep 17 00:00:00 2001
+From 708ee86d1712a62f3850136903ec5487ebeda5ac Mon Sep 17 00:00:00 2001
 From: Austin L Mayes <me@austinlm.me>
 Date: Mon, 21 Dec 2020 17:08:28 -0600
 Subject: [PATCH] Don't store merchant recipes with invalid data
@@ -19,5 +19,5 @@ index 3dd22559..3e4d5ed1 100644
          }
  
 -- 
-2.23.0
+2.25.1
 

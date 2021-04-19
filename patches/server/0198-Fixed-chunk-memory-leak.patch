@@ -1,0 +1,66 @@
+From 7d4d1d5eab983509cbff61d6635dd6cd69305326 Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Sat, 17 Apr 2021 10:27:53 +0300
+Subject: [PATCH] Fixed chunk memory leak
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 812686d5..28ca6aaf 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -32,7 +32,8 @@ public class ChunkProviderServer implements IChunkProvider {
+     public LongSet unloadQueue = new LongOpenHashSet(20); // SportPaper
+     public Chunk emptyChunk;
+     public IChunkProvider chunkProvider;
+-    private IChunkLoader chunkLoader;
++    // SportPaper - make chunkLoader public
++    public IChunkLoader chunkLoader;
+     public boolean forceChunkLoad = false; // CraftBukkit - true -> false
+     // Paper start
+     protected Chunk lastChunkByPos = null;
+diff --git a/src/main/java/net/minecraft/server/ChunkRegionLoader.java b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
+index 6b244904..64d66602 100644
+--- a/src/main/java/net/minecraft/server/ChunkRegionLoader.java
++++ b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
+@@ -17,8 +17,9 @@ import org.apache.logging.log4j.Logger;
+ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
+ 
+     private static final Logger a = LogManager.getLogger();
+-    private Map<ChunkCoordIntPair, NBTTagCompound> b = new ConcurrentHashMap();
+-    private Set<ChunkCoordIntPair> c = Collections.newSetFromMap(new ConcurrentHashMap());
++    // SportPaper - make b and c public
++    public Map<ChunkCoordIntPair, NBTTagCompound> b = new ConcurrentHashMap();
++    public Set<ChunkCoordIntPair> c = Collections.newSetFromMap(new ConcurrentHashMap());
+     private final File d;
+     private boolean e = false;
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index c90241cd..f5b78d0a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -919,6 +919,22 @@ public final class CraftServer implements Server {
+             } catch (ExceptionWorldConflict ex) {
+                 getLogger().log(Level.SEVERE, null, ex);
+             }
++        } else { // SportPaper - fix chunk memory leak
++            ChunkProviderServer chunkProviderServer = handle.chunkProviderServer;
++            ChunkRegionLoader regionLoader = (ChunkRegionLoader) chunkProviderServer.chunkLoader;
++
++            regionLoader.b.clear();
++            regionLoader.c.clear();
++
++            try {
++                FileIOThread.a().b();
++            } catch (InterruptedException ex) {
++                Thread.currentThread().interrupt();
++            }
++
++            chunkProviderServer.chunkLoader = null;
++            chunkProviderServer.chunkProvider = null;
++            chunkProviderServer.chunks.clear();
+         }
+ 
+         worlds.remove(world.getName().toLowerCase());
+-- 
+2.25.1
+
