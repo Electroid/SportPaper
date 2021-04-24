@@ -1,4 +1,4 @@
-From 2dce85dbd1b9b461a8fbcfef8ecb1feefe24964f Mon Sep 17 00:00:00 2001
+From 65ce36f446874f52b08024a1ca740be8cf234e7b Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 10:28:37 +0300
 Subject: [PATCH] Limit CraftChatMessage iterations
