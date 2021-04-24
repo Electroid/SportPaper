@@ -1,4 +1,4 @@
-From 8b747146cf6fbc508f616400ad27bd59eacccdda Mon Sep 17 00:00:00 2001
+From c54899c8dd35a95ddccc9690ff3306bbe1965a51 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 19:20:22 +0300
 Subject: [PATCH] Fix EntityKnockbackByEntityEvent
@@ -58,7 +58,7 @@ index ede4e3e9..f311373f 100644
  
      protected String bo() {
 diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
-index b7d410ee..e3463846 100644
+index b7d410ee..b6f0aaaf 100644
 --- a/src/main/java/net/minecraft/server/Explosion.java
 +++ b/src/main/java/net/minecraft/server/Explosion.java
 @@ -135,7 +135,11 @@ public class Explosion {
@@ -102,7 +102,7 @@ index b7d410ee..e3463846 100644
  
                          if (entity instanceof EntityHuman && !((EntityHuman) entity).abilities.isInvulnerable && !world.paperSpigotConfig.disableExplosionKnockback) { // PaperSpigot
 -                            this.k.put((EntityHuman) entity, new Vec3D(d8 * d13, d9 * d13, d10 * d13));
-+                            this.k.put((EntityHuman) entity, new Vec3D(x, y, z)); // SportPaper
++                            this.k.put((EntityHuman) entity, new Vec3D(x / d14 * d13, y / d14 * d13, z / d14 * d13)); // SportPaper
                          }
                      }
                  }
