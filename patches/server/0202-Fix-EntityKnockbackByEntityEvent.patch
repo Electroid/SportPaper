@@ -1,4 +1,4 @@
-From 1e114738ed942f22f95f51640cc33700e129de11 Mon Sep 17 00:00:00 2001
+From c54899c8dd35a95ddccc9690ff3306bbe1965a51 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 19:20:22 +0300
 Subject: [PATCH] Fix EntityKnockbackByEntityEvent
@@ -58,7 +58,7 @@ index ede4e3e9..f311373f 100644
  
      protected String bo() {
 diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
-index b7d410ee..da8cc0f7 100644
+index b7d410ee..b6f0aaaf 100644
 --- a/src/main/java/net/minecraft/server/Explosion.java
 +++ b/src/main/java/net/minecraft/server/Explosion.java
 @@ -135,7 +135,11 @@ public class Explosion {
@@ -74,31 +74,37 @@ index b7d410ee..da8cc0f7 100644
                          CraftEventFactory.entityDamage = null;
                          if (!wasDamaged && !(entity instanceof EntityTNTPrimed || entity instanceof EntityFallingBlock) && !entity.forceExplosionKnockback) {
                              continue;
-@@ -150,11 +154,22 @@ public class Explosion {
+@@ -150,11 +154,29 @@ public class Explosion {
                          entity.motZ += d10 * d14;
                          */
                          // This impulse method sets the dirty flag, so clients will get an immediate velocity update
 -                        entity.g(d8 * d14, d9 * d14, d10 * d14);
 +                        // SportPaper start - Call EntityKnockbackByEntityEvent
-+                        org.bukkit.util.Vector vector = new org.bukkit.util.Vector(d8 * d14, d9 * d14, d10 * d14);
-+                        if (!damageSource.knockbackEventCalled && entity instanceof EntityLiving && !new org.github.paperspigot.event.entity.EntityKnockbackByEntityEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), source.getBukkitEntity(), f, vector).callEvent()) {
-+                            vector.setX(0);
-+                            vector.setY(0);
-+                            vector.setZ(0);
++                        double x = d8 * d14;
++                        double y = d9 * d14;
++                        double z = d10 * d14;
++                        if (!damageSource.knockbackEventCalled && entity instanceof EntityLiving) {
++                            org.bukkit.util.Vector vector = new org.bukkit.util.Vector(x, y, z);
++                            if (!new org.github.paperspigot.event.entity.EntityKnockbackByEntityEvent((org.bukkit.entity.LivingEntity) entity.getBukkitEntity(), source.getBukkitEntity(), f, vector).callEvent()) {
++                                x = 0;
++                                y = 0;
++                                z = 0;
++                            } else {
++                                x = vector.getX();
++                                y = vector.getY();
++                                z = vector.getZ();
++                            }
 +                        }
-+                        double x = vector.getX();
-+                        double y = vector.getY();
-+                        double z = vector.getZ();
++
 +                        entity.g(x, y, z);
 +                        // SportPaper end
                          // PaperSpigot end
  
                          if (entity instanceof EntityHuman && !((EntityHuman) entity).abilities.isInvulnerable && !world.paperSpigotConfig.disableExplosionKnockback) { // PaperSpigot
 -                            this.k.put((EntityHuman) entity, new Vec3D(d8 * d13, d9 * d13, d10 * d13));
-+                            this.k.put((EntityHuman) entity, new Vec3D(x, y, z)); // SportPaper
++                            this.k.put((EntityHuman) entity, new Vec3D(x / d14 * d13, y / d14 * d13, z / d14 * d13)); // SportPaper
                          }
                      }
                  }
 -- 
 2.25.1
-
