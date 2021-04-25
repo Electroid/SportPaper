@@ -58,6 +58,8 @@ import WorldGenCaves
 import WorldSettings
 import BlockCarpet
 import MerchantRecipeList
+# SportPaper - Import DamageSource for kb patch
+import DamageSource
 
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1
