@@ -1,14 +1,28 @@
-From b2ddc219a40cba6680a96fbdd13b9e7679e03082 Mon Sep 17 00:00:00 2001
+From 29cfa19f306abddf93012e89daa86af81eee78c7 Mon Sep 17 00:00:00 2001
 From: linsaftw <linsaftw@users.noreply.github.com>
 Date: Tue, 27 Apr 2021 09:53:13 -0300
 Subject: [PATCH] Catch FastUtil exception
 
 
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index e58c022b..2089cb81 100644
+index e58c022b..66b3b5e4 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-@@ -414,7 +414,11 @@ public class ChunkProviderServer implements IChunkProvider {
+@@ -163,7 +163,12 @@ public class ChunkProviderServer implements IChunkProvider {
+             chunk = originalGetChunkAt(i, j);
+         }
+ 
+-        unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
++        try {
++            unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
++        } catch (Exception e) {
++            // SportPaper - Catch possible NPEs (Concurrent modification?)
++        }
++        
+         // If we didn't load the chunk async and have a callback run it now
+         if (runnable != null) {
+             runnable.run();
+@@ -414,7 +419,11 @@ public class ChunkProviderServer implements IChunkProvider {
              this.saveChunkNOP(chunk);
              this.chunks.remove(chunk.chunkKey); // CraftBukkit
              if (!auto && this.unloadQueue.contains(chunk.chunkKey)) {
@@ -21,7 +35,7 @@ index e58c022b..2089cb81 100644
              }
  
              // Update neighbor counts
-@@ -442,12 +446,16 @@ public class ChunkProviderServer implements IChunkProvider {
+@@ -442,12 +451,16 @@ public class ChunkProviderServer implements IChunkProvider {
              // SportPaper start
              LongIterator iterator = unloadQueue.iterator();
              for (int i = 0; i < 100 && iterator.hasNext(); ++i) {
