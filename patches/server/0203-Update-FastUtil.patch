@@ -1,0 +1,22 @@
+From e9fb59631a6bdf017181407a1ebf4e1ba23dd0db Mon Sep 17 00:00:00 2001
+From: linsaftw <linsaftw@users.noreply.github.com>
+Date: Mon, 26 Apr 2021 23:54:07 -0300
+Subject: [PATCH] Update FastUtil
+
+
+diff --git a/pom.xml b/pom.xml
+index 404eb178..fc7cff9a 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -30,7 +30,7 @@
+         <dependency>
+             <groupId>it.unimi.dsi</groupId>
+             <artifactId>fastutil</artifactId>
+-            <version>8.1.0</version>
++            <version>8.5.4</version>
+         </dependency>
+         <dependency>
+             <groupId>net.sf.trove4j</groupId>
+-- 
+2.31.1
+
