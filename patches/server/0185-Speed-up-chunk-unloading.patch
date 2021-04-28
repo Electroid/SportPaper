@@ -1,11 +1,11 @@
-From a0cacec226ab8c0829a03d649abce8f8d3535de9 Mon Sep 17 00:00:00 2001
+From 96d11bb8432ab5b2f2ce86f1152324b516c2a23d Mon Sep 17 00:00:00 2001
 From: Austin Mayes <austin@avicus.net>
 Date: Fri, 14 Feb 2020 18:11:36 -0600
 Subject: [PATCH] Speed up chunk unloading
 
 
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 775cbd48..812686d5 100644
+index 775cbd481..550d824e4 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -1,28 +1,19 @@
@@ -43,7 +43,7 @@ index 775cbd48..812686d5 100644
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 -import it.unimi.dsi.fastutil.longs.LongArraySet;
  import it.unimi.dsi.fastutil.longs.LongIterator;
-+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
++import it.unimi.dsi.fastutil.longs.LongArraySet;
  import it.unimi.dsi.fastutil.longs.LongSet;
  // SportPaper end
  
@@ -51,7 +51,7 @@ index 775cbd48..812686d5 100644
  
      private static final Logger b = LogManager.getLogger();
 -    public LongSet unloadQueue = new LongArraySet(); // SportPaper
-+    public LongSet unloadQueue = new LongOpenHashSet(20); // SportPaper
++    public LongSet unloadQueue = new LongArraySet(20); // SportPaper
      public Chunk emptyChunk;
      public IChunkProvider chunkProvider;
      private IChunkLoader chunkLoader;
@@ -123,7 +123,7 @@ index 775cbd48..812686d5 100644
              // CraftBukkit end
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 87cb3be2..b2eaf0c7 100644
+index 87cb3be2a..b2eaf0c78 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -338,7 +338,6 @@ public class CraftWorld implements World {
@@ -143,5 +143,5 @@ index 87cb3be2..b2eaf0c7 100644
      }
  
 -- 
-2.23.0
+2.31.1
 
