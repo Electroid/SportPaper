@@ -1,25 +1,25 @@
-From 7d4d1d5eab983509cbff61d6635dd6cd69305326 Mon Sep 17 00:00:00 2001
-From: VytskaLT <VytskaLT@protonmail.com>
-Date: Sat, 17 Apr 2021 10:27:53 +0300
+From a945eef326f5c49946d712bfa47fcfe4499d96e0 Mon Sep 17 00:00:00 2001
+From: Juan Cruz Linsalata <LinsaFTW@users.noreply.github.com>
+Date: Sun, 18 Oct 2020 15:36:00 -0300
 Subject: [PATCH] Fixed chunk memory leak
 
 
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 812686d5..28ca6aaf 100644
+index c4dab42b..fa73a6be 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -32,7 +32,8 @@ public class ChunkProviderServer implements IChunkProvider {
-     public LongSet unloadQueue = new LongOpenHashSet(20); // SportPaper
+     public LongSet unloadQueue = new LongArraySet(20); // SportPaper
      public Chunk emptyChunk;
      public IChunkProvider chunkProvider;
 -    private IChunkLoader chunkLoader;
-+    // SportPaper - make chunkLoader public
++    // SportPaper - Make chunkloader public
 +    public IChunkLoader chunkLoader;
      public boolean forceChunkLoad = false; // CraftBukkit - true -> false
      // Paper start
      protected Chunk lastChunkByPos = null;
 diff --git a/src/main/java/net/minecraft/server/ChunkRegionLoader.java b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
-index 6b244904..64d66602 100644
+index 6b244904..7889b91e 100644
 --- a/src/main/java/net/minecraft/server/ChunkRegionLoader.java
 +++ b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
 @@ -17,8 +17,9 @@ import org.apache.logging.log4j.Logger;
@@ -28,21 +28,39 @@ index 6b244904..64d66602 100644
      private static final Logger a = LogManager.getLogger();
 -    private Map<ChunkCoordIntPair, NBTTagCompound> b = new ConcurrentHashMap();
 -    private Set<ChunkCoordIntPair> c = Collections.newSetFromMap(new ConcurrentHashMap());
-+    // SportPaper - make b and c public
++    // SportPaper - Make b and c public
 +    public Map<ChunkCoordIntPair, NBTTagCompound> b = new ConcurrentHashMap();
 +    public Set<ChunkCoordIntPair> c = Collections.newSetFromMap(new ConcurrentHashMap());
      private final File d;
      private boolean e = false;
  
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index 87529552..068bfe1e 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -231,7 +231,12 @@ public class WorldServer extends World implements IAsyncTaskHandler {
+         // CraftBukkit end
+         timings.doChunkUnload.startTiming(); // Spigot
+         this.methodProfiler.c("chunkSource");
+-        this.chunkProvider.unloadChunks();
++
++        // SportPaper - Only unload if chunkProvider isn't null
++        if (this.chunkProvider != null) {
++            this.chunkProvider.unloadChunks();
++        }
++
+         int j = this.a(1.0F);
+ 
+         if (j != this.ab()) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index c90241cd..f5b78d0a 100644
+index 69485fa6..dbaf70e9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-@@ -919,6 +919,22 @@ public final class CraftServer implements Server {
+@@ -1001,6 +1001,22 @@ public final class CraftServer implements Server {
              } catch (ExceptionWorldConflict ex) {
                  getLogger().log(Level.SEVERE, null, ex);
              }
-+        } else { // SportPaper - fix chunk memory leak
++        } else { // SportPaper - Fix chunk memory leak
 +            ChunkProviderServer chunkProviderServer = handle.chunkProviderServer;
 +            ChunkRegionLoader regionLoader = (ChunkRegionLoader) chunkProviderServer.chunkLoader;
 +
@@ -62,5 +80,5 @@ index c90241cd..f5b78d0a 100644
  
          worlds.remove(world.getName().toLowerCase());
 -- 
-2.25.1
+2.31.1
 
