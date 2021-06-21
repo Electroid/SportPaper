@@ -60,6 +60,8 @@ import BlockCarpet
 import MerchantRecipeList
 # SportPaper - Import DamageSource for kb patch
 import DamageSource
+# SportPaper - Import IChatBaseComponent for security patch
+import IChatBaseComponent
 
 cd "$basedir/base/Paper/PaperSpigot-Server/"
 rm -rf nms-patches applyPatches.sh makePatches.sh >/dev/null 2>&1

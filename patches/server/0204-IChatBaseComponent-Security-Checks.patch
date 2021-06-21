@@ -1,0 +1,31 @@
+From 61888c635653e4e8b1bf06543cb2bb61b4d45c74 Mon Sep 17 00:00:00 2001
+From: LinsaFTW <25271111+linsaftw@users.noreply.github.com>
+Date: Mon, 21 Jun 2021 03:29:33 -0300
+Subject: [PATCH] iChatBaseComponent Security Checks
+
+
+diff --git a/src/main/java/net/minecraft/server/IChatBaseComponent.java b/src/main/java/net/minecraft/server/IChatBaseComponent.java
+index b187a8518..01fcde5fc 100644
+--- a/src/main/java/net/minecraft/server/IChatBaseComponent.java
++++ b/src/main/java/net/minecraft/server/IChatBaseComponent.java
+@@ -48,9 +48,16 @@ public interface IChatBaseComponent extends Iterable<IChatBaseComponent> {
+                     JsonArray jsonarray = jsonelement.getAsJsonArray();
+                     IChatBaseComponent ichatbasecomponent = null;
+                     Iterator iterator = jsonarray.iterator();
++                    int iterations = 0; // FlamePaper - Limit jsonarray iterations
+ 
+-                    while (iterator.hasNext()) {
++                    while (iterator.hasNext() && ++iterations < 5) {
+                         JsonElement jsonelement1 = (JsonElement) iterator.next();
++
++                        // FlamePaper - Don't iterate over arrays
++                        if (jsonelement1.isJsonArray()) {
++                            continue;
++                        }
++
+                         IChatBaseComponent ichatbasecomponent1 = this.a(jsonelement1, (Type) jsonelement1.getClass(), jsondeserializationcontext);
+ 
+                         if (ichatbasecomponent == null) {
+-- 
+2.32.0.windows.1
+
