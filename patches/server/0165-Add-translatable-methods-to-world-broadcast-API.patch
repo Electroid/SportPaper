@@ -1,11 +1,11 @@
-From 65a9af3a1013d2354b1920e2849d1c17ac17ec1f Mon Sep 17 00:00:00 2001
+From b1df953e7bd0be5aa0ee8bfc93a9da426c64b3cc Mon Sep 17 00:00:00 2001
 From: Austin Mayes <austin@avicus.net>
 Date: Thu, 27 Sep 2018 08:31:55 -0500
 Subject: [PATCH] Add translatable methods to world broadcast API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 2d999301..7047ecb9 100644
+index 19835eac7..4135d5954 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -15,6 +15,7 @@ import java.util.UUID;
@@ -16,7 +16,7 @@ index 2d999301..7047ecb9 100644
  import org.apache.commons.lang.Validate;
  import org.bukkit.BlockChangeDelegate;
  import org.bukkit.Bukkit;
-@@ -873,6 +874,16 @@ public class CraftWorld implements World {
+@@ -874,6 +875,16 @@ public class CraftWorld implements World {
          getPlayers().forEach(player -> player.sendMessage(components));
      }
  
@@ -34,5 +34,5 @@ index 2d999301..7047ecb9 100644
      // Spigot start
          save(true);
 -- 
-2.19.0
+2.30.2
 

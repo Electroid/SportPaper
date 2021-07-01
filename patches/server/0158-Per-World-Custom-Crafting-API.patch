@@ -1,11 +1,11 @@
-From 5e2381118779072fed5ae8d011803502af5c7ffa Mon Sep 17 00:00:00 2001
+From def0d75d76d8e969f8b78f0e599415fe1a987208 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 02:31:21 -0700
 Subject: [PATCH] Per World Custom Crafting API
 
 
 diff --git a/src/main/java/net/minecraft/server/ContainerFurnace.java b/src/main/java/net/minecraft/server/ContainerFurnace.java
-index 04cccbb6..be9b4cfd 100644
+index 04cccbb68..be9b4cfd7 100644
 --- a/src/main/java/net/minecraft/server/ContainerFurnace.java
 +++ b/src/main/java/net/minecraft/server/ContainerFurnace.java
 @@ -104,7 +104,7 @@ public class ContainerFurnace extends Container {
@@ -18,7 +18,7 @@ index 04cccbb6..be9b4cfd 100644
                          return null;
                      }
 diff --git a/src/main/java/net/minecraft/server/ContainerPlayer.java b/src/main/java/net/minecraft/server/ContainerPlayer.java
-index a86f896b..94e329ee 100644
+index a86f896b4..94e329eee 100644
 --- a/src/main/java/net/minecraft/server/ContainerPlayer.java
 +++ b/src/main/java/net/minecraft/server/ContainerPlayer.java
 @@ -63,8 +63,8 @@ public class ContainerPlayer extends Container {
@@ -33,7 +33,7 @@ index a86f896b..94e329ee 100644
          if (super.listeners.size() < 1) {
              return;
 diff --git a/src/main/java/net/minecraft/server/ContainerWorkbench.java b/src/main/java/net/minecraft/server/ContainerWorkbench.java
-index 48d524e5..f63011e3 100644
+index 48d524e54..f63011e3d 100644
 --- a/src/main/java/net/minecraft/server/ContainerWorkbench.java
 +++ b/src/main/java/net/minecraft/server/ContainerWorkbench.java
 @@ -52,8 +52,8 @@ public class ContainerWorkbench extends Container {
@@ -48,7 +48,7 @@ index 48d524e5..f63011e3 100644
          if (super.listeners.size() < 1) {
              return;
 diff --git a/src/main/java/net/minecraft/server/CraftingManager.java b/src/main/java/net/minecraft/server/CraftingManager.java
-index 544ff0a6..2c2110d4 100644
+index 544ff0a6c..2c2110d4a 100644
 --- a/src/main/java/net/minecraft/server/CraftingManager.java
 +++ b/src/main/java/net/minecraft/server/CraftingManager.java
 @@ -13,17 +13,12 @@ import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
@@ -79,7 +79,7 @@ index 544ff0a6..2c2110d4 100644
          // CraftBukkit end
      }
 diff --git a/src/main/java/net/minecraft/server/EntitySheep.java b/src/main/java/net/minecraft/server/EntitySheep.java
-index 29611a19..9a3d3751 100644
+index 29611a194..9a3d3751b 100644
 --- a/src/main/java/net/minecraft/server/EntitySheep.java
 +++ b/src/main/java/net/minecraft/server/EntitySheep.java
 @@ -222,7 +222,7 @@ public class EntitySheep extends EntityAnimal {
@@ -92,7 +92,7 @@ index 29611a19..9a3d3751 100644
  
          if (itemstack != null && itemstack.getItem() == Items.DYE) {
 diff --git a/src/main/java/net/minecraft/server/IRecipe.java b/src/main/java/net/minecraft/server/IRecipe.java
-index ffc65a24..444af5b0 100644
+index ffc65a242..444af5b06 100644
 --- a/src/main/java/net/minecraft/server/IRecipe.java
 +++ b/src/main/java/net/minecraft/server/IRecipe.java
 @@ -4,7 +4,7 @@ public interface IRecipe {
@@ -105,7 +105,7 @@ index ffc65a24..444af5b0 100644
      int a();
  
 diff --git a/src/main/java/net/minecraft/server/RecipeArmorDye.java b/src/main/java/net/minecraft/server/RecipeArmorDye.java
-index 43a1cf8d..7e7a18dc 100644
+index 43a1cf8dd..7e7a18dcb 100644
 --- a/src/main/java/net/minecraft/server/RecipeArmorDye.java
 +++ b/src/main/java/net/minecraft/server/RecipeArmorDye.java
 @@ -40,7 +40,7 @@ public class RecipeArmorDye extends ShapelessRecipes implements IRecipe { // Cra
@@ -118,7 +118,7 @@ index 43a1cf8d..7e7a18dc 100644
          int[] aint = new int[3];
          int i = 0;
 diff --git a/src/main/java/net/minecraft/server/RecipeBookClone.java b/src/main/java/net/minecraft/server/RecipeBookClone.java
-index 264019d9..4d591cbf 100644
+index 264019d9d..4d591cbf3 100644
 --- a/src/main/java/net/minecraft/server/RecipeBookClone.java
 +++ b/src/main/java/net/minecraft/server/RecipeBookClone.java
 @@ -35,7 +35,7 @@ public class RecipeBookClone extends ShapelessRecipes implements IRecipe { // Cr
@@ -131,7 +131,7 @@ index 264019d9..4d591cbf 100644
          ItemStack itemstack = null;
  
 diff --git a/src/main/java/net/minecraft/server/RecipeFireworks.java b/src/main/java/net/minecraft/server/RecipeFireworks.java
-index ba9ce61b..be10c973 100644
+index ba9ce61bf..be10c9731 100644
 --- a/src/main/java/net/minecraft/server/RecipeFireworks.java
 +++ b/src/main/java/net/minecraft/server/RecipeFireworks.java
 @@ -163,7 +163,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe { // Cr
@@ -144,7 +144,7 @@ index ba9ce61b..be10c973 100644
      }
  
 diff --git a/src/main/java/net/minecraft/server/RecipeMapClone.java b/src/main/java/net/minecraft/server/RecipeMapClone.java
-index 579f6d1d..1663898a 100644
+index 579f6d1d2..1663898a1 100644
 --- a/src/main/java/net/minecraft/server/RecipeMapClone.java
 +++ b/src/main/java/net/minecraft/server/RecipeMapClone.java
 @@ -35,7 +35,7 @@ public class RecipeMapClone extends ShapelessRecipes implements IRecipe { // Cra
@@ -157,7 +157,7 @@ index 579f6d1d..1663898a 100644
          ItemStack itemstack = null;
  
 diff --git a/src/main/java/net/minecraft/server/RecipeRepair.java b/src/main/java/net/minecraft/server/RecipeRepair.java
-index 187e59ae..0bac6309 100644
+index 187e59aef..0bac6309e 100644
 --- a/src/main/java/net/minecraft/server/RecipeRepair.java
 +++ b/src/main/java/net/minecraft/server/RecipeRepair.java
 @@ -32,7 +32,7 @@ public class RecipeRepair extends ShapelessRecipes implements IRecipe { // Craft
@@ -179,7 +179,7 @@ index 187e59ae..0bac6309 100644
                  // return new ItemStack(itemstack2.getItem(), 1, i1);
                  // CraftBukkit end
 diff --git a/src/main/java/net/minecraft/server/RecipesBanner.java b/src/main/java/net/minecraft/server/RecipesBanner.java
-index 4a77c77d..0e60bd0c 100644
+index 4a77c77d1..0e60bd0ca 100644
 --- a/src/main/java/net/minecraft/server/RecipesBanner.java
 +++ b/src/main/java/net/minecraft/server/RecipesBanner.java
 @@ -54,7 +54,7 @@ public class RecipesBanner {
@@ -201,7 +201,7 @@ index 4a77c77d..0e60bd0c 100644
                  ItemStack itemstack = inventorycrafting.getItem(i);
  
 diff --git a/src/main/java/net/minecraft/server/RecipesFurnace.java b/src/main/java/net/minecraft/server/RecipesFurnace.java
-index d16fa9ec..d4c2319f 100644
+index d16fa9ec7..d4c2319fc 100644
 --- a/src/main/java/net/minecraft/server/RecipesFurnace.java
 +++ b/src/main/java/net/minecraft/server/RecipesFurnace.java
 @@ -7,14 +7,9 @@ import java.util.Map.Entry;
@@ -221,7 +221,7 @@ index d16fa9ec..d4c2319f 100644
      public RecipesFurnace() { // PAIL: Public
          this.registerRecipe(Blocks.IRON_ORE, new ItemStack(Items.IRON_INGOT), 0.7F);
 diff --git a/src/main/java/net/minecraft/server/ShapedRecipes.java b/src/main/java/net/minecraft/server/ShapedRecipes.java
-index cac2e78b..17d787cf 100644
+index cac2e78bb..17d787cfc 100644
 --- a/src/main/java/net/minecraft/server/ShapedRecipes.java
 +++ b/src/main/java/net/minecraft/server/ShapedRecipes.java
 @@ -146,7 +146,7 @@ public class ShapedRecipes implements IRecipe {
@@ -234,7 +234,7 @@ index cac2e78b..17d787cf 100644
  
          if (this.e) {
 diff --git a/src/main/java/net/minecraft/server/ShapelessRecipes.java b/src/main/java/net/minecraft/server/ShapelessRecipes.java
-index e9934f90..0d46b8d5 100644
+index e9934f904..0d46b8d5e 100644
 --- a/src/main/java/net/minecraft/server/ShapelessRecipes.java
 +++ b/src/main/java/net/minecraft/server/ShapelessRecipes.java
 @@ -83,7 +83,7 @@ public class ShapelessRecipes implements IRecipe {
@@ -247,7 +247,7 @@ index e9934f90..0d46b8d5 100644
      }
  
 diff --git a/src/main/java/net/minecraft/server/SlotFurnaceResult.java b/src/main/java/net/minecraft/server/SlotFurnaceResult.java
-index 914be4e8..24927ede 100644
+index 914be4e8d..24927ede3 100644
 --- a/src/main/java/net/minecraft/server/SlotFurnaceResult.java
 +++ b/src/main/java/net/minecraft/server/SlotFurnaceResult.java
 @@ -41,7 +41,7 @@ public class SlotFurnaceResult extends Slot {
@@ -260,7 +260,7 @@ index 914be4e8..24927ede 100644
  
              if (f == 0.0F) {
 diff --git a/src/main/java/net/minecraft/server/SlotResult.java b/src/main/java/net/minecraft/server/SlotResult.java
-index d2551cfb..ca377490 100644
+index d2551cfb3..ca377490e 100644
 --- a/src/main/java/net/minecraft/server/SlotResult.java
 +++ b/src/main/java/net/minecraft/server/SlotResult.java
 @@ -83,7 +83,7 @@ public class SlotResult extends Slot {
@@ -273,7 +273,7 @@ index d2551cfb..ca377490 100644
          for (int i = 0; i < aitemstack.length; ++i) {
              ItemStack itemstack1 = this.a.getItem(i);
 diff --git a/src/main/java/net/minecraft/server/StatisticList.java b/src/main/java/net/minecraft/server/StatisticList.java
-index b5ceb9a6..c56507e3 100644
+index b5ceb9a68..c56507e35 100644
 --- a/src/main/java/net/minecraft/server/StatisticList.java
 +++ b/src/main/java/net/minecraft/server/StatisticList.java
 @@ -79,7 +79,7 @@ public class StatisticList {
@@ -295,7 +295,7 @@ index b5ceb9a6..c56507e3 100644
          while (iterator.hasNext()) {
              ItemStack itemstack = (ItemStack) iterator.next();
 diff --git a/src/main/java/net/minecraft/server/TileEntityFurnace.java b/src/main/java/net/minecraft/server/TileEntityFurnace.java
-index 37a43fdc..ffc902c9 100644
+index 37a43fdc8..ffc902c94 100644
 --- a/src/main/java/net/minecraft/server/TileEntityFurnace.java
 +++ b/src/main/java/net/minecraft/server/TileEntityFurnace.java
 @@ -270,7 +270,7 @@ public class TileEntityFurnace extends TileEntityContainer implements IUpdatePla
@@ -317,7 +317,7 @@ index 37a43fdc..ffc902c9 100644
              // CraftBukkit start - fire FurnaceSmeltEvent
              CraftItemStack source = CraftItemStack.asCraftMirror(this.items[0]);
 diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
-index e6899775..138b17f3 100644
+index e68997751..138b17f30 100644
 --- a/src/main/java/net/minecraft/server/World.java
 +++ b/src/main/java/net/minecraft/server/World.java
 @@ -142,6 +142,8 @@ public abstract class World implements IBlockAccess {
@@ -330,7 +330,7 @@ index e6899775..138b17f3 100644
      public static long chunkToKey(int x, int z)
      {
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 4dc6ebfc..d0901cac 100644
+index 4dc6ebfcf..d0901cac7 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -5,7 +5,6 @@ import java.io.File;
@@ -401,7 +401,7 @@ index 4dc6ebfc..d0901cac 100644
  
      @Override
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 8a7c3345..2d999301 100644
+index edf2bafd4..19835eac7 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -34,7 +34,12 @@ import org.bukkit.block.BlockState;
@@ -434,7 +434,7 @@ index 8a7c3345..2d999301 100644
  import org.bukkit.metadata.MetadataValue;
  import org.bukkit.plugin.Plugin;
  import org.bukkit.plugin.messaging.StandardMessenger;
-@@ -1529,6 +1536,67 @@ public class CraftWorld implements World {
+@@ -1530,6 +1537,67 @@ public class CraftWorld implements World {
              cps.queueUnload(chunk.locX, chunk.locZ);
          }
      }
@@ -503,7 +503,7 @@ index 8a7c3345..2d999301 100644
      private final Spigot spigot = new Spigot()
      {
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
-index 69f17db8..bc853a0f 100644
+index 69f17db84..bc853a0fa 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
 @@ -1,8 +1,8 @@
@@ -529,7 +529,7 @@ index 69f17db8..bc853a0f 100644
      }
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
-index d3e03e24..232d1bbd 100644
+index d3e03e247..232d1bbdd 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
 @@ -1,7 +1,9 @@
@@ -544,7 +544,7 @@ index d3e03e24..232d1bbd 100644
 +    void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace);
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
-index baea7597..622e4fe7 100644
+index baea75977..622e4fe76 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
 @@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
@@ -573,7 +573,7 @@ index baea7597..622e4fe7 100644
      }
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
-index 53479c72..8b2ea3f5 100644
+index 53479c72c..8b2ea3f58 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
 @@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
@@ -602,7 +602,7 @@ index 53479c72..8b2ea3f5 100644
      }
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java b/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
-index 53b53b79..5563c869 100644
+index 53b53b799..5563c8691 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
 @@ -13,11 +13,20 @@ public class RecipeIterator implements Iterator<Recipe> {
@@ -639,5 +639,5 @@ index 53b53b79..5563c869 100644
              return new CraftFurnaceRecipe(stack, CraftItemStack.asCraftMirror(item));
          }
 -- 
-2.19.0
+2.30.2
 

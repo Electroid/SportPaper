@@ -1,11 +1,11 @@
-From e77f0e36d2222c007c11bb85b3c39061fc0c6aa6 Mon Sep 17 00:00:00 2001
+From d7d1dc711e50369a0f48584f02cff732a400b7f8 Mon Sep 17 00:00:00 2001
 From: Ashcon Partovi <ashcon@partovi.net>
 Date: Sat, 27 Apr 2019 12:36:37 -0700
 Subject: [PATCH] Use fast util collections
 
 
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 0602beac..775cbd48 100644
+index 0602beac9..775cbd481 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -27,18 +27,25 @@ import org.bukkit.event.world.ChunkUnloadEvent;
@@ -88,7 +88,7 @@ index 0602beac..775cbd48 100644
                  if (chunk == null) continue;
                  unloadChunk(chunk); // SportPaper - Move to own method
 diff --git a/src/main/java/net/minecraft/server/DataWatcher.java b/src/main/java/net/minecraft/server/DataWatcher.java
-index dec091e7..f1e70d98 100644
+index dec091e73..f1e70d98d 100644
 --- a/src/main/java/net/minecraft/server/DataWatcher.java
 +++ b/src/main/java/net/minecraft/server/DataWatcher.java
 @@ -10,18 +10,25 @@ import java.util.Map;
@@ -151,7 +151,7 @@ index dec091e7..f1e70d98 100644
          for ( int i = 0; i < arraylist.size(); i++ )
          {
 diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
-index e8cdce2a..9a2508c8 100644
+index e8cdce2aa..9a2508c81 100644
 --- a/src/main/java/net/minecraft/server/WorldServer.java
 +++ b/src/main/java/net/minecraft/server/WorldServer.java
 @@ -404,7 +404,7 @@ public class WorldServer extends World implements IAsyncTaskHandler {
@@ -164,10 +164,10 @@ index e8cdce2a..9a2508c8 100644
                      iter.remove();
                      continue;
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 3c42fec5..d358ea58 100644
+index e184d4168..34b232714 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -280,7 +280,7 @@ public class CraftWorld implements World {
+@@ -281,7 +281,7 @@ public class CraftWorld implements World {
              world.chunkProviderServer.saveChunkNOP(chunk);
          }
  
@@ -176,7 +176,7 @@ index 3c42fec5..d358ea58 100644
          world.chunkProviderServer.chunks.remove(LongHash.toLong(x, z));
  
          return true;
-@@ -289,7 +289,7 @@ public class CraftWorld implements World {
+@@ -290,7 +290,7 @@ public class CraftWorld implements World {
      public boolean regenerateChunk(int x, int z) {
          unloadChunk(x, z, false, false);
  
@@ -185,7 +185,7 @@ index 3c42fec5..d358ea58 100644
  
          net.minecraft.server.Chunk chunk = null;
  
-@@ -338,7 +338,7 @@ public class CraftWorld implements World {
+@@ -339,7 +339,7 @@ public class CraftWorld implements World {
              return world.chunkProviderServer.getChunkAt(x, z) != null;
          }
  
@@ -194,7 +194,7 @@ index 3c42fec5..d358ea58 100644
          net.minecraft.server.Chunk chunk = world.chunkProviderServer.chunks.get(LongHash.toLong(x, z));
  
          if (chunk == null) {
-@@ -1568,7 +1568,7 @@ public class CraftWorld implements World {
+@@ -1569,7 +1569,7 @@ public class CraftWorld implements World {
              }
  
              // Already unloading?
@@ -204,5 +204,5 @@ index 3c42fec5..d358ea58 100644
              }
  
 -- 
-2.20.1
+2.30.2
 

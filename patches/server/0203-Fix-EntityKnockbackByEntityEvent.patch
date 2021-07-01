@@ -1,11 +1,11 @@
-From c54899c8dd35a95ddccc9690ff3306bbe1965a51 Mon Sep 17 00:00:00 2001
+From de0361dc31ca71b957acb87053973bcf1efdb70e Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 19:20:22 +0300
 Subject: [PATCH] Fix EntityKnockbackByEntityEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/DamageSource.java b/src/main/java/net/minecraft/server/DamageSource.java
-index bc024176..237d9df3 100644
+index bc024176d..237d9df3a 100644
 --- a/src/main/java/net/minecraft/server/DamageSource.java
 +++ b/src/main/java/net/minecraft/server/DamageSource.java
 @@ -26,6 +26,7 @@ public class DamageSource {
@@ -17,7 +17,7 @@ index bc024176..237d9df3 100644
  
      public static DamageSource mobAttack(EntityLiving entityliving) {
 diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
-index ede4e3e9..f311373f 100644
+index ede4e3e9c..f311373fe 100644
 --- a/src/main/java/net/minecraft/server/EntityLiving.java
 +++ b/src/main/java/net/minecraft/server/EntityLiving.java
 @@ -841,7 +841,7 @@ public abstract class EntityLiving extends Entity {
@@ -58,7 +58,7 @@ index ede4e3e9..f311373f 100644
  
      protected String bo() {
 diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
-index b7d410ee..b6f0aaaf 100644
+index b7d410eeb..b6f0aaaf7 100644
 --- a/src/main/java/net/minecraft/server/Explosion.java
 +++ b/src/main/java/net/minecraft/server/Explosion.java
 @@ -135,7 +135,11 @@ public class Explosion {
@@ -107,4 +107,5 @@ index b7d410ee..b6f0aaaf 100644
                      }
                  }
 -- 
-2.25.1
+2.30.2
+

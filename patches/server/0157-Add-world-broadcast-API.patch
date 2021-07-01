@@ -1,11 +1,11 @@
-From 9088d14c325a4eb233b2293efc27dc3476381347 Mon Sep 17 00:00:00 2001
+From f39fd4a0eae4b0be62cf343072272811d9022422 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 27 Aug 2018 00:03:32 -0700
 Subject: [PATCH] Add world broadcast API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 5bdeb949..8a7c3345 100644
+index c70c4c174..edf2bafd4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -12,6 +12,7 @@ import java.util.Random;
@@ -16,7 +16,7 @@ index 5bdeb949..8a7c3345 100644
  import net.minecraft.server.*;
  
  import org.apache.commons.lang.Validate;
-@@ -850,6 +851,21 @@ public class CraftWorld implements World {
+@@ -851,6 +852,21 @@ public class CraftWorld implements World {
          return list;
      }
  
@@ -39,5 +39,5 @@ index 5bdeb949..8a7c3345 100644
      // Spigot start
          save(true);
 -- 
-2.19.0
+2.30.2
 

@@ -1,11 +1,11 @@
-From 35a180108ff673060c61d6c2ef39aee4d9517167 Mon Sep 17 00:00:00 2001
+From afec0bfb455a7c31afc56d3f23958a468f7d06d2 Mon Sep 17 00:00:00 2001
 From: RoccoDev <hey@rocco.dev>
 Date: Fri, 19 Mar 2021 16:55:19 +0100
 Subject: [PATCH] Optimize head rotation patch
 
 
 diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
-index 5fda01c3..45d611f3 100644
+index 5fda01c3d..45d611f34 100644
 --- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
 +++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
 @@ -411,9 +411,15 @@ public class EntityTrackerEntry {
@@ -27,5 +27,5 @@ index 5fda01c3..45d611f3 100644
                      // CraftBukkit end
  
 -- 
-2.28.0
+2.30.2
 

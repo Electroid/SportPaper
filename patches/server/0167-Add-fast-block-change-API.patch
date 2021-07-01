@@ -1,11 +1,11 @@
-From 2ee8add5bbd695ca331da793ee1ce006391f1cea Mon Sep 17 00:00:00 2001
+From 6b7bf62297fc1fa0298cc80eabb33bb5c8a63763 Mon Sep 17 00:00:00 2001
 From: Austin Mayes <almayes@trevecca.edu>
 Date: Tue, 5 Feb 2019 00:59:06 -0600
 Subject: [PATCH] Add fast block change API
 
 
 diff --git a/src/main/java/net/minecraft/server/BlockPosition.java b/src/main/java/net/minecraft/server/BlockPosition.java
-index 4160d545..1f28a997 100644
+index 4160d545a..1f28a9977 100644
 --- a/src/main/java/net/minecraft/server/BlockPosition.java
 +++ b/src/main/java/net/minecraft/server/BlockPosition.java
 @@ -318,4 +318,10 @@ public class BlockPosition extends BaseBlockPosition {
@@ -20,10 +20,10 @@ index 4160d545..1f28a997 100644
 +    // SportPaper end
  }
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 7047ecb9..d8a21927 100644
+index 4135d5954..dc81e2607 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -874,6 +874,7 @@ public class CraftWorld implements World {
+@@ -875,6 +875,7 @@ public class CraftWorld implements World {
          getPlayers().forEach(player -> player.sendMessage(components));
      }
  
@@ -31,7 +31,7 @@ index 7047ecb9..d8a21927 100644
      @Override
      public void broadcast(TranslatableComponent... translatables) {
          getPlayers().forEach(player -> player.sendMessage(translatables));
-@@ -884,6 +885,34 @@ public class CraftWorld implements World {
+@@ -885,6 +886,34 @@ public class CraftWorld implements World {
          getPlayers().forEach(player -> player.sendMessage(translatable));
      }
  
@@ -67,5 +67,5 @@ index 7047ecb9..d8a21927 100644
      // Spigot start
          save(true);
 -- 
-2.20.1
+2.30.2
 

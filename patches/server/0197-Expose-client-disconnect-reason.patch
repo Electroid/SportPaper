@@ -1,4 +1,4 @@
-From e71bdd3cadca08aa2c3addefd95ff256a290443b Mon Sep 17 00:00:00 2001
+From b1071fc494ccf9a11b7ccb712e4d884ddb42b11d Mon Sep 17 00:00:00 2001
 From: Austin L Mayes <me@austinlm.me>
 Date: Wed, 17 Feb 2021 16:37:59 -0600
 Subject: [PATCH] Expose client disconnect reason
@@ -6,7 +6,7 @@ Subject: [PATCH] Expose client disconnect reason
 Signed-off-by: Austin L Mayes <me@austinlm.me>
 
 diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
-index 5267250a..5e903d40 100644
+index 5267250ab..5e903d405 100644
 --- a/src/main/java/net/minecraft/server/PlayerConnection.java
 +++ b/src/main/java/net/minecraft/server/PlayerConnection.java
 @@ -722,7 +722,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
@@ -28,7 +28,7 @@ index 5267250a..5e903d40 100644
              this.minecraftServer.getPlayerList().sendMessage(CraftChatMessage.fromString(quitMessage));
          }
 diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
-index d09f7453..cb6a3be0 100644
+index d09f7453a..cb6a3be08 100644
 --- a/src/main/java/net/minecraft/server/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/PlayerList.java
 @@ -75,7 +75,7 @@ public abstract class PlayerList {
@@ -99,5 +99,5 @@ index d09f7453..cb6a3be0 100644
          entityplayer1.copyTo(entityplayer, flag);
          entityplayer1.d(entityplayer.getId());
 -- 
-2.25.1
+2.30.2
 

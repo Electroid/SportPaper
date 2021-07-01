@@ -1,4 +1,4 @@
-From 96d11bb8432ab5b2f2ce86f1152324b516c2a23d Mon Sep 17 00:00:00 2001
+From f9a6c374ab80d5f9f89777f72f718655b780f8d9 Mon Sep 17 00:00:00 2001
 From: Austin Mayes <austin@avicus.net>
 Date: Fri, 14 Feb 2020 18:11:36 -0600
 Subject: [PATCH] Speed up chunk unloading
@@ -123,10 +123,10 @@ index 775cbd481..550d824e4 100644
              // CraftBukkit end
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 87cb3be2a..b2eaf0c78 100644
+index 913bfbed7..cb97f4425 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -338,7 +338,6 @@ public class CraftWorld implements World {
+@@ -339,7 +339,6 @@ public class CraftWorld implements World {
              return world.chunkProviderServer.getChunkAt(x, z) != null;
          }
  
@@ -134,7 +134,7 @@ index 87cb3be2a..b2eaf0c78 100644
          net.minecraft.server.Chunk chunk = world.chunkProviderServer.chunks.get(LongHash.toLong(x, z));
  
          if (chunk == null) {
-@@ -348,6 +347,7 @@ public class CraftWorld implements World {
+@@ -349,6 +348,7 @@ public class CraftWorld implements World {
              chunkLoadPostProcess(chunk, x, z);
              world.timings.syncChunkLoadTimer.stopTiming(); // Spigot
          }
@@ -143,5 +143,5 @@ index 87cb3be2a..b2eaf0c78 100644
      }
  
 -- 
-2.31.1
+2.30.2
 

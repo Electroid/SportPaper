@@ -1,11 +1,11 @@
-From f5dc0bb692c4c7896480e6b3f04708e25d0dd3e3 Mon Sep 17 00:00:00 2001
+From 632e4654cdb32e97b6138913d6fee8036004af17 Mon Sep 17 00:00:00 2001
 From: Austin Mayes <almayes@trevecca.edu>
 Date: Tue, 5 Mar 2019 21:25:54 -0600
 Subject: [PATCH] Personalized component API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index d8a21927..3c42fec5 100644
+index dc81e2607..e184d4168 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 @@ -15,7 +15,7 @@ import java.util.UUID;
@@ -17,7 +17,7 @@ index d8a21927..3c42fec5 100644
  import org.apache.commons.lang.Validate;
  import org.bukkit.BlockChangeDelegate;
  import org.bukkit.Bukkit;
-@@ -876,12 +876,12 @@ public class CraftWorld implements World {
+@@ -877,12 +877,12 @@ public class CraftWorld implements World {
  
      // SportPaper start
      @Override
@@ -33,5 +33,5 @@ index d8a21927..3c42fec5 100644
      }
  
 -- 
-2.20.1
+2.30.2
 

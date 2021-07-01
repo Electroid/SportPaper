@@ -1,11 +1,11 @@
-From 2dda8400bdeea5f788fb18efd3f94d47d09687d6 Mon Sep 17 00:00:00 2001
+From 83b48a73fc8cba0c3994f78ae3a16ea63d01642a Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Fri, 24 Aug 2018 02:33:02 -0700
 Subject: [PATCH] isChunkGenerated API
 
 
 diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
-index 475e2507..0602beac 100644
+index 475e2507d..0602beac9 100644
 --- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
 +++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
 @@ -129,6 +129,12 @@ public class ChunkProviderServer implements IChunkProvider {
@@ -22,10 +22,10 @@ index 475e2507..0602beac 100644
      public Chunk getChunkIfLoaded(int x, int z) {
          return chunks.get(LongHash.toLong(x, z));
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-index 86bbb9f5..5bdeb949 100644
+index 27840e017..c70c4c174 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
-@@ -662,6 +662,12 @@ public class CraftWorld implements World {
+@@ -663,6 +663,12 @@ public class CraftWorld implements World {
          return getChunkAt(location.getBlockX() >> 4, location.getBlockZ() >> 4);
      }
  
@@ -39,5 +39,5 @@ index 86bbb9f5..5bdeb949 100644
          return generator;
      }
 -- 
-2.19.0
+2.30.2
 

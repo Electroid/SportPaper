@@ -1,11 +1,11 @@
-From 88b24a411ba183287a92d16136b4a859b83529d0 Mon Sep 17 00:00:00 2001
+From ff885d929f43e3fd78a8d611e89f8953e8018154 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 10:43:08 +0300
 Subject: [PATCH] Cache block break animation packet
 
 
 diff --git a/src/main/java/net/minecraft/server/WorldManager.java b/src/main/java/net/minecraft/server/WorldManager.java
-index 55a2112d..1acae40d 100644
+index 55a2112d2..1acae40d9 100644
 --- a/src/main/java/net/minecraft/server/WorldManager.java
 +++ b/src/main/java/net/minecraft/server/WorldManager.java
 @@ -61,6 +61,7 @@ public class WorldManager implements IWorldAccess {
@@ -29,5 +29,5 @@ index 55a2112d..1acae40d 100644
              }
          }
 -- 
-2.25.1
+2.30.2
 
