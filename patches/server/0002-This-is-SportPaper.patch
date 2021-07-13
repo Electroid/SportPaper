@@ -1,4 +1,4 @@
-From 7ea153ab75c2b0301d652a136d616093ec920c28 Mon Sep 17 00:00:00 2001
+From 51cbc39cff75fea4b435d47d69415d538397e89e Mon Sep 17 00:00:00 2001
 From: Austin Mayes <austin@avicus.net>
 Date: Mon, 16 Oct 2017 11:45:28 -0500
 Subject: [PATCH] This is SportPaper
@@ -6,7 +6,7 @@ Subject: [PATCH] This is SportPaper
   Also includes some legacy mc-dev imports
 
 diff --git a/pom.xml b/pom.xml
-index 6aaba502..092ca7df 100644
+index 6aaba5027..1c4c754da 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,12 +1,10 @@
@@ -48,17 +48,84 @@ index 6aaba502..092ca7df 100644
              <version>${project.version}</version>
              <type>jar</type>
              <scope>compile</scope>
-@@ -113,7 +111,7 @@
-             <artifactId>gitdescribe-maven-plugin</artifactId>
-             <version>1.3</version>
-             <configuration>
+@@ -108,23 +106,49 @@
+     <build>
+         <defaultGoal>install</defaultGoal>
+         <plugins>
+-            <plugin>
+-            <groupId>com.lukegb.mojo</groupId>
+-            <artifactId>gitdescribe-maven-plugin</artifactId>
+-            <version>1.3</version>
+-            <configuration>
 -                <outputPrefix>git-PaperSpigot-</outputPrefix>
-+                <outputPrefix>git-SportPaper-</outputPrefix>
-                 <scmDirectory>..</scmDirectory>
-             </configuration>
-             <executions>
+-                <scmDirectory>..</scmDirectory>
+-            </configuration>
+-            <executions>
+-                <execution>
+-                    <phase>compile</phase>
+-                    <goals>
+-                        <goal>gitdescribe</goal>
+-                    </goals>
+-                </execution>
+-            </executions>
+-        </plugin>
++						<plugin>
++								<groupId>net.md-5</groupId>
++								<artifactId>scriptus</artifactId>
++								<version>0.4.1</version>
++								<executions>
++									<execution>
++										<id>ex-sport</id>
++										<configuration>
++											<format>git-SportPaper-%s</format>
++											<scmDirectory>../</scmDirectory>
++											<descriptionProperty>sportpaper.desc</descriptionProperty>
++										</configuration>
++										<phase>initialize</phase>
++										<goals>
++											<goal>describe</goal>
++										</goals>
++									</execution>
++										<execution>
++												<id>ex-spigot</id>
++												<configuration>
++														<format>git-Spigot-%s</format>
++														<scmDirectory>../base/Paper/Spigot-Server</scmDirectory>
++														<descriptionProperty>spigot.desc</descriptionProperty>
++												</configuration>
++												<phase>initialize</phase>
++												<goals>
++														<goal>describe</goal>
++												</goals>
++										</execution>
++										<execution>
++												<id>ex-craftbukkit</id>
++												<configuration>
++														<format>-%s</format>
++														<scmDirectory>../base/Paper/CraftBukkit</scmDirectory>
++														<descriptionProperty>craftbukkit.desc</descriptionProperty>
++												</configuration>
++												<phase>initialize</phase>
++												<goals>
++														<goal>describe</goal>
++												</goals>
++										</execution>
++								</executions>
++						</plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-jar-plugin</artifactId>
+@@ -135,7 +159,7 @@
+                         <manifestEntries>
+                             <Main-Class>org.bukkit.craftbukkit.Main</Main-Class>
+                             <Implementation-Title>CraftBukkit</Implementation-Title>
+-                            <Implementation-Version>${describe}</Implementation-Version>
++                            <Implementation-Version>${sportpaper.desc}${spigot.desc}${craftbukkit.desc}</Implementation-Version>
+                             <Implementation-Vendor>Bukkit Team</Implementation-Vendor>
+                             <Specification-Title>Bukkit</Specification-Title>
+                             <Specification-Version>${api.version}</Specification-Version>
 diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
-index b400ce04..bbca20fa 100644
+index b400ce04d..bbca20fa0 100644
 --- a/src/main/java/net/minecraft/server/MinecraftServer.java
 +++ b/src/main/java/net/minecraft/server/MinecraftServer.java
 @@ -1084,7 +1084,7 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
@@ -71,7 +138,7 @@ index b400ce04..bbca20fa 100644
  
      public CrashReport b(CrashReport crashreport) {
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
-index 3a4b1424..36bb612a 100644
+index 3a4b14246..36bb612a9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
 @@ -11,7 +11,7 @@ public final class Versioning {
@@ -84,5 +151,5 @@ index 3a4b1424..36bb612a 100644
  
          if (stream != null) {
 -- 
-2.18.0
+2.30.2
 
