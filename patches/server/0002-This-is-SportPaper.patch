@@ -1,4 +1,4 @@
-From 51cbc39cff75fea4b435d47d69415d538397e89e Mon Sep 17 00:00:00 2001
+From bec48f109af4a7e0e4dc562fcc44857b68a2f0d6 Mon Sep 17 00:00:00 2001
 From: Austin Mayes <austin@avicus.net>
 Date: Mon, 16 Oct 2017 11:45:28 -0500
 Subject: [PATCH] This is SportPaper
@@ -6,7 +6,7 @@ Subject: [PATCH] This is SportPaper
   Also includes some legacy mc-dev imports
 
 diff --git a/pom.xml b/pom.xml
-index 6aaba5027..1c4c754da 100644
+index 6aaba5027..5d6a6dba4 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -1,12 +1,10 @@
@@ -48,7 +48,16 @@ index 6aaba5027..1c4c754da 100644
              <version>${project.version}</version>
              <type>jar</type>
              <scope>compile</scope>
-@@ -108,23 +106,49 @@
+@@ -100,7 +98,7 @@
+         <!-- PaperSpigot - Repo for gitdescribe -->
+         <pluginRepository>
+             <id>destroystokyo</id>
+-            <url>https://ci.destroystokyo.com/plugin/repository/everything/</url>
++            <url>https://papermc.io/repo/repository/maven-public/</url>
+         </pluginRepository>
+     </pluginRepositories>
+ 
+@@ -108,23 +106,61 @@
      <build>
          <defaultGoal>install</defaultGoal>
          <plugins>
@@ -74,22 +83,34 @@ index 6aaba5027..1c4c754da 100644
 +								<artifactId>scriptus</artifactId>
 +								<version>0.4.1</version>
 +								<executions>
-+									<execution>
-+										<id>ex-sport</id>
-+										<configuration>
-+											<format>git-SportPaper-%s</format>
-+											<scmDirectory>../</scmDirectory>
-+											<descriptionProperty>sportpaper.desc</descriptionProperty>
-+										</configuration>
-+										<phase>initialize</phase>
-+										<goals>
-+											<goal>describe</goal>
-+										</goals>
-+									</execution>
++										<execution>
++												<id>ex-sport</id>
++												<configuration>
++														<format>git-SportPaper-%s</format>
++														<scmDirectory>../</scmDirectory>
++														<descriptionProperty>sportpaper.desc</descriptionProperty>
++												</configuration>
++												<phase>initialize</phase>
++												<goals>
++														<goal>describe</goal>
++												</goals>
++										</execution>
++										<execution>
++												<id>ex-paper</id>
++												<configuration>
++														<format>-P.%s</format>
++														<scmDirectory>../base/Paper/PaperSpigot-Server</scmDirectory>
++														<descriptionProperty>paper.desc</descriptionProperty>
++												</configuration>
++												<phase>initialize</phase>
++												<goals>
++														<goal>describe</goal>
++												</goals>
++										</execution>
 +										<execution>
 +												<id>ex-spigot</id>
 +												<configuration>
-+														<format>git-Spigot-%s</format>
++														<format>-SP.%s</format>
 +														<scmDirectory>../base/Paper/Spigot-Server</scmDirectory>
 +														<descriptionProperty>spigot.desc</descriptionProperty>
 +												</configuration>
@@ -101,7 +122,7 @@ index 6aaba5027..1c4c754da 100644
 +										<execution>
 +												<id>ex-craftbukkit</id>
 +												<configuration>
-+														<format>-%s</format>
++														<format>-CB.%s</format>
 +														<scmDirectory>../base/Paper/CraftBukkit</scmDirectory>
 +														<descriptionProperty>craftbukkit.desc</descriptionProperty>
 +												</configuration>
@@ -115,12 +136,12 @@ index 6aaba5027..1c4c754da 100644
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-jar-plugin</artifactId>
-@@ -135,7 +159,7 @@
+@@ -135,7 +171,7 @@
                          <manifestEntries>
                              <Main-Class>org.bukkit.craftbukkit.Main</Main-Class>
                              <Implementation-Title>CraftBukkit</Implementation-Title>
 -                            <Implementation-Version>${describe}</Implementation-Version>
-+                            <Implementation-Version>${sportpaper.desc}${spigot.desc}${craftbukkit.desc}</Implementation-Version>
++                            <Implementation-Version>${sportpaper.desc}${paper.desc}${spigot.desc}${craftbukkit.desc}</Implementation-Version>
                              <Implementation-Vendor>Bukkit Team</Implementation-Vendor>
                              <Specification-Title>Bukkit</Specification-Title>
                              <Specification-Version>${api.version}</Specification-Version>
