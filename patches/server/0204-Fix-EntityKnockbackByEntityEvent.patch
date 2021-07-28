@@ -1,11 +1,11 @@
-From e04e6d7f101eae4e3fa364a25cd31f769f2c61f8 Mon Sep 17 00:00:00 2001
+From bbda0c61059f63c3913e92859aea1085ca3cc925 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 19:20:22 +0300
 Subject: [PATCH] Fix EntityKnockbackByEntityEvent
 
 
 diff --git a/src/main/java/net/minecraft/server/DamageSource.java b/src/main/java/net/minecraft/server/DamageSource.java
-index bc024176d..237d9df3a 100644
+index bc024176..237d9df3 100644
 --- a/src/main/java/net/minecraft/server/DamageSource.java
 +++ b/src/main/java/net/minecraft/server/DamageSource.java
 @@ -26,6 +26,7 @@ public class DamageSource {
@@ -17,7 +17,7 @@ index bc024176d..237d9df3a 100644
  
      public static DamageSource mobAttack(EntityLiving entityliving) {
 diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
-index ede4e3e9c..f311373fe 100644
+index ede4e3e9..f311373f 100644
 --- a/src/main/java/net/minecraft/server/EntityLiving.java
 +++ b/src/main/java/net/minecraft/server/EntityLiving.java
 @@ -841,7 +841,7 @@ public abstract class EntityLiving extends Entity {
@@ -58,7 +58,7 @@ index ede4e3e9c..f311373fe 100644
  
      protected String bo() {
 diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
-index b7d410eeb..b6f0aaaf7 100644
+index b7d410ee..0d6ccbf7 100644
 --- a/src/main/java/net/minecraft/server/Explosion.java
 +++ b/src/main/java/net/minecraft/server/Explosion.java
 @@ -135,7 +135,11 @@ public class Explosion {
@@ -74,7 +74,7 @@ index b7d410eeb..b6f0aaaf7 100644
                          CraftEventFactory.entityDamage = null;
                          if (!wasDamaged && !(entity instanceof EntityTNTPrimed || entity instanceof EntityFallingBlock) && !entity.forceExplosionKnockback) {
                              continue;
-@@ -150,11 +154,29 @@ public class Explosion {
+@@ -150,11 +154,33 @@ public class Explosion {
                          entity.motZ += d10 * d14;
                          */
                          // This impulse method sets the dirty flag, so clients will get an immediate velocity update
@@ -102,10 +102,14 @@ index b7d410eeb..b6f0aaaf7 100644
  
                          if (entity instanceof EntityHuman && !((EntityHuman) entity).abilities.isInvulnerable && !world.paperSpigotConfig.disableExplosionKnockback) { // PaperSpigot
 -                            this.k.put((EntityHuman) entity, new Vec3D(d8 * d13, d9 * d13, d10 * d13));
-+                            this.k.put((EntityHuman) entity, new Vec3D(x / d14 * d13, y / d14 * d13, z / d14 * d13)); // SportPaper
++                            double vecX = d14 == 0 ? x : x / d14;
++                            double vecY = d14 == 0 ? y : y / d14;
++                            double vecZ = d14 == 0 ? z : z / d14;
++
++                            this.k.put((EntityHuman) entity, new Vec3D(vecX * d13, vecY * d13, vecZ * d13)); // SportPaper
                          }
                      }
                  }
 -- 
-2.30.2
+2.25.1
 
