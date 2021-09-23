@@ -1,11 +1,11 @@
-From 7ec1fc360876dd4bd42c55e3b3e64d0efb6417f9 Mon Sep 17 00:00:00 2001
+From 1f6664eb3b14f26931b4fc73be508b64a0c5d11f Mon Sep 17 00:00:00 2001
 From: linsaftw <linsaftw@users.noreply.github.com>
 Date: Sun, 25 Apr 2021 17:33:56 -0300
 Subject: [PATCH] Fix Teleport Invisibility
 
 
 diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
-index 45d611f34..97fbf0eab 100644
+index 45d611f3..97fbf0ea 100644
 --- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
 +++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
 @@ -13,6 +13,10 @@ import org.bukkit.entity.Player;
@@ -30,5 +30,5 @@ index 45d611f34..97fbf0eab 100644
                          // CraftBukkit end
                          object = new PacketPlayOutEntityTeleport(this.tracker.getId(), i, j, k, (byte) l, (byte) i1, this.tracker.onGround);
 -- 
-2.30.2
+2.17.1
 

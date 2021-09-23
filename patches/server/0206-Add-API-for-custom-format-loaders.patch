@@ -1,0 +1,338 @@
+From cb6ee67011963c3de485743cb37ae4d93ab5b2fe Mon Sep 17 00:00:00 2001
+From: William Jeffcock <jeffcockw@gmail.com>
+Date: Thu, 23 Sep 2021 01:11:33 +0100
+Subject: [PATCH] Add API for custom format loaders
+
+
+diff --git a/src/main/java/net/minecraft/server/ServerNBTManager.java b/src/main/java/net/minecraft/server/ServerNBTManager.java
+index 7b3985f6..809c5667 100644
+--- a/src/main/java/net/minecraft/server/ServerNBTManager.java
++++ b/src/main/java/net/minecraft/server/ServerNBTManager.java
+@@ -8,21 +8,8 @@ public class ServerNBTManager extends WorldNBTStorage {
+         super(file, s, flag);
+     }
+ 
+-    public IChunkLoader createChunkLoader(WorldProvider worldprovider) {
+-        File file = this.getDirectory();
+-        File file1;
+-
+-        if (worldprovider instanceof WorldProviderHell) {
+-            file1 = new File(file, "DIM-1");
+-            file1.mkdirs();
+-            return new ChunkRegionLoader(file1);
+-        } else if (worldprovider instanceof WorldProviderTheEnd) {
+-            file1 = new File(file, "DIM1");
+-            file1.mkdirs();
+-            return new ChunkRegionLoader(file1);
+-        } else {
+-            return new ChunkRegionLoader(file);
+-        }
++    public IChunkLoader createChunkLoader(WorldProvider worldprovider) { // SportPaper - allow for custom format loaders
++        return format.createChunkLoader(worldprovider);
+     }
+ 
+     public void saveWorldData(WorldData worlddata, NBTTagCompound nbttagcompound) {
+diff --git a/src/main/java/net/minecraft/server/WorldNBTStorage.java b/src/main/java/net/minecraft/server/WorldNBTStorage.java
+index 590095e4..363b4d4d 100644
+--- a/src/main/java/net/minecraft/server/WorldNBTStorage.java
++++ b/src/main/java/net/minecraft/server/WorldNBTStorage.java
+@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
+ import java.util.UUID;
+ 
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.world.CraftFormatManager;
++import org.bukkit.craftbukkit.world.IWorldFormat;
+ import org.github.paperspigot.PaperSpigotConfig;
+ import org.github.paperspigot.exception.ServerInternalException;
+ // CraftBukkit end
+@@ -28,6 +30,7 @@ public class WorldNBTStorage implements IDataManager, IPlayerFileData {
+     private final long sessionId = MinecraftServer.az();
+     private final String f;
+     private UUID uuid = null; // CraftBukkit
++    public IWorldFormat format; // SportPaper
+ 
+     public WorldNBTStorage(File file, String s, boolean flag) {
+         this.baseDir = new File(file, s);
+@@ -36,6 +39,7 @@ public class WorldNBTStorage implements IDataManager, IPlayerFileData {
+         this.dataDir = new File(this.baseDir, "data");
+         this.dataDir.mkdirs();
+         this.f = s;
++        this.format = CraftFormatManager.findFormat(this, baseDir);
+         if (flag) {
+             this.playerDir.mkdirs();
+         }
+@@ -76,7 +80,6 @@ public class WorldNBTStorage implements IDataManager, IPlayerFileData {
+             } finally {
+                 datainputstream.close();
+             }
+-
+         } catch (IOException ioexception) {
+             throw new ExceptionWorldConflict("Failed to check session lock for world located at " + this.baseDir + ", aborting. Stop the server and delete the session.lock in this world to prevent further issues."); // Spigot
+         }
+@@ -87,69 +90,14 @@ public class WorldNBTStorage implements IDataManager, IPlayerFileData {
+     }
+ 
+     public WorldData getWorldData() {
+-        File file = new File(this.baseDir, "level.dat");
+-        NBTTagCompound nbttagcompound;
+-        NBTTagCompound nbttagcompound1;
+-
+-        if (file.exists()) {
+-            try {
+-                nbttagcompound = NBTCompressedStreamTools.a((InputStream) (new FileInputStream(file)));
+-                nbttagcompound1 = nbttagcompound.getCompound("Data");
+-                return new WorldData(nbttagcompound1);
+-            } catch (Exception exception) {
+-                exception.printStackTrace();
+-                ServerInternalException.reportInternalException(exception); // Paper
+-            }
+-        }
+-
+-        file = new File(this.baseDir, "level.dat_old");
+-        if (file.exists()) {
+-            try {
+-                nbttagcompound = NBTCompressedStreamTools.a((InputStream) (new FileInputStream(file)));
+-                nbttagcompound1 = nbttagcompound.getCompound("Data");
+-                return new WorldData(nbttagcompound1);
+-            } catch (Exception exception1) {
+-                exception1.printStackTrace();
+-                ServerInternalException.reportInternalException(exception1); // Paper
+-            }
+-        }
+-
+-        return null;
++        return format.loadWorldData();
+     }
+ 
+-    public void saveWorldData(WorldData worlddata, NBTTagCompound nbttagcompound) {
+-        NBTTagCompound nbttagcompound1 = worlddata.a(nbttagcompound);
+-        NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+-
+-        nbttagcompound2.set("Data", nbttagcompound1);
+-
+-        try {
+-            File file = new File(this.baseDir, "level.dat_new");
+-            File file1 = new File(this.baseDir, "level.dat_old");
+-            File file2 = new File(this.baseDir, "level.dat");
+-
+-            NBTCompressedStreamTools.a(nbttagcompound2, (OutputStream) (new FileOutputStream(file)));
+-            if (file1.exists()) {
+-                file1.delete();
+-            }
+-
+-            file2.renameTo(file1);
+-            if (file2.exists()) {
+-                file2.delete();
+-            }
+-
+-            file.renameTo(file2);
+-            if (file.exists()) {
+-                file.delete();
+-            }
+-        } catch (Exception exception) {
+-            exception.printStackTrace();
+-            ServerInternalException.reportInternalException(exception); // Paper
+-        }
+-
++    public void saveWorldData(WorldData worlddata, NBTTagCompound nbttagcompound) { // nbttagcompound is always null - see PlayerList#t()
++        format.saveWorldData(worlddata, nbttagcompound);
+     }
+ 
+-    public void saveWorldData(WorldData worlddata) {
++    public void saveWorldData(WorldData worlddata) { // called when migrating worlds
+         NBTTagCompound nbttagcompound = worlddata.a();
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/world/AnvilFormatLoader.java b/src/main/java/org/bukkit/craftbukkit/world/AnvilFormatLoader.java
+new file mode 100644
+index 00000000..8050f252
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/world/AnvilFormatLoader.java
+@@ -0,0 +1,109 @@
++package org.bukkit.craftbukkit.world;
++
++import java.io.File;
++import java.io.FileInputStream;
++import java.io.FileOutputStream;
++import java.io.InputStream;
++import java.io.OutputStream;
++
++import net.minecraft.server.ChunkRegionLoader;
++import net.minecraft.server.IChunkLoader;
++import net.minecraft.server.NBTTagCompound;
++import net.minecraft.server.NBTCompressedStreamTools;
++import net.minecraft.server.WorldData;
++import net.minecraft.server.WorldNBTStorage;
++import net.minecraft.server.WorldProvider;
++import net.minecraft.server.WorldProviderHell;
++import net.minecraft.server.WorldProviderTheEnd;
++
++import org.github.paperspigot.exception.ServerInternalException;
++
++public class AnvilFormatLoader implements IWorldFormat {
++
++    private WorldNBTStorage worldStorage;
++    private File worldDir, container;
++
++    public AnvilFormatLoader(WorldNBTStorage worldStorage, File worldDir) {
++        this.worldStorage = worldStorage;
++        this.worldDir = worldDir;
++    }
++
++    @Override
++    public IChunkLoader createChunkLoader(WorldProvider worldProvider) {
++        File container = worldDir;
++        if (worldProvider instanceof WorldProviderHell) {
++            container = new File(worldDir, "DIM-1");
++            container.mkdirs();
++        } else if (worldProvider instanceof WorldProviderTheEnd) {
++            container = new File(worldDir, "DIM1");
++            container.mkdirs();
++        }
++
++        return new ChunkRegionLoader(container);
++    }
++
++    @Override
++    public WorldData loadWorldData() {
++        File file = new File(worldDir, "level.dat");
++        NBTTagCompound nbttagcompound;
++        NBTTagCompound nbttagcompound1;
++
++        if (file.exists()) {
++            try {
++                nbttagcompound = NBTCompressedStreamTools.a((InputStream) (new FileInputStream(file)));
++                nbttagcompound1 = nbttagcompound.getCompound("Data");
++                return new WorldData(nbttagcompound1);
++            } catch (Exception exception) {
++                exception.printStackTrace();
++                ServerInternalException.reportInternalException(exception); // Paper
++            }
++        }
++
++        file = new File(worldDir, "level.dat_old");
++        if (file.exists()) {
++            try {
++                nbttagcompound = NBTCompressedStreamTools.a((InputStream) (new FileInputStream(file)));
++                nbttagcompound1 = nbttagcompound.getCompound("Data");
++                return new WorldData(nbttagcompound1);
++            } catch (Exception exception1) {
++                exception1.printStackTrace();
++                ServerInternalException.reportInternalException(exception1); // Paper
++            }
++        }
++
++        return null;
++    }
++
++    @Override
++    public void saveWorldData(WorldData worlddata, NBTTagCompound nbttagcompound) {
++        NBTTagCompound nbttagcompound1 = worlddata.a(nbttagcompound);
++        NBTTagCompound nbttagcompound2 = new NBTTagCompound();
++
++        nbttagcompound2.set("Data", nbttagcompound1);
++
++        try {
++            File file = new File(worldDir, "level.dat_new");
++            File file1 = new File(worldDir, "level.dat_old");
++            File file2 = new File(worldDir, "level.dat");
++
++            NBTCompressedStreamTools.a(nbttagcompound2, (OutputStream) (new FileOutputStream(file)));
++            if (file1.exists()) {
++                file1.delete();
++            }
++
++            file2.renameTo(file1);
++            if (file2.exists()) {
++                file2.delete();
++            }
++
++            file.renameTo(file2);
++            if (file.exists()) {
++                file.delete();
++            }
++        } catch (Exception exception) {
++            exception.printStackTrace();
++            ServerInternalException.reportInternalException(exception); // Paper
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/craftbukkit/world/CraftFormatManager.java b/src/main/java/org/bukkit/craftbukkit/world/CraftFormatManager.java
+new file mode 100644
+index 00000000..212063c0
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/world/CraftFormatManager.java
+@@ -0,0 +1,27 @@
++package org.bukkit.craftbukkit.world;
++
++import java.io.File;
++import java.util.ArrayList;
++import java.util.List;
++
++import net.minecraft.server.WorldNBTStorage;
++
++public class CraftFormatManager { // SportPaper
++
++    private static List<IWorldFormatProvider> providers = new ArrayList<>();
++
++    public static IWorldFormat findFormat(WorldNBTStorage worldStorage, File worldDir) {
++        for (IWorldFormatProvider provider : providers) {
++            IWorldFormat result = provider.create(worldStorage, worldDir);
++            if (result != null)
++                return result;
++        }
++
++        return new AnvilFormatLoader(worldStorage, worldDir);
++    }
++
++    public static void addFormatProvider(IWorldFormatProvider provider) {
++        providers.add(provider);
++    }
++
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/world/IWorldFormat.java b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormat.java
+new file mode 100644
+index 00000000..01c8af4f
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormat.java
+@@ -0,0 +1,18 @@
++package org.bukkit.craftbukkit.world;
++
++import java.io.File;
++
++import net.minecraft.server.IChunkLoader;
++import net.minecraft.server.NBTTagCompound;
++import net.minecraft.server.WorldData;
++import net.minecraft.server.WorldProvider;
++
++public interface IWorldFormat { // SportPaper
++
++    IChunkLoader createChunkLoader(WorldProvider worldProvider);
++
++    WorldData loadWorldData();
++
++    void saveWorldData(WorldData worldData, NBTTagCompound nbt);
++
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/world/IWorldFormatProvider.java b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormatProvider.java
+new file mode 100644
+index 00000000..8dbd5826
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormatProvider.java
+@@ -0,0 +1,11 @@
++package org.bukkit.craftbukkit.world;
++
++import java.io.File;
++
++import net.minecraft.server.WorldNBTStorage;
++
++public interface IWorldFormatProvider { // SportPaper
++
++    IWorldFormat create(WorldNBTStorage storage, File worldDir);
++
++}
+-- 
+2.17.1
+
