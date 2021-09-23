@@ -1,4 +1,4 @@
-From d9173e8593b261c946686ac79bd9a3e08f4b7ea0 Mon Sep 17 00:00:00 2001
+From 96de1b7ec06d7843bbcc452ec5a6a9dbf928ce9d Mon Sep 17 00:00:00 2001
 From: William Jeffcock <jeffcockw@gmail.com>
 Date: Sat, 28 Aug 2021 23:32:33 +0100
 Subject: [PATCH] Fix getPlayer not respecting viewer when looking for an exact
@@ -6,7 +6,7 @@ Subject: [PATCH] Fix getPlayer not respecting viewer when looking for an exact
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
-index 0f75111e..6453951d 100644
+index c90241cd..52b2d106 100644
 --- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
 @@ -360,7 +360,7 @@ public final class CraftServer implements Server {

@@ -1,11 +1,11 @@
-From f896a2a02114847af971f47b615f23959221bb12 Mon Sep 17 00:00:00 2001
+From 9b950b8a7ec886c8b610c92c1002fd0b4e91e464 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Sat, 17 Apr 2021 10:28:37 +0300
 Subject: [PATCH] Limit CraftChatMessage iterations
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java b/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java
-index 38ef8216c..a68d9e38c 100644
+index 38ef8216..a68d9e38 100644
 --- a/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java
 +++ b/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java
 @@ -143,8 +143,14 @@ public final class CraftChatMessage {
@@ -25,5 +25,5 @@ index 38ef8216c..a68d9e38c 100644
              out.append(modi.getColor() == null ? defaultColor : modi.getColor());
              if (modi.isBold()) {
 -- 
-2.30.2
+2.17.1
 
