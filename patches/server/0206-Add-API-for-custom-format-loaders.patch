@@ -1,4 +1,4 @@
-From cb6ee67011963c3de485743cb37ae4d93ab5b2fe Mon Sep 17 00:00:00 2001
+From 23260df35df06d1fcecfbb13454e3c1961afc264 Mon Sep 17 00:00:00 2001
 From: William Jeffcock <jeffcockw@gmail.com>
 Date: Thu, 23 Sep 2021 01:11:33 +0100
 Subject: [PATCH] Add API for custom format loaders
@@ -145,7 +145,7 @@ index 590095e4..363b4d4d 100644
  
 diff --git a/src/main/java/org/bukkit/craftbukkit/world/AnvilFormatLoader.java b/src/main/java/org/bukkit/craftbukkit/world/AnvilFormatLoader.java
 new file mode 100644
-index 00000000..8050f252
+index 00000000..622841b0
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/world/AnvilFormatLoader.java
 @@ -0,0 +1,109 @@
@@ -261,7 +261,7 @@ index 00000000..8050f252
 \ No newline at end of file
 diff --git a/src/main/java/org/bukkit/craftbukkit/world/CraftFormatManager.java b/src/main/java/org/bukkit/craftbukkit/world/CraftFormatManager.java
 new file mode 100644
-index 00000000..212063c0
+index 00000000..7b0de027
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/world/CraftFormatManager.java
 @@ -0,0 +1,27 @@
@@ -294,7 +294,7 @@ index 00000000..212063c0
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/world/IWorldFormat.java b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormat.java
 new file mode 100644
-index 00000000..01c8af4f
+index 00000000..8466cd0d
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormat.java
 @@ -0,0 +1,18 @@
@@ -318,7 +318,7 @@ index 00000000..01c8af4f
 +}
 diff --git a/src/main/java/org/bukkit/craftbukkit/world/IWorldFormatProvider.java b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormatProvider.java
 new file mode 100644
-index 00000000..8dbd5826
+index 00000000..5bac0f05
 --- /dev/null
 +++ b/src/main/java/org/bukkit/craftbukkit/world/IWorldFormatProvider.java
 @@ -0,0 +1,11 @@
@@ -334,5 +334,5 @@ index 00000000..8dbd5826
 +
 +}
 -- 
-2.17.1
+2.34.1
 

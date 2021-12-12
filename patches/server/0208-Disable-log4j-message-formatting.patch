@@ -1,0 +1,26 @@
+From 9e1fc71688bd80e8c75f5f719e86f4bfe5079139 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 10 Dec 2021 07:53:20 +1100
+Subject: [PATCH] Disable log4j message formatting
+
+
+diff --git a/src/main/resources/log4j2.xml b/src/main/resources/log4j2.xml
+index f37d1c2d..0452fbc0 100644
+--- a/src/main/resources/log4j2.xml
++++ b/src/main/resources/log4j2.xml
+@@ -3,10 +3,10 @@
+     <Appenders>
+         <Console name="WINDOWS_COMPAT" target="SYSTEM_OUT"></Console>
+         <Queue name="TerminalConsole">
+-            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n" />
++            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg{nolookups}%n" />
+         </Queue>
+         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
+-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
++            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg{nolookups}%n" />
+             <Policies>
+                 <TimeBasedTriggeringPolicy />
+                 <OnStartupTriggeringPolicy />
+-- 
+2.34.1
+
