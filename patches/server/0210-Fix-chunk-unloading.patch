@@ -1,0 +1,31 @@
+From 827e396174f52fe04ebeed7ef0a930ad653b5805 Mon Sep 17 00:00:00 2001
+From: applenick <applenick@users.noreply.github.com>
+Date: Wed, 29 Dec 2021 16:09:42 -0800
+Subject: [PATCH] Fix chunk unloading
+
+Signed-off-by: applenick <applenick@users.noreply.github.com>
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 550d824e..812686d5 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -22,14 +22,14 @@ import org.github.paperspigot.exception.ServerInternalException;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+-import it.unimi.dsi.fastutil.longs.LongArraySet;
++import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+ // SportPaper end
+ 
+ public class ChunkProviderServer implements IChunkProvider {
+ 
+     private static final Logger b = LogManager.getLogger();
+-    public LongSet unloadQueue = new LongArraySet(20); // SportPaper
++    public LongSet unloadQueue = new LongOpenHashSet(20); // SportPaper
+     public Chunk emptyChunk;
+     public IChunkProvider chunkProvider;
+     private IChunkLoader chunkLoader;
+-- 
+2.32.0 (Apple Git-132)
+
