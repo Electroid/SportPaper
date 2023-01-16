@@ -1,4 +1,4 @@
-# SportPaper [![Status](https://github.com/Electroid/SportPaper/actions/workflows/ci.yml/badge.svg)](https://github.com/Electroid/SportPaper/actions)
+# SportPaper [![Status](https://github.com/Electroid/SportPaper/actions/workflows/build.yml/badge.svg)](https://github.com/Electroid/SportPaper/actions)
 
 A performance-tuned Minecraft 1.8 server, forked from Spigot and Paper.
 

@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Build (Java ${{ matrix.java }})
     strategy:
       matrix:
         java:
