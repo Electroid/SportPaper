@@ -15,23 +15,15 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
         </repository>
         <repository>
-            <id>ashcon-releases</id>
-            <url>https://repo.ashcon.app/nexus/content/repositories/releases</url>
-        </repository>
-        <repository>
-            <id>ashcon-snapshots</id>
-            <url>https://repo.ashcon.app/nexus/content/repositories/snapshots</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Electroid/SportPaper</url>
         </repository>
     </repositories>
     <distributionManagement>
         <repository>
-            <id>ashcon-releases</id>
-            <url>https://repo.ashcon.app/nexus/content/repositories/releases</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Electroid/SportPaper</url>
         </repository>
-        <snapshotRepository>
-            <id>ashcon-snapshots</id>
-            <url>https://repo.ashcon.app/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
     </distributionManagement>
     <modules>
         <module>SportPaper-API</module>

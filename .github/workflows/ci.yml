@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - patches/**.patch
+      - pom.xml
+      - settings.xml
+  pull_request:
+    paths:
+      - patches/**.patch
+  workflow_dispatch:
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        java:
+          - "8"
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+      - id: setup-java
+        name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: temurin
+          cache: maven
+      - id: setup-git
+        name: Setup Git
+        run: |
+          git config --global user.email "ci@github.com"
+          git config --global user.name "GitHub CI"
+      - id: build
+        name: Build SportPaper
+        run: bash sportpaper build
+      - id: upload
+        name: Upload SportPaper
+        uses: actions/upload-artifact@v3
+        with:
+          name: SportPaper.jar
+          path: SportPaper-Server/target/sportpaper-*.jar
+          if-no-files-found: error
+  deploy:
+    permissions:
+      contents: read
+      packages: write
+    need: build
+    if: |
+      github.repository_owner == 'Electroid' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - id: deploy
+        name: Deploy SportPaper
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
