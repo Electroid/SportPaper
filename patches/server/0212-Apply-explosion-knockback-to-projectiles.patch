@@ -1,0 +1,26 @@
+From 6dd05da521c5e6c6bf38ad396cc6352265ff5eef Mon Sep 17 00:00:00 2001
+From: woofdoggo <woofwoofdoggo@protonmail.com>
+Date: Wed, 11 May 2022 16:49:54 -0400
+Subject: [PATCH] Apply explosion knockback to projectiles
+
+
+diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
+index 0d6ccbf7..e90b1c23 100644
+--- a/src/main/java/net/minecraft/server/Explosion.java
++++ b/src/main/java/net/minecraft/server/Explosion.java
+@@ -139,11 +139,11 @@ public class Explosion {
+                         DamageSource damageSource = DamageSource.explosion(this);
+                         float f = (float) ((int) ((d13 * d13 + d13) / 2.0D * 8.0D * (double) f3 + 1.0D));
+                         boolean wasDamaged = entity.damageEntity(damageSource, f);
+-                        // SportPaper end
+                         CraftEventFactory.entityDamage = null;
+-                        if (!wasDamaged && !(entity instanceof EntityTNTPrimed || entity instanceof EntityFallingBlock) && !entity.forceExplosionKnockback) {
++                        if (!wasDamaged && !(entity instanceof IProjectile || entity instanceof EntityTNTPrimed || entity instanceof EntityFallingBlock) && !entity.forceExplosionKnockback) {
+                             continue;
+                         }
++                        // SportPaper end
+                         // CraftBukkit end
+                         double d14 = entity instanceof EntityHuman && world.paperSpigotConfig.disableExplosionKnockback ? 0 : EnchantmentProtection.a(entity, d13); // PaperSpigot
+ 
+-- 
+2.36.1
