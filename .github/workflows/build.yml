@@ -1,39 +1,57 @@
-name: CI
+name: Build
 
 on:
   push:
-    branches:
-     - master
+    paths:
+      - patches/**.patch
+      - scripts/**.sh
+      - pom.xml
+      - settings.xml
   pull_request:
+    paths:
+      - patches/**.patch
+      - scripts/**.sh
   workflow_dispatch:
 
 jobs:
   build:
+    name: Build
+    strategy:
+      matrix:
+        java:
+          - "8"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Setup Java 8
-        uses: actions/setup-java@v2
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+      - id: setup-java
+        name: Setup Java ${{ matrix.java }}
+        uses: actions/setup-java@v3
         with:
-          java-version: "8"
-          distribution: adopt
+          java-version: ${{ matrix.java }}
+          distribution: temurin
           cache: maven
-      - name: Setup Git
+      - id: setup-git
+        name: Setup Git
         run: |
-          git config --global user.email "ci@example.com"
+          git config --global user.email "ci@github.com"
           git config --global user.name "GitHub CI"
-      - name: Build SportPaper
+      - id: build
+        name: Build SportPaper
         run: bash sportpaper build
-      - name: Upload SportPaper JAR
-        uses: actions/upload-artifact@v2
+      - id: upload
+        name: Upload SportPaper
+        uses: actions/upload-artifact@v3
         with:
-          name: sportpaper-1.8.8-R0.1-SNAPSHOT.jar
-          path: SportPaper-Server/target/sportpaper-1.8.8-R0.1-SNAPSHOT.jar
+          name: SportPaper.jar
+          path: SportPaper-Server/target/sportpaper-*.jar
           if-no-files-found: error
-      - name: Publish SportPaper JAR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: mvn deploy --settings settings.xml
+      - id: deploy
+        if: |
+          github.repository_owner == 'Electroid' &&
+          github.ref == 'refs/heads/main'
+        name: Deploy SportPaper
+        run: mvn --batch-mode deploy
         env:
-          REPO_USERNAME: ${{ secrets.REPO_USERNAME }}
-          REPO_PASSWORD: ${{ secrets.REPO_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

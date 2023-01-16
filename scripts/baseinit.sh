@@ -33,7 +33,7 @@ do
     file="$(echo $file | cut -d. -f1).java"
 
     echo "Patching $file < $patchFile"
-    sed -i 's/\r//' "$nms/$file" > /dev/null
+    sed -i'' -e 's/\r//' "$nms/$file" > /dev/null
 
     cp "$nms/$file" "$cb/$file"
     "$patch" -s -d src/main/java/ "net/minecraft/server/$file" < "$patchFile"

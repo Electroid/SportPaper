@@ -1,13 +1,13 @@
-# SportPaper [![Build Status](https://travis-ci.org/Electroid/SportPaper.png?branch=master)](https://travis-ci.org/Electroid/SportPaper)
+# SportPaper [![Status](https://github.com/Electroid/SportPaper/actions/workflows/ci.yml/badge.svg)](https://github.com/Electroid/SportPaper/actions)
 
-A fork of Paper 1.8 with changes for the Stratus Network using Magnet's build system.
+A performance-tuned Minecraft 1.8 server, forked from Spigot and Paper.
 
 Requirements
 ------------
 
 To build SportPaper, the following will need to be installed and available from your shell:
 
-* [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+* [Java 8](https://adoptium.net/temurin/releases/?version=8)
 * [Git](https://git-scm.com)
 * [Maven](https://maven.apache.org)
 
@@ -23,8 +23,8 @@ Maven
 Repository:
 ```xml
 <repository>
-  <id>ashcon-snapshots</id>
-  <url>https://repo.ashcon.app/nexus/content/repositories/snapshots/</url>
+  <id>sportpaper</id>
+  <url>https://maven.pkg.github.com/Electroid/SportPaper</url>
 </repository>
 ```
 API:
