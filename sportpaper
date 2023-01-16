@@ -40,7 +40,7 @@ case "$1" in
         scripts/upstream.sh
         scripts/apply.sh "$basedir"
         mvn clean install
-        buildpaperclipjar
+        # buildpaperclipjar
     ;;
     "rb" | "rbp" | "rebuild")
     (
@@ -61,7 +61,7 @@ case "$1" in
     (
         set -e
         mvn clean install
-        buildpaperclipjar
+        # buildpaperclipjar
     )
     ;;
     *)
