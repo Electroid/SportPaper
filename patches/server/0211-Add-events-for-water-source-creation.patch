@@ -1,0 +1,83 @@
+From 62c738039a2cff268d2f5a9dbf2916741ff4ab1f Mon Sep 17 00:00:00 2001
+From: OhPointFive <ohpointfive@gmail.com>
+Date: Thu, 7 Jul 2022 00:33:31 -0400
+Subject: [PATCH] Add events for water source creation
+
+Now, when ice melts or a water source is created by other water sources,
+a BlockFormEvent is called, and the formation cancelled if the event is.
+
+diff --git a/src/main/java/net/minecraft/server/BlockFlowing.java b/src/main/java/net/minecraft/server/BlockFlowing.java
+index 2c91d6d5..75a0e4cf 100644
+--- a/src/main/java/net/minecraft/server/BlockFlowing.java
++++ b/src/main/java/net/minecraft/server/BlockFlowing.java
+@@ -7,6 +7,7 @@ import java.util.Set;
+ 
+ // CraftBukkit start
+ import org.bukkit.block.BlockFace;
++import org.bukkit.event.block.BlockFormEvent;
+ import org.bukkit.event.block.BlockFromToEvent;
+ // CraftBukkit end
+ 
+@@ -67,11 +68,18 @@ public class BlockFlowing extends BlockFluids {
+             if (this.a >= 2 && this.material == Material.WATER) {
+                 IBlockData iblockdata1 = world.getType(blockposition.down());
+ 
+-                if (iblockdata1.getBlock().getMaterial().isBuildable()) {
+-                    i1 = 0;
+-                } else if (iblockdata1.getBlock().getMaterial() == this.material && ((Integer) iblockdata1.get(BlockFlowing.LEVEL)).intValue() == 0) {
+-                    i1 = 0;
++                // SportPaper start
++                if (iblockdata1.getBlock().getMaterial().isBuildable() || (iblockdata1.getBlock().getMaterial() == this.material && ((Integer) iblockdata1.get(BlockFlowing.LEVEL)).intValue() == 0)) {
++                    org.bukkit.block.BlockState blockState = world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()).getState();
++                    blockState.getMaterialData().setData((byte) 0);
++
++                    BlockFormEvent waterSourceFormEvent = new BlockFormEvent(blockState.getBlock(), blockState);
++                    world.getServer().getPluginManager().callEvent(waterSourceFormEvent);
++                    if (!waterSourceFormEvent.isCancelled()) {
++                        i1 = 0;
++                    }
+                 }
++                // SportPaper end
+             }
+ 
+             if (!world.paperSpigotConfig.fastDrainLava && this.material == Material.LAVA && i < 8 && i1 < 8 && i1 > i && random.nextInt(4) != 0) { // PaperSpigot
+diff --git a/src/main/java/net/minecraft/server/BlockIce.java b/src/main/java/net/minecraft/server/BlockIce.java
+index be8bb5be..cc4d7319 100644
+--- a/src/main/java/net/minecraft/server/BlockIce.java
++++ b/src/main/java/net/minecraft/server/BlockIce.java
+@@ -2,6 +2,9 @@ package net.minecraft.server;
+ 
+ import java.util.Random;
+ 
++import org.bukkit.block.BlockState;
++import org.bukkit.event.block.BlockFormEvent;
++
+ public class BlockIce extends BlockHalfTransparent {
+ 
+     public BlockIce() {
+@@ -49,7 +52,22 @@ public class BlockIce extends BlockHalfTransparent {
+                 return;
+             }
+             // CraftBukkit end
+-            
++
++            // SportPaper start
++            BlockState blockState = world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()).getState();
++            if (world.worldProvider.n()) {
++                blockState.setTypeId(Block.getId(Blocks.AIR));
++            } else {
++                blockState.setTypeId(Block.getId(Blocks.FLOWING_WATER));
++            }
++
++            BlockFormEvent iceBlockForm = new BlockFormEvent(blockState.getBlock(), blockState);
++            world.getServer().getPluginManager().callEvent(iceBlockForm);
++            if (iceBlockForm.isCancelled()) {
++                return;
++            }
++            // SportPaper end
++
+             if (world.worldProvider.n()) {
+                 world.setAir(blockposition);
+             } else {
+-- 
+2.29.2
