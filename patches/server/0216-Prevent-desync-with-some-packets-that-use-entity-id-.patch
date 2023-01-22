@@ -1,0 +1,24 @@
+From 2fc8b01269746bd5ac029cbeac1a26686acfd410 Mon Sep 17 00:00:00 2001
+From: theFoxley <7950977+theFoxley@users.noreply.github.com>
+Date: Sat, 21 Jan 2023 22:54:41 +0100
+Subject: [PATCH] Prevent desync with some packets that use entity id and check
+ for 0
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 9ab157cd..0d95a296 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -65,7 +65,8 @@ public abstract class Entity implements ICommandListener {
+     // CraftBukikt end
+ 
+     private static final AxisAlignedBB a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+-    public static int entityCount; // SportPaper - make public
++    // SportPaper - set starting id to 1 to prevent desync in some packets (PacketPlayOutSpawnEntity...)
++    public static int entityCount = 1; // SportPaper - make public
+     private int id;
+     public double j;
+     public boolean k; public boolean blocksEntitySpawning() { return k; } // Paper - OBFHELPER
+-- 
+2.37.2
+
