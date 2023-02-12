@@ -30,7 +30,13 @@ cp -f scripts/basenewApplyPatches.sh base/Paper/newApplyPatches.sh
 
 cd "$basedir/base/Paper/"
 
-git submodule update --init && ./remap.sh && ./decompile.sh && ./init.sh && ./newApplyPatches.sh
+git submodule update --init
+
+# To compile with Java 17, we need newer copies of SpecialSource.jar and SpecialSource-2.jar
+cp -f "$basedir/builddata/bin/SpecialSource.jar" BuildData/bin/SpecialSource.jar
+cp -f "$basedir/builddata/bin/SpecialSource-2.jar" BuildData/bin/SpecialSource-2.jar
+
+./remap.sh && ./decompile.sh && ./init.sh && ./newApplyPatches.sh
 
 cd "PaperSpigot-Server"
 mcVer=$(mvn -o org.apache.maven.plugins:maven-help-plugin:2.1.1:evaluate -Dexpression=minecraft_version | sed -n -e '/^\[.*\]/ !{ /^[0-9]/ { p; q } }')

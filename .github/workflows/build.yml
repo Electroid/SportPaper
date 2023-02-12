@@ -20,6 +20,7 @@ jobs:
       matrix:
         java:
           - "8"
+          - "17"
     runs-on: ubuntu-latest
     steps:
       - id: checkout
@@ -44,13 +45,14 @@ jobs:
         name: Upload SportPaper
         uses: actions/upload-artifact@v3
         with:
-          name: SportPaper.jar
+          name: SportPaper-Java-${{ matrix.java }}.jar
           path: SportPaper-Server/target/sportpaper-*.jar
           if-no-files-found: error
       - id: deploy
         if: |
           github.repository_owner == 'Electroid' &&
-          github.ref == 'refs/heads/main'
+          github.ref == 'refs/heads/main' &&
+          matrix.java == '8'
         name: Deploy SportPaper
         run: mvn --batch-mode deploy
         env:

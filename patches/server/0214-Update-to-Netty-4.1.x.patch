@@ -1,11 +1,11 @@
-From 42f916afdb36bd909528c561005c98395a503a58 Mon Sep 17 00:00:00 2001
+From 0325b9e8caeded0950255f34ede21315daf7217c Mon Sep 17 00:00:00 2001
 From: hpfxd <me@hpfxd.com>
 Date: Wed, 27 Oct 2021 06:29:44 -0400
 Subject: [PATCH] Update to Netty 4.1.x
 
 
 diff --git a/pom.xml b/pom.xml
-index 2dee42e5..e6ea4704 100644
+index 2dee42e5..e6bdad05 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -27,6 +27,11 @@
@@ -316,4 +316,5 @@ index e2eb3054..9a075fef 100644
 +    // SportPaper end
  }
 -- 
-2.38.1
+2.39.1
+
