@@ -1,0 +1,66 @@
+From 9e08031e6d1ffab0b44dd8d3d8d24e164dbde8f5 Mon Sep 17 00:00:00 2001
+From: AmbrosL <AmbrosL@users.noreply.github.com>
+Date: Sat, 10 Mar 2018 02:33:28 +0100
+Subject: [PATCH] Fix east/west cannoning
+
+Ported to SportPaper from TacoSpigot and Titanium
+https://github.com/TacoSpigot/TacoSpigot/pull/89
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 0d95a296..2790207d 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -38,6 +38,7 @@ import org.bukkit.plugin.PluginManager;
+ // CraftBukkit end
+ 
+ // PaperSpigot start
++import org.github.paperspigot.PaperSpigotWorldConfig;
+ import org.spigotmc.event.entity.EntityDismountEvent;
+ // PaperSpigot end
+ 
+@@ -555,17 +556,34 @@ public abstract class Entity implements ICommandListener {
+             AxisAlignedBB axisalignedbb2;
+             Iterator iterator1;
+ 
+-            for (iterator1 = list.iterator(); iterator1.hasNext(); d0 = axisalignedbb2.a(this.getBoundingBox(), d0)) {
+-                axisalignedbb2 = (AxisAlignedBB) iterator1.next();
+-            }
++            // SportPaper start - fix east/west cannoning by calculating the z movement before x if the x velocity is greater
++            if (PaperSpigotWorldConfig.fixCannons && Math.abs(d0) > Math.abs(d2)) {
++                for (iterator1 = list.iterator(); iterator1.hasNext(); d2 = axisalignedbb2.c(this.getBoundingBox(), d2)) {
++                    axisalignedbb2 = (AxisAlignedBB) iterator1.next();
++                }
+ 
+-            this.a(this.getBoundingBox().c(d0, 0.0D, 0.0D));
++                this.a(this.getBoundingBox().c(0.0D, 0.0D, d2));
++
++                for (iterator1 = list.iterator(); iterator1.hasNext(); d0 = axisalignedbb2.a(this.getBoundingBox(), d0)) {
++                    axisalignedbb2 = (AxisAlignedBB) iterator1.next();
++                }
++
++                this.a(this.getBoundingBox().c(d0, 0.0D, 0.0D));
++            } else {
++                for (iterator1 = list.iterator(); iterator1.hasNext(); d0 = axisalignedbb2.a(this.getBoundingBox(), d0)) {
++                    axisalignedbb2 = (AxisAlignedBB) iterator1.next();
++                }
++
++                this.a(this.getBoundingBox().c(d0, 0.0D, 0.0D));
++
++                for (iterator1 = list.iterator(); iterator1.hasNext(); d2 = axisalignedbb2.c(this.getBoundingBox(), d2)) {
++                    axisalignedbb2 = (AxisAlignedBB) iterator1.next();
++                }
++
++                this.a(this.getBoundingBox().c(0.0D, 0.0D, d2));
++            } // SportPaper end
+ 
+-            for (iterator1 = list.iterator(); iterator1.hasNext(); d2 = axisalignedbb2.c(this.getBoundingBox(), d2)) {
+-                axisalignedbb2 = (AxisAlignedBB) iterator1.next();
+-            }
+ 
+-            this.a(this.getBoundingBox().c(0.0D, 0.0D, d2));
+             if (this.S > 0.0F && flag1 && (d6 != d0 || d8 != d2)) {
+                 double d10 = d0;
+                 double d11 = d1;
+-- 
+2.39.2
+
