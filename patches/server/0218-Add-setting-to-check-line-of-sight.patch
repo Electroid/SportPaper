@@ -1,0 +1,36 @@
+From 2ec0a95c46a09efb7a92dd200185ac850a5a6c1d Mon Sep 17 00:00:00 2001
+From: halfmaster1 <ohpointfive@gmail.com>
+Date: Wed, 5 May 2021 02:20:01 -0400
+Subject: [PATCH] Add setting to check line of sight
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 5e903d40..d3c6c3ff 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1464,7 +1464,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+ 
+         this.player.resetIdleTimer();
+         if (entity != null) {
+-            boolean flag = this.player.hasLineOfSight(entity);
++            boolean flag = !PaperSpigotConfig.checkLineOfSight || this.player.hasLineOfSight(entity);
+             double d0 = 36.0D;
+ 
+             if (!flag) {
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 8d58d1f3..ca028d04 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -225,4 +225,9 @@ public class PaperSpigotConfig
+                 knockbackExtraVertical));
+     }
+ 
++    public static boolean checkLineOfSight = true;
++    private static void checkLineOfSight() {
++        checkLineOfSight = getBoolean("settings.check-line-of-sight", checkLineOfSight);
++    }
++
+ }
+-- 
+2.39.2
+

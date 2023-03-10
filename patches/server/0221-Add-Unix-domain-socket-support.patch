@@ -1,0 +1,220 @@
+From 6205973d8597aabd4c209c05fe24176c6ee63704 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Tue, 11 May 2021 17:39:22 -0400
+Subject: [PATCH] Add Unix domain socket support
+
+Backported from Paper upstream
+https://github.com/PaperMC/Paper/pull/5611
+
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 79a53cc4..a8fa7bbf 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -164,19 +164,39 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+ 
+             this.r = WorldSettings.a(i);
+             DedicatedServer.LOGGER.info("Default game type: " + this.r);
+-            InetAddress inetaddress = null;
+ 
+-            if (this.getServerIp().length() > 0) {
+-                inetaddress = InetAddress.getByName(this.getServerIp());
+-            }
+-
+-            if (this.R() < 0) {
+-                this.setPort(this.propertyManager.getInt("server-port", 25565));
+-            }
++            // SportPaper start - load config earlier to check IP forwarding setting
+             // Spigot start
+             this.a((PlayerList) (new DedicatedPlayerList(this)));
+             // Spigot end
+             SharedConfig.registerCommands();
++            // SportPaper end
++            // Paper start - Unix domain socket support
++            java.net.SocketAddress bindAddress;
++            if (this.getServerIp().startsWith("unix:")) {
++                if (!io.netty.channel.epoll.Epoll.isAvailable()) {
++                    DedicatedServer.LOGGER.error("**** INVALID CONFIGURATION!");
++                    DedicatedServer.LOGGER.error("You are trying to use a Unix domain socket but you're not on a supported OS.");
++                    return false;
++            } else if (!org.spigotmc.SpigotConfig.bungee) {
++                    DedicatedServer.LOGGER.error("**** INVALID CONFIGURATION!");
++                    DedicatedServer.LOGGER.error("Unix domain sockets require IPs to be forwarded from a proxy.");
++                    return false;
++                }
++                bindAddress = new io.netty.channel.unix.DomainSocketAddress(this.getServerIp().substring("unix:".length()));
++            } else {
++                InetAddress inetaddress = null;
++
++                if (this.getServerIp().length() > 0) {
++                    inetaddress = InetAddress.getByName(this.getServerIp());
++                }
++
++                if (this.R() < 0) {
++                    this.setPort(this.propertyManager.getInt("server-port", 25565));
++                }
++                bindAddress = new java.net.InetSocketAddress(inetaddress, this.R());
++            }
++            // Paper end
+ 
+             DedicatedServer.LOGGER.info("Generating keypair");
+             this.a(MinecraftEncryption.b());
+@@ -184,7 +204,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+ 
+         if (!org.spigotmc.SpigotConfig.lateBind) {
+             try {
+-                this.aq().a(inetaddress, this.R());
++                this.aq().bind(bindAddress); // Paper - Unix domain socket support
+             } catch (IOException ioexception) {
+                 DedicatedServer.LOGGER.warn("**** FAILED TO BIND TO PORT!");
+                 DedicatedServer.LOGGER.warn("The exception was: {}", new Object[] { ioexception.toString()});
+@@ -280,7 +300,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+ 
+         if (org.spigotmc.SpigotConfig.lateBind) {
+             try {
+-                this.aq().a(inetaddress, this.R());
++                this.aq().bind(bindAddress); // Paper - Unix domain socket support
+             } catch (IOException ioexception) {
+                 DedicatedServer.LOGGER.warn("**** FAILED TO BIND TO PORT!");
+                 DedicatedServer.LOGGER.warn("The exception was: {}", new Object[] { ioexception.toString()});
+diff --git a/src/main/java/net/minecraft/server/HandshakeListener.java b/src/main/java/net/minecraft/server/HandshakeListener.java
+index 5454f2b5..f4a3c2f5 100644
+--- a/src/main/java/net/minecraft/server/HandshakeListener.java
++++ b/src/main/java/net/minecraft/server/HandshakeListener.java
+@@ -29,34 +29,36 @@ public class HandshakeListener implements PacketHandshakingInListener {
+ 
+             // CraftBukkit start - Connection throttle
+             try {
+-                long currentTime = System.currentTimeMillis();
+-                long connectionThrottle = MinecraftServer.getServer().server.getConnectionThrottle();
+-                InetAddress address = ((java.net.InetSocketAddress) this.b.getSocketAddress()).getAddress();
++                if (!(this.b.channel.localAddress() instanceof io.netty.channel.unix.DomainSocketAddress)) { // Paper - the connection throttle is useless when you have a Unix domain socket
++                    long currentTime = System.currentTimeMillis();
++                    long connectionThrottle = MinecraftServer.getServer().server.getConnectionThrottle();
++                    InetAddress address = ((java.net.InetSocketAddress) this.b.getSocketAddress()).getAddress();
++
++                    synchronized (throttleTracker) {
++                        if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle) {
++                            throttleTracker.put(address, currentTime);
++                            chatcomponenttext = new ChatComponentText("Connection throttled! Please wait before reconnecting.");
++                            this.b.handle(new PacketLoginOutDisconnect(chatcomponenttext));
++                            this.b.close(chatcomponenttext);
++                            return;
++                        }
+ 
+-                synchronized (throttleTracker) {
+-                    if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle) {
+                         throttleTracker.put(address, currentTime);
+-                        chatcomponenttext = new ChatComponentText("Connection throttled! Please wait before reconnecting.");
+-                        this.b.handle(new PacketLoginOutDisconnect(chatcomponenttext));
+-                        this.b.close(chatcomponenttext);
+-                        return;
+-                    }
+-
+-                    throttleTracker.put(address, currentTime);
+-                    throttleCounter++;
+-                    if (throttleCounter > 200) {
+-                        throttleCounter = 0;
+-
+-                        // Cleanup stale entries
+-                        java.util.Iterator iter = throttleTracker.entrySet().iterator();
+-                        while (iter.hasNext()) {
+-                            java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
+-                            if (entry.getValue() > connectionThrottle) {
+-                                iter.remove();
++                        throttleCounter++;
++                        if (throttleCounter > 200) {
++                            throttleCounter = 0;
++
++                            // Cleanup stale entries
++                            java.util.Iterator iter = throttleTracker.entrySet().iterator();
++                            while (iter.hasNext()) {
++                                java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
++                                if (entry.getValue() > connectionThrottle) {
++                                    iter.remove();
++                                }
+                             }
+                         }
+                     }
+-                }
++                } // Paper - add closing bracket for if check above
+             } catch (Throwable t) {
+                 org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
+             }
+@@ -77,8 +79,11 @@ public class HandshakeListener implements PacketHandshakingInListener {
+                 if (org.spigotmc.SpigotConfig.bungee) {
+                     String[] split = packethandshakinginsetprotocol.hostname.split("\00");
+                     if ( split.length == 3 || split.length == 4 ) {
++                        // Paper start - Unix domain socket support
++                        java.net.SocketAddress socketAddress = b.getSocketAddress();
+                         packethandshakinginsetprotocol.hostname = split[0];
+-                        b.l = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) b.getSocketAddress()).getPort());
++                        b.l = new java.net.InetSocketAddress(split[1], socketAddress instanceof java.net.InetSocketAddress ? ((java.net.InetSocketAddress) socketAddress).getPort() : 0);
++                        // Paper end
+                         b.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString( split[2] );
+                     } else
+                     {
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index 9e35715a..854d1196 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -340,6 +340,11 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+     // Spigot Start
+     public SocketAddress getRawAddress()
+     {
++        // Paper start - this can be nullable in the case of a Unix domain socket, so if it is, fake something
++        if (this.channel.remoteAddress() == null) {
++            return new java.net.InetSocketAddress(java.net.InetAddress.getLoopbackAddress(), 0);
++        }
++        // Paper end
+         return this.channel.remoteAddress();
+     }
+     // Spigot End
+diff --git a/src/main/java/net/minecraft/server/ServerConnection.java b/src/main/java/net/minecraft/server/ServerConnection.java
+index 052139d4..abdfedf6 100644
+--- a/src/main/java/net/minecraft/server/ServerConnection.java
++++ b/src/main/java/net/minecraft/server/ServerConnection.java
+@@ -77,7 +77,13 @@ public class ServerConnection {
+         this.d = true;
+     }
+ 
++    // Paper start - Unix domain socket support
+     public void a(InetAddress inetaddress, int i) throws IOException {
++        bind(new java.net.InetSocketAddress(inetaddress, i));
++    }
++
++    public void bind(java.net.SocketAddress address) throws IOException {
++        // Paper end
+         List list = this.g;
+ 
+         synchronized (this.g) {
+@@ -85,9 +91,15 @@ public class ServerConnection {
+             LazyInitVar lazyinitvar;
+ 
+             if (Epoll.isAvailable() && this.f.ai()) {
+-                oclass = EpollServerSocketChannel.class;
+-                lazyinitvar = ServerConnection.b;
+-                ServerConnection.e.info("Using epoll channel type");
++                // Paper start - Unix domain socket support
++                if (address instanceof io.netty.channel.unix.DomainSocketAddress) {
++                    oclass = io.netty.channel.epoll.EpollServerDomainSocketChannel.class;
++                } else {
++                    oclass = EpollServerSocketChannel.class;
++                }
++                // Paper end
++                    lazyinitvar = ServerConnection.b;
++                    ServerConnection.e.info("Using epoll channel type");
+             } else {
+                 oclass = NioServerSocketChannel.class;
+                 lazyinitvar = ServerConnection.a;
+@@ -110,7 +122,7 @@ public class ServerConnection {
+                     channel.pipeline().addLast("packet_handler", networkmanager);
+                     networkmanager.a((PacketListener) (new HandshakeListener(ServerConnection.this.f, networkmanager)));
+                 }
+-            }).group((EventLoopGroup) lazyinitvar.c()).localAddress(inetaddress, i)).bind().syncUninterruptibly());
++            }).group((EventLoopGroup) lazyinitvar.c()).localAddress(address)).bind().syncUninterruptibly()); // Paper - Unix domain socket support
+         }
+     }
+ 
+-- 
+2.39.2
+

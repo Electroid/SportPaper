@@ -1,0 +1,36 @@
+From 500389b43f88e74bf0444a4c7f02eec612419f11 Mon Sep 17 00:00:00 2001
+From: halfmaster1 <ohpointfive@gmail.com>
+Date: Tue, 18 May 2021 04:28:46 -0400
+Subject: [PATCH] Make critical hits configurable
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 0e68599d..ef182d42 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -1015,7 +1015,7 @@ public abstract class EntityHuman extends EntityLiving {
+                     boolean flag = !world.paperSpigotConfig.disablePlayerCrits && this.fallDistance > 0.0F && !this.onGround && !this.k_() && !this.V() && !this.hasEffect(MobEffectList.BLINDNESS) && this.vehicle == null && entity instanceof EntityLiving; // PaperSpigot
+ 
+                     if (flag && f > 0.0F) {
+-                        f *= 1.5F;
++                        f *= PaperSpigotConfig.criticalHitMultiplier;
+                     }
+ 
+                     f += f1;
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index ca028d04..8cdcaf3a 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -230,4 +230,9 @@ public class PaperSpigotConfig
+         checkLineOfSight = getBoolean("settings.check-line-of-sight", checkLineOfSight);
+     }
+ 
++    public static float criticalHitMultiplier = 1.5F;
++    private static void criticalHitMultiplier() {
++        criticalHitMultiplier = (float) getDouble("settings.critical-hit-multiplier", (double) criticalHitMultiplier);
++    }
++
+ }
+-- 
+2.39.2
+

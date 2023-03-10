@@ -1,0 +1,22 @@
+From 94b14fa428771a46eda1560dc4ea12a75094ca73 Mon Sep 17 00:00:00 2001
+From: Heath Logan Campbell <github@heathlogancampbell.com>
+Date: Fri, 31 Jul 2020 12:43:00 +0200
+Subject: [PATCH] Optimize networking by using IP_TOS
+
+Ported from Titanium, originally from NachoSpigot
+
+diff --git a/src/main/java/net/minecraft/server/ServerConnection.java b/src/main/java/net/minecraft/server/ServerConnection.java
+index cc6f993b..052139d4 100644
+--- a/src/main/java/net/minecraft/server/ServerConnection.java
++++ b/src/main/java/net/minecraft/server/ServerConnection.java
+@@ -98,6 +98,7 @@ public class ServerConnection {
+                 protected void initChannel(Channel channel) throws Exception {
+                     try {
+                         channel.config().setOption(ChannelOption.TCP_NODELAY, Boolean.valueOf(true));
++                        channel.config().setOption(ChannelOption.IP_TOS, 0x18); // SportPaper - Optimize networking by using IP_TOS
+                     } catch (ChannelException channelexception) {
+                         ;
+                     }
+-- 
+2.39.2
+
