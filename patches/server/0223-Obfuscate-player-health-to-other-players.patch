@@ -1,4 +1,4 @@
-From 8179147764629f36fe866dc7de627e626fbcf359 Mon Sep 17 00:00:00 2001
+From eaf8ee98555c310f1612710e51adf00569b48865 Mon Sep 17 00:00:00 2001
 From: Beanes <sikyserver@gmail.com>
 Date: Sun, 2 Apr 2023 16:33:30 +0200
 Subject: [PATCH] Obfuscate player health to other players
@@ -75,6 +75,19 @@ index 043ce662..085f9989 100644
      public void a(PacketDataSerializer packetdataserializer) throws IOException {
          this.a = packetdataserializer.e();
          this.b = DataWatcher.b(packetdataserializer);
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 8cdcaf3a..4bd60ff2 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -235,4 +235,8 @@ public class PaperSpigotConfig
+         criticalHitMultiplier = (float) getDouble("settings.critical-hit-multiplier", (double) criticalHitMultiplier);
+     }
+ 
++    public static boolean obfuscatePlayerHealth = true;
++    private static void obfuscatePlayerHealth() {
++        obfuscatePlayerHealth = getBoolean("settings.obfuscate-player-health", obfuscatePlayerHealth);
++    }
+ }
 -- 
 2.37.3.windows.1
 
