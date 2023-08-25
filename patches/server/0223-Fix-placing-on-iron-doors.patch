@@ -1,0 +1,22 @@
+From 96f3dc152667d5bfbaf27dae8be9d9f6ee90a80c Mon Sep 17 00:00:00 2001
+From: necrozma <necrozma999@gmail.com>
+Date: Fri, 25 Aug 2023 13:26:34 -0600
+Subject: [PATCH] Fix placing on iron doors
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockDoor.java b/src/main/java/net/minecraft/server/BlockDoor.java
+index bbaa2b5a..044c039a 100644
+--- a/src/main/java/net/minecraft/server/BlockDoor.java
++++ b/src/main/java/net/minecraft/server/BlockDoor.java
+@@ -91,7 +91,7 @@ public class BlockDoor extends Block {
+ 
+     public boolean interact(World world, BlockPosition blockposition, IBlockData iblockdata, EntityHuman entityhuman, EnumDirection enumdirection, float f, float f1, float f2) {
+         if (this.material == Material.ORE) {
+-            return true;
++            return false; // SportPaper - Fix placing on iron doors
+         } else {
+             BlockPosition blockposition1 = iblockdata.get(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.LOWER ? blockposition : blockposition.down();
+             IBlockData iblockdata1 = blockposition.equals(blockposition1) ? iblockdata : world.getType(blockposition1);
+-- 
+2.34.1
+
