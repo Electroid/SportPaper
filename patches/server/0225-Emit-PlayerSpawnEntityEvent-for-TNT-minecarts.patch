@@ -1,0 +1,50 @@
+From eff8026026598af6bd0c817ccbb9d6dcef38b37b Mon Sep 17 00:00:00 2001
+From: TTtie <me@tttie.cz>
+Date: Wed, 17 Jan 2024 16:13:41 +0000
+Subject: [PATCH] Emit PlayerSpawnEntityEvent for TNT minecarts
+
+This patch allows for TNT minecarts to be tracked by API consumers
+using PlayerSpawnEntityEvent, as they can be used for offensive
+purposes and due to their non-living nature are not tracked via
+ItemMonsterEgg.
+
+Signed-off-by: TTtie <me@tttie.cz>
+
+diff --git a/src/main/java/net/minecraft/server/ItemMinecart.java b/src/main/java/net/minecraft/server/ItemMinecart.java
+index 90221acb..00af3cc2 100644
+--- a/src/main/java/net/minecraft/server/ItemMinecart.java
++++ b/src/main/java/net/minecraft/server/ItemMinecart.java
+@@ -4,6 +4,7 @@ package net.minecraft.server;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.event.block.BlockDispenseEntityEvent;
+ import org.bukkit.event.block.BlockDispenseEvent;
++import org.bukkit.event.player.PlayerSpawnEntityEvent;
+ // CraftBukkit end
+ 
+ public class ItemMinecart extends Item {
+@@ -122,6 +123,22 @@ public class ItemMinecart extends Item {
+                     entityminecartabstract.setCustomName(itemstack.getName());
+                 }
+ 
++                // SportPaper start - emit entity spawn events for TNT minecarts
++                if (b == EntityMinecartAbstract.EnumMinecartType.TNT) {
++                    CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++
++                    PlayerSpawnEntityEvent spawnEntityEvent = new PlayerSpawnEntityEvent((org.bukkit.entity.Player) entityhuman.getBukkitEntity(), entityminecartabstract.getBukkitEntity(), entityminecartabstract.getBukkitEntity().getLocation(), craftItem.clone());
++                    world.getServer().getPluginManager().callEvent(spawnEntityEvent);
++
++                    if (spawnEntityEvent.isCancelled()) {
++                        spawnEntityEvent.getEntity().remove();
++                        return false;
++                    }
++
++                    entityminecartabstract.setPositionRotation(spawnEntityEvent.getLocation().getX(), spawnEntityEvent.getLocation().getY(), spawnEntityEvent.getLocation().getZ(), spawnEntityEvent.getLocation().getYaw(), spawnEntityEvent.getLocation().getPitch());
++                }
++                // SportPaper end - emit entity spawn events for TNT minecarts
++
+                 world.addEntity(entityminecartabstract);
+             }
+ 
+-- 
+2.43.0
+
