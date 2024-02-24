@@ -1,0 +1,23 @@
+From 839ef7b6c51833927c8fb4de1026fda2cc121320 Mon Sep 17 00:00:00 2001
+From: David Rodriguez <15853933+limbo56@users.noreply.github.com>
+Date: Sat, 3 Jun 2023 00:25:49 -0400
+Subject: [PATCH] Fix incorrect block placement sound position
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index c54050bf..ac6743a0 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -222,7 +222,8 @@ public final class ItemStack {
+                 // SPIGOT-1288 - play sound stripped from ItemBlock
+                 if (this.getItem() instanceof ItemBlock) {
+                     Block base = ((ItemBlock) this.getItem()).a;
+-                    world.makeSound((double) ((float) blockposition.getX() + 0.5F), (double) ((float) blockposition.getY() + 0.5F), (double) ((float) blockposition.getZ() + 0.5F), base.stepSound.getPlaceSound(), (base.stepSound.getVolume1() + 1.0F) / 2.0F, base.stepSound.getVolume2() * 0.8F);
++                    BlockPosition bp = blockposition.shift(enumdirection); // SportPaper - Fix incorrect sound position
++                    world.makeSound((double) ((float) bp.getX() + 0.5F), (double) ((float) bp.getY() + 0.5F), (double) ((float) bp.getZ() + 0.5F), base.stepSound.getPlaceSound(), (base.stepSound.getVolume1() + 1.0F) / 2.0F, base.stepSound.getVolume2() * 0.8F);
+                 }
+ 
+                 entityhuman.b(StatisticList.USE_ITEM_COUNT[Item.getId(this.item)]);
+-- 
+2.38.1.windows.1
+
