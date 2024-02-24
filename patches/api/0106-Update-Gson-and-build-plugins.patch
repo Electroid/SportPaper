@@ -1,0 +1,42 @@
+From 1c95f138431ebaea5d406b1d0915f019356381c1 Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Tue, 22 Aug 2023 10:10:54 -0700
+Subject: [PATCH] Update Gson and build plugins
+
+
+diff --git a/pom.xml b/pom.xml
+index ab017e4b..353e4410 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -61,11 +61,11 @@
+             <version>17.0</version>
+             <scope>compile</scope>
+         </dependency>
+-        <!-- bundled with Minecraft, should be kept in sync -->
++        <!-- bundled with Minecraft, updated in SportPaper -->
+         <dependency>
+             <groupId>com.google.code.gson</groupId>
+             <artifactId>gson</artifactId>
+-          <version>2.2.4</version>
++            <version>2.10.1</version>
+         </dependency>
+         <dependency>
+             <groupId>org.avaje</groupId>
+@@ -107,12 +107,12 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.1</version>
++                <version>3.11.0</version>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+-                <version>2.3</version>
++                <version>3.5.0</version>
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+-- 
+2.41.0
+

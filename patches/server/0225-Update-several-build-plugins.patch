@@ -1,0 +1,168 @@
+From 1726ca7e38b99bf0a47dfaf3a4f14ec42aef4c04 Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Tue, 22 Aug 2023 10:11:12 -0700
+Subject: [PATCH] Update several build plugins
+
+
+diff --git a/pom.xml b/pom.xml
+index 6959c62a..41d4e4c7 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -117,65 +117,65 @@
+     <build>
+         <defaultGoal>install</defaultGoal>
+         <plugins>
+-						<plugin>
+-								<groupId>net.md-5</groupId>
+-								<artifactId>scriptus</artifactId>
+-								<version>0.4.1</version>
+-								<executions>
+-										<execution>
+-												<id>ex-sport</id>
+-												<configuration>
+-														<format>git-SportPaper-%s</format>
+-														<scmDirectory>../</scmDirectory>
+-														<descriptionProperty>sportpaper.desc</descriptionProperty>
+-												</configuration>
+-												<phase>initialize</phase>
+-												<goals>
+-														<goal>describe</goal>
+-												</goals>
+-										</execution>
+-										<execution>
+-												<id>ex-paper</id>
+-												<configuration>
+-														<format>-P.%s</format>
+-														<scmDirectory>../base/Paper/PaperSpigot-Server</scmDirectory>
+-														<descriptionProperty>paper.desc</descriptionProperty>
+-												</configuration>
+-												<phase>initialize</phase>
+-												<goals>
+-														<goal>describe</goal>
+-												</goals>
+-										</execution>
+-										<execution>
+-												<id>ex-spigot</id>
+-												<configuration>
+-														<format>-SP.%s</format>
+-														<scmDirectory>../base/Paper/Spigot-Server</scmDirectory>
+-														<descriptionProperty>spigot.desc</descriptionProperty>
+-												</configuration>
+-												<phase>initialize</phase>
+-												<goals>
+-														<goal>describe</goal>
+-												</goals>
+-										</execution>
+-										<execution>
+-												<id>ex-craftbukkit</id>
+-												<configuration>
+-														<format>-CB.%s</format>
+-														<scmDirectory>../base/Paper/CraftBukkit</scmDirectory>
+-														<descriptionProperty>craftbukkit.desc</descriptionProperty>
+-												</configuration>
+-												<phase>initialize</phase>
+-												<goals>
+-														<goal>describe</goal>
+-												</goals>
+-										</execution>
+-								</executions>
+-						</plugin>
++            <plugin>
++                <groupId>net.md-5</groupId>
++                <artifactId>scriptus</artifactId>
++                <version>0.5.0</version>
++                <executions>
++                    <execution>
++                        <id>ex-sport</id>
++                        <configuration>
++                            <format>git-SportPaper-%s</format>
++                            <scmDirectory>../</scmDirectory>
++                            <descriptionProperty>sportpaper.desc</descriptionProperty>
++                        </configuration>
++                        <phase>initialize</phase>
++                        <goals>
++                            <goal>describe</goal>
++                        </goals>
++                    </execution>
++                    <execution>
++                        <id>ex-paper</id>
++                        <configuration>
++                            <format>-P.%s</format>
++                            <scmDirectory>../base/Paper/PaperSpigot-Server</scmDirectory>
++                            <descriptionProperty>paper.desc</descriptionProperty>
++                        </configuration>
++                        <phase>initialize</phase>
++                        <goals>
++                            <goal>describe</goal>
++                        </goals>
++                    </execution>
++                    <execution>
++                        <id>ex-spigot</id>
++                        <configuration>
++                            <format>-SP.%s</format>
++                            <scmDirectory>../base/Paper/Spigot-Server</scmDirectory>
++                            <descriptionProperty>spigot.desc</descriptionProperty>
++                        </configuration>
++                        <phase>initialize</phase>
++                        <goals>
++                            <goal>describe</goal>
++                        </goals>
++                    </execution>
++                    <execution>
++                        <id>ex-craftbukkit</id>
++                        <configuration>
++                            <format>-CB.%s</format>
++                            <scmDirectory>../base/Paper/CraftBukkit</scmDirectory>
++                            <descriptionProperty>craftbukkit.desc</descriptionProperty>
++                        </configuration>
++                        <phase>initialize</phase>
++                        <goals>
++                            <goal>describe</goal>
++                        </goals>
++                    </execution>
++                </executions>
++            </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-jar-plugin</artifactId>
+-                <version>2.5</version>
++                <version>3.3.0</version>
+                 <configuration>
+                     <forceCreation>true</forceCreation> <!-- Required to prevent shading the jar multiple times -->
+                     <archive>
+@@ -214,7 +214,7 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-shade-plugin</artifactId>
+-                <version>2.3</version>
++                <version>3.5.0</version>
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+@@ -259,7 +259,7 @@
+             <plugin>
+                 <groupId>net.md-5</groupId>
+                 <artifactId>specialsource-maven-plugin</artifactId>
+-                <version>1.2.1</version>
++                <version>1.2.3</version>
+                 <executions>
+                     <execution>
+                         <phase>package</phase>
+@@ -276,12 +276,12 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+-                <version>3.1</version>
++                <version>3.11.0</version>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-surefire-plugin</artifactId>
+-                <version>2.18</version>
++                <version>3.1.2</version>
+                 <configuration>
+                     <workingDirectory>${basedir}/target/test-server</workingDirectory>
+                     <excludes>
+-- 
+2.41.0
+
