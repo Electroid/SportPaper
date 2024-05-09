@@ -1,9 +1,24 @@
-From 97eb4c50bb22267d87f9e136ce1e6e85f1c27032 Mon Sep 17 00:00:00 2001
+From e49d3924fb3cdc1fff4749c20ce5ae4b7ba20506 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 6 Aug 2018 16:39:57 -0700
 Subject: [PATCH] Fix Decompilation errors
 
 
+diff --git a/src/main/java/net/minecraft/server/IEntitySelector.java b/src/main/java/net/minecraft/server/IEntitySelector.java
+index 81c45a95a..c27709e1f 100644
+--- a/src/main/java/net/minecraft/server/IEntitySelector.java
++++ b/src/main/java/net/minecraft/server/IEntitySelector.java
+@@ -61,8 +61,8 @@ public final class IEntitySelector {
+             }
+         }
+ 
+-        public boolean apply(Object object) {
+-            return this.a((Entity) object);
++        public boolean apply(Entity entity) {
++            return this.a(entity);
+         }
+     }
+ }
 diff --git a/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java b/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java
 index f55bedaff..a8fc3361a 100644
 --- a/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java
@@ -61,5 +76,5 @@ index 90606f50b..4b8eb3eed 100644
 -    }
  }
 -- 
-2.18.0
+2.28.0.windows.1
 
