@@ -1,0 +1,26 @@
+From e0c046f68018df323312eecb0a711587eb0bb029 Mon Sep 17 00:00:00 2001
+From: Christopher White <18whitechristop@gmail.com>
+Date: Sat, 20 Jul 2024 11:28:20 -0700
+Subject: [PATCH] Readd NPE prevention for BlockDispenseEntityEvent
+
+Signed-off-by: Christopher White <18whitechristop@gmail.com>
+
+diff --git a/src/main/java/net/minecraft/server/DispenserRegistry.java b/src/main/java/net/minecraft/server/DispenserRegistry.java
+index 9577483d..5c5ceed7 100644
+--- a/src/main/java/net/minecraft/server/DispenserRegistry.java
++++ b/src/main/java/net/minecraft/server/DispenserRegistry.java
+@@ -89,6 +89,11 @@ public class DispenserRegistry {
+                 CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
+ 
+                 Entity entity = ItemMonsterEgg.spawnCreature(isourceblock.getWorld(), itemstack.getData(), d0, d1, d2, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DISPENSE_EGG);
++                if (entity == null) {
++                    // This happens if the spawn event is cancelled
++                    itemstack.count++;
++                    return itemstack;
++                }
+ 
+                 BlockDispenseEntityEvent event = new BlockDispenseEntityEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2), entity.getBukkitEntity());
+                 if (!BlockDispenser.eventFired) {
+-- 
+2.45.2
+
