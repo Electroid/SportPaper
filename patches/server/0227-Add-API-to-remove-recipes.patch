@@ -1,0 +1,295 @@
+From 6fdbfe8cb922bb5c00cd52537621f2d8ed35e108 Mon Sep 17 00:00:00 2001
+From: Doclic <doclic@tutanota.com>
+Date: Thu, 25 Jul 2024 02:08:50 +0200
+Subject: [PATCH] Add API to remove recipes
+
+
+diff --git a/src/main/java/net/minecraft/server/IRecipe.java b/src/main/java/net/minecraft/server/IRecipe.java
+index 444af5b0..1fa4d1f3 100644
+--- a/src/main/java/net/minecraft/server/IRecipe.java
++++ b/src/main/java/net/minecraft/server/IRecipe.java
+@@ -15,4 +15,6 @@ public interface IRecipe {
+     org.bukkit.inventory.Recipe toBukkitRecipe(); // CraftBukkit
+ 
+     java.util.List<ItemStack> getIngredients(); // Spigot
++
++    boolean equals(Object other); // SportPaper
+ }
+diff --git a/src/main/java/net/minecraft/server/ShapedRecipes.java b/src/main/java/net/minecraft/server/ShapedRecipes.java
+index 17d787cf..f4f3c60b 100644
+--- a/src/main/java/net/minecraft/server/ShapedRecipes.java
++++ b/src/main/java/net/minecraft/server/ShapedRecipes.java
+@@ -172,4 +172,24 @@ public class ShapedRecipes implements IRecipe {
+         return java.util.Arrays.asList( items );
+     }
+     // Spigot end
++
++    // SportPaper start
++    @Override
++    public boolean equals(Object other) {
++        if (this == other) return true;
++        if (other == null) return false;
++        if (this.getClass() != other.getClass()) return false;
++
++        ShapedRecipes shapedRecipes = (ShapedRecipes) other;
++        if (this.items.length != shapedRecipes.items.length) return false;
++        for (int i = 0; i < this.items.length; i++) {
++            if (ItemStack.matches(this.items[i], shapedRecipes.items[i])) continue;
++            return false;
++        }
++        return this.width == shapedRecipes.width &&
++                this.height == shapedRecipes.height &&
++                this.e == shapedRecipes.e &&
++                ItemStack.matches(this.result, shapedRecipes.result);
++    }
++    // SportPaper end
+ }
+diff --git a/src/main/java/net/minecraft/server/ShapelessRecipes.java b/src/main/java/net/minecraft/server/ShapelessRecipes.java
+index 0d46b8d5..8c179f98 100644
+--- a/src/main/java/net/minecraft/server/ShapelessRecipes.java
++++ b/src/main/java/net/minecraft/server/ShapelessRecipes.java
+@@ -97,4 +97,21 @@ public class ShapelessRecipes implements IRecipe {
+         return java.util.Collections.unmodifiableList( ingredients );
+     }
+     // Spigot end
++
++    // SportPaper start
++    @Override
++    public boolean equals(Object other) {
++        if (this == other) return true;
++        if (other == null) return false;
++        if (this.getClass() != other.getClass()) return false;
++
++        ShapelessRecipes shapelessRecipes = (ShapelessRecipes) other;
++        if (this.ingredients.size() != shapelessRecipes.ingredients.size()) return false;
++        for (int i = 0; i < this.ingredients.size(); i++) {
++            if (ItemStack.matches(this.ingredients.get(i), shapelessRecipes.ingredients.get(i))) continue;
++            return false;
++        }
++        return ItemStack.matches(this.result, shapelessRecipes.result);
++    }
++    // SportPaper end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 52b2d106..5d91b537 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1032,6 +1032,14 @@ public final class CraftServer implements Server {
+         return true;
+     }
+ 
++    // SportPaper start
++    @Override
++    public boolean removeRecipe(Recipe recipe) {
++        getWorlds().forEach(world -> world.removeRecipe(recipe));
++        return true;
++    }
++    // SportPaper end
++
+     @Override
+     public List<Recipe> getRecipesFor(ItemStack result) {
+         Validate.notNull(result, "Result cannot be null");
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 2c66dbee..bc97e99a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -1600,6 +1600,28 @@ public class CraftWorld implements World {
+         return true;
+     }
+ 
++    // SportPaper start
++    @Override
++    public boolean removeRecipe(Recipe recipe) {
++        CraftRecipe toRemove;
++        if (recipe instanceof CraftRecipe) {
++            toRemove = (CraftRecipe) recipe;
++        } else {
++            if (recipe instanceof ShapedRecipe) {
++                toRemove = CraftShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
++            } else if (recipe instanceof ShapelessRecipe) {
++                toRemove = CraftShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
++            } else if (recipe instanceof FurnaceRecipe) {
++                toRemove = CraftFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
++            } else {
++                return false;
++            }
++        }
++        toRemove.removeFromCraftingManager(world.craftingManager, world.recipesFurnace);
++        return true;
++    }
++    // SportPaper end
++
+     @Override
+     public List<Recipe> getRecipesFor(ItemStack result) {
+         Validate.notNull(result, "Result cannot be null");
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
+index bc853a0f..b380b38f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
+@@ -6,6 +6,8 @@ import net.minecraft.server.RecipesFurnace;
+ import org.bukkit.inventory.FurnaceRecipe;
+ import org.bukkit.inventory.ItemStack;
+ 
++import java.util.Map; // SportPaper
++
+ public class CraftFurnaceRecipe extends FurnaceRecipe implements CraftRecipe {
+     public CraftFurnaceRecipe(ItemStack result, ItemStack source) {
+         super(result, source.getType(), source.getDurability());
+@@ -24,4 +26,24 @@ public class CraftFurnaceRecipe extends FurnaceRecipe implements CraftRecipe {
+         ItemStack input = this.getInput();
+         recipesFurnace.registerRecipe(CraftItemStack.asNMSCopy(input), CraftItemStack.asNMSCopy(result));
+     }
++
++    // SportPaper start
++    @Override
++    public void removeFromCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
++        net.minecraft.server.ItemStack input = CraftItemStack.asNMSCopy(getInput());
++        net.minecraft.server.ItemStack result = CraftItemStack.asNMSCopy(getResult());
++        for (Map.Entry<net.minecraft.server.ItemStack, net.minecraft.server.ItemStack> recipe : recipesFurnace.recipes.entrySet()) {
++            if (!recipe.getKey().equals(input)) continue;
++            if (!recipe.getValue().equals(result)) break;
++            recipesFurnace.recipes.remove(recipe.getKey(), recipe.getValue());
++            break;
++        }
++        for (Map.Entry<net.minecraft.server.ItemStack, net.minecraft.server.ItemStack> recipe : recipesFurnace.customRecipes.entrySet()) {
++            if (!recipe.getKey().equals(input)) continue;
++            if (!recipe.getValue().equals(result)) break;
++            recipesFurnace.customRecipes.remove(recipe.getKey(), recipe.getValue());
++            break;
++        }
++    }
++    // SportPaper end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
+index 232d1bbd..b938dca9 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
+@@ -6,4 +6,5 @@ import org.bukkit.inventory.Recipe;
+ 
+ public interface CraftRecipe extends Recipe {
+     void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace);
++    void removeFromCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace); // SportPaper
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
+index 622e4fe7..97d3ece4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
+@@ -40,27 +40,45 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
+         return ret;
+     }
+ 
+-    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
+-        Object[] data;
++    // SportPaper start
++    public ShapedRecipes getHandle() {
++        if (this.recipe != null) return this.recipe;
+         String[] shape = this.getShape();
+-        Map<Character, ItemStack> ingred = this.getIngredientMap();
+-        int datalen = shape.length;
+-        datalen += ingred.size() * 2;
+-        int i = 0;
+-        data = new Object[datalen];
+-        for (; i < shape.length; i++) {
+-            data[i] = shape[i];
++        int height = shape.length;
++        int width = 0;
++        for (String row : shape) {
++            if (row.length() < width) continue;
++            width = row.length();
+         }
+-        for (char c : ingred.keySet()) {
+-            ItemStack mdata = ingred.get(c);
+-            if (mdata == null) continue;
+-            data[i] = c;
+-            i++;
+-            int id = mdata.getTypeId();
+-            short dmg = mdata.getDurability();
+-            data[i] = new net.minecraft.server.ItemStack(CraftMagicNumbers.getItem(id), 1, dmg);
+-            i++;
++        Map<Character, ItemStack> ingredientMap = this.getIngredientMap();
++        net.minecraft.server.ItemStack[] itemStacks = new net.minecraft.server.ItemStack[width * height];
++        for (int i = 0; i < height; i++) {
++            String row = shape[i];
++            for (int j = 0; j < row.length(); j++) {
++                char c = row.charAt(j);
++                ItemStack ingredient = ingredientMap.get(c);
++                if (ingredient == null) {
++                    itemStacks[i * width + j] = null;
++                    continue;
++                }
++                int id = ingredient.getTypeId();
++                short dmg = ingredient.getDurability();
++                itemStacks[i * width + j] = new net.minecraft.server.ItemStack(CraftMagicNumbers.getItem(id), 1, dmg);
++            }
+         }
+-        craftingManager.registerShapedRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
++        this.recipe = new ShapedRecipes(width, height, itemStacks, CraftItemStack.asNMSCopy(getResult()));
++        return this.recipe;
++    }
++    // SportPaper end
++
++    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
++        craftingManager.a(this.getHandle()); // SportPaper
++    }
++
++    // SportPaper start
++    @Override
++    public void removeFromCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
++        craftingManager.recipes.remove(this.getHandle());
+     }
++    // SportPaper end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+index 8b2ea3f5..9442ee68 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
++import java.util.ArrayList; // SportPaper
+ import java.util.List;
+ 
+ import net.minecraft.server.CraftingManager;
+@@ -34,16 +35,29 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
+         return ret;
+     }
+ 
+-    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
+-        List<ItemStack> ingred = this.getIngredientList();
+-        Object[] data = new Object[ingred.size()];
+-        int i = 0;
+-        for (ItemStack mdata : ingred) {
+-            int id = mdata.getTypeId();
+-            short dmg = mdata.getDurability();
+-            data[i] = new net.minecraft.server.ItemStack(CraftMagicNumbers.getItem(id), 1, dmg);
+-            i++;
++    // SportPaper start
++    public ShapelessRecipes getHandle() {
++        if (this.recipe != null) return recipe;
++        List<ItemStack> ingredientList = getIngredientList();
++        ArrayList<net.minecraft.server.ItemStack> itemStacks = new ArrayList<>();
++        for (ItemStack ingredient : ingredientList) {
++            int id = ingredient.getTypeId();
++            short dmg = ingredient.getDurability();
++            itemStacks.add(new net.minecraft.server.ItemStack(CraftMagicNumbers.getItem(id), 1, dmg));
+         }
+-        craftingManager.registerShapelessRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
++        this.recipe = new ShapelessRecipes(CraftItemStack.asNMSCopy(getResult()), itemStacks);
++        return this.recipe;
++    }
++    // SportPaper end
++
++    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
++        craftingManager.a(this.getHandle()); // SportPaper
++    }
++
++    // SportPaper start
++    @Override
++    public void removeFromCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
++        craftingManager.recipes.remove(this.getHandle());
+     }
++    // SportPaper end
+ }
+-- 
+2.45.2
+

@@ -1,0 +1,77 @@
+From 49e15f50a03b6006c9c69b0a1a6898dd32d654ca Mon Sep 17 00:00:00 2001
+From: Doclic <doclic@tutanota.com>
+Date: Thu, 25 Jul 2024 02:08:33 +0200
+Subject: [PATCH] Add API to remove recipes
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 9a92d97b..0f43a275 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -648,6 +648,19 @@ public final class Bukkit {
+         return server.addRecipe(recipe);
+     }
+ 
++    // SportPaper start
++    /**
++     * Removes a recipe to the crafting manager.
++     *
++     * @param recipe the recipe to remove
++     * @return true if the recipe was removed, false if it wasn't for some
++     *     reason
++     */
++    public static boolean removeRecipe(Recipe recipe) {
++        return server.removeRecipe(recipe);
++    }
++    // SportPaper end
++
+     /**
+      * Get a list of all recipes for a given item. The stack size is ignored
+      * in comparisons. If the durability is -1, it will match any data value.
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index c136cb6d..86a9b539 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -557,6 +557,17 @@ public interface Server extends PluginMessageRecipient {
+      */
+     public boolean addRecipe(Recipe recipe);
+ 
++    // SportPaper start
++    /**
++     * Removes a recipe to all world crafting managers.
++     *
++     * @param recipe the recipe to remove
++     * @return true if the recipe was removed, false if it wasn't for some
++     *     reason
++     */
++    public boolean removeRecipe(Recipe recipe);
++    // SportPaper end
++
+     /**
+      * Get a list of all default recipes for a given item. The stack size is ignored
+      * in comparisons. If the durability is -1, it will match any data value.
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index a01ee01b..cec4b60d 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -1658,6 +1658,17 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+      */
+     public boolean addRecipe(Recipe recipe);
+ 
++    // SportPaper start
++    /**
++     * Removes a recipe from the crafting manager.
++     *
++     * @param recipe the recipe to remove
++     * @return true if the recipe was removed, false if it wasn't for some
++     *     reason
++     */
++    public boolean removeRecipe(Recipe recipe);
++    // SportPaper end
++
+     /**
+      * Get a list of all recipes for a given item. The stack size is ignored
+      * in comparisons. If the durability is -1, it will match any data value.
+-- 
+2.45.2
+
