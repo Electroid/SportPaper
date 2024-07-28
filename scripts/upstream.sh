@@ -49,7 +49,11 @@ minecraftversion=$(cat "$basedir/base/Paper/BuildData/info.json" | grep minecraf
 cd base/Paper/
 
 version=$(echo -e "Paper: $paperVer\nmc-dev:$importedmcdev")
-tag="${minecraftversion}-${mcVer}-$(echo -e $version | shasum | awk '{print $1}')"
+if [[ "$OSTYPE" =~ ^msys ]]; then
+    tag="${minecraftversion}-${mcVer}-$(echo -e $version | sha1sum | awk '{print $1}')"
+else
+    tag="${minecraftversion}-${mcVer}-$(echo -e $version | shasum | awk '{print $1}')"
+fi
 
 function tag {
 (
