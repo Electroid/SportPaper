@@ -1,4 +1,4 @@
-From 9e08031e6d1ffab0b44dd8d3d8d24e164dbde8f5 Mon Sep 17 00:00:00 2001
+From fa4c43d1f83aae486ed04bb33734bfba83541a64 Mon Sep 17 00:00:00 2001
 From: AmbrosL <AmbrosL@users.noreply.github.com>
 Date: Sat, 10 Mar 2018 02:33:28 +0100
 Subject: [PATCH] Fix east/west cannoning
@@ -62,5 +62,5 @@ index 0d95a296..2790207d 100644
                  double d10 = d0;
                  double d11 = d1;
 -- 
-2.39.2
+2.50.0
 

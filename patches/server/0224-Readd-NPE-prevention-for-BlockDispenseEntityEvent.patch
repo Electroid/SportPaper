@@ -1,4 +1,4 @@
-From e0c046f68018df323312eecb0a711587eb0bb029 Mon Sep 17 00:00:00 2001
+From 504fc94bf00275e51b03aa0c5ede95fb5edc8291 Mon Sep 17 00:00:00 2001
 From: Christopher White <18whitechristop@gmail.com>
 Date: Sat, 20 Jul 2024 11:28:20 -0700
 Subject: [PATCH] Readd NPE prevention for BlockDispenseEntityEvent
@@ -22,5 +22,5 @@ index 9577483d..5c5ceed7 100644
                  BlockDispenseEntityEvent event = new BlockDispenseEntityEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2), entity.getBukkitEntity());
                  if (!BlockDispenser.eventFired) {
 -- 
-2.45.2
+2.50.0
 

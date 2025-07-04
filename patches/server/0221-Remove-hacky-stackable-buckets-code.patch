@@ -1,4 +1,4 @@
-From 3d38a1e462bfcc4a009ace1a8d349f719f9dddce Mon Sep 17 00:00:00 2001
+From b10c6741b5d697c3136b8f9f06ff2d0a39cbc33c Mon Sep 17 00:00:00 2001
 From: hpfxd <me@hpfxd.com>
 Date: Wed, 27 Oct 2021 20:46:41 -0400
 Subject: [PATCH] Remove hacky stackable buckets code
@@ -65,5 +65,5 @@ index 8cdcaf3a..065dcdf6 100644
  
      public static boolean warnForExcessiveVelocity;
 -- 
-2.43.0
+2.50.0
 
