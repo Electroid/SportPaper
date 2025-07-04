@@ -1,8 +1,11 @@
-From 780dc32f9ade99ebca08534c1f3616cf1e6a8200 Mon Sep 17 00:00:00 2001
+From 0e7e8502f432eb838aa4cb3994fba19e97498dd4 Mon Sep 17 00:00:00 2001
 From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
 Date: Fri, 5 Jul 2024 21:12:10 -0700
 Subject: [PATCH] Increase chat message length to 256
 
+This lets modded 1.8 clients send longer messages. ViaChatFixer will
+still be needed for modern Minecraft versions since ViaVersion trims
+messages on its end.
 
 diff --git a/src/main/java/net/minecraft/server/PacketPlayInChat.java b/src/main/java/net/minecraft/server/PacketPlayInChat.java
 index 18358b43..d82dc0a8 100644
