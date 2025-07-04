@@ -1,4 +1,4 @@
-From 2fc8b01269746bd5ac029cbeac1a26686acfd410 Mon Sep 17 00:00:00 2001
+From 94e6ab0c4157a9752098f057494412fb20a2af0c Mon Sep 17 00:00:00 2001
 From: theFoxley <7950977+theFoxley@users.noreply.github.com>
 Date: Sat, 21 Jan 2023 22:54:41 +0100
 Subject: [PATCH] Prevent desync with some packets that use entity id and check
@@ -20,5 +20,5 @@ index 9ab157cd..0d95a296 100644
      public double j;
      public boolean k; public boolean blocksEntitySpawning() { return k; } // Paper - OBFHELPER
 -- 
-2.37.2
+2.50.0
 

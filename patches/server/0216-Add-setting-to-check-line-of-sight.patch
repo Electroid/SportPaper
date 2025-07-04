@@ -1,4 +1,4 @@
-From 2ec0a95c46a09efb7a92dd200185ac850a5a6c1d Mon Sep 17 00:00:00 2001
+From 5d8c30c1395a04e3c88d0d7695e50f8fc4f7f5b0 Mon Sep 17 00:00:00 2001
 From: halfmaster1 <ohpointfive@gmail.com>
 Date: Wed, 5 May 2021 02:20:01 -0400
 Subject: [PATCH] Add setting to check line of sight
@@ -32,5 +32,5 @@ index 8d58d1f3..ca028d04 100644
 +
  }
 -- 
-2.39.2
+2.50.0
 

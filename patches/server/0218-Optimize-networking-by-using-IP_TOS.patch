@@ -1,4 +1,4 @@
-From 94b14fa428771a46eda1560dc4ea12a75094ca73 Mon Sep 17 00:00:00 2001
+From 0473d6807b44d8b79771a8d37c6098963bf2925f Mon Sep 17 00:00:00 2001
 From: Heath Logan Campbell <github@heathlogancampbell.com>
 Date: Fri, 31 Jul 2020 12:43:00 +0200
 Subject: [PATCH] Optimize networking by using IP_TOS
@@ -18,5 +18,5 @@ index cc6f993b..052139d4 100644
                          ;
                      }
 -- 
-2.39.2
+2.50.0
 

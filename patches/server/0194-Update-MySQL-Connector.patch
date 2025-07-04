@@ -1,14 +1,14 @@
-From 8f44896ae94500d9533a5b8bf884e5e505fc475c Mon Sep 17 00:00:00 2001
+From ef4ce39e89a038ec0d39e8f238dfc6d333d25a33 Mon Sep 17 00:00:00 2001
 From: VytskaLT <VytskaLT@protonmail.com>
 Date: Tue, 15 Dec 2020 18:59:08 +0200
 Subject: [PATCH] Update MySQL Connector
 
 
 diff --git a/pom.xml b/pom.xml
-index 6a9d969e..404eb178 100644
+index a2f665c1..d8e35ef2 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -75,7 +75,7 @@
+@@ -81,7 +81,7 @@
          <dependency>
              <groupId>mysql</groupId>
              <artifactId>mysql-connector-java</artifactId>
@@ -18,5 +18,5 @@ index 6a9d969e..404eb178 100644
              <scope>compile</scope>
          </dependency>
 -- 
-2.25.1
+2.50.0
 
