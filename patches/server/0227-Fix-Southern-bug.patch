@@ -1,0 +1,198 @@
+From 2b23e242ee2ebf6c6f0146d94f92e26a9ef88f7e Mon Sep 17 00:00:00 2001
+From: shChallenger <wylserop32@proton.me>
+Date: Sun, 13 Oct 2024 22:30:38 +0200
+Subject: [PATCH] Fix Southern bug
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+index 97fbf0ea..2c2ab3fb 100644
+--- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
++++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerVelocityEvent;
+ 
+ // SportPaper start
+ import java.util.ArrayList;
++import java.lang.Math;
+ // SportPaper end
+ 
+ public class EntityTrackerEntry {
+@@ -55,9 +56,11 @@ public class EntityTrackerEntry {
+         this.b = i;
+         this.c = j;
+         this.u = flag;
+-        this.xLoc = MathHelper.floor(entity.locX * 32.0D);
+-        this.yLoc = MathHelper.floor(entity.locY * 32.0D);
+-        this.zLoc = MathHelper.floor(entity.locZ * 32.0D);
++        // SportPaper start - fix southern bug
++        this.xLoc = (int) Math.round(entity.locX * 32.0D);
++        this.yLoc = (int) Math.round(entity.locY * 32.0D);
++        this.zLoc = (int) Math.round(entity.locZ * 32.0D);
++        // SportPaper end
+         this.yRot = MathHelper.d(entity.yaw * 256.0F / 360.0F);
+         this.xRot = MathHelper.d(entity.pitch * 256.0F / 360.0F);
+         this.i = MathHelper.d(entity.getHeadRotation() * 256.0F / 360.0F);
+@@ -118,9 +121,11 @@ public class EntityTrackerEntry {
+ 
+             if (this.tracker.vehicle == null) {
+                 ++this.v;
+-                i = MathHelper.floor(this.tracker.locX * 32.0D);
+-                j = MathHelper.floor(this.tracker.locY * 32.0D);
+-                int k = MathHelper.floor(this.tracker.locZ * 32.0D);
++                // SportPaper start - fix southern bug
++                i = (int) Math.round(this.tracker.locX * 32.0D);
++                j = (int) Math.round(this.tracker.locY * 32.0D);
++                int k = (int) Math.round(this.tracker.locZ * 32.0D);
++                // SportPaper end
+                 int l = MathHelper.d(this.tracker.yaw * 256.0F / 360.0F);
+                 int i1 = MathHelper.d(this.tracker.pitch * 256.0F / 360.0F);
+                 int j1 = i - this.xLoc;
+@@ -231,9 +236,11 @@ public class EntityTrackerEntry {
+                     this.xRot = j;
+                 }
+ 
+-                this.xLoc = MathHelper.floor(this.tracker.locX * 32.0D);
+-                this.yLoc = MathHelper.floor(this.tracker.locY * 32.0D);
+-                this.zLoc = MathHelper.floor(this.tracker.locZ * 32.0D);
++                // SportPaper start - fix southern bug
++                this.xLoc = (int) Math.round(this.tracker.locX * 32.0D);
++                this.yLoc = (int) Math.round(this.tracker.locY * 32.0D);
++                this.zLoc = (int) Math.round(this.tracker.locZ * 32.0D);
++                // SportPaper end
+                 this.b();
+                 this.x = true;
+             }
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java b/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
+index 67fc8b4f..58e5ecce 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
+@@ -4,6 +4,10 @@ import java.io.IOException;
+ import java.util.List;
+ import java.util.UUID;
+ 
++// SportPaper start
++import java.lang.Math;
++// SportPaper end
++
+ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayOut> {
+ 
+     private int a;
+@@ -21,9 +25,10 @@ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayO
+     public PacketPlayOutNamedEntitySpawn(int id, UUID uuid, double xPos, double yPos, double zPos, byte yaw, byte pitch, ItemStack heldItem, DataWatcher dataWatcher) {
+         this.a = id;
+         this.b = uuid;
+-        this.c = MathHelper.floor(xPos * 32.0D);
+-        this.d = MathHelper.floor(yPos * 32.0D);
+-        this.e = MathHelper.floor(zPos * 32.0D);
++        // SportPaper - fix southern bug
++        this.c = (int) Math.round(xPos * 32.0D);
++        this.d = (int) Math.round(yPos * 32.0D);
++        this.e = (int) Math.round(zPos * 32.0D);
+         this.f = (byte) ((int) (yaw * 256.0F / 360.0F));
+         this.g = (byte) ((int) (pitch * 256.0F / 360.0F));
+         this.h = heldItem == null ? 0 : Item.getId(heldItem.getItem());
+@@ -36,9 +41,11 @@ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayO
+     public PacketPlayOutNamedEntitySpawn(EntityHuman entityhuman) {
+         this.a = entityhuman.getId();
+         this.b = entityhuman.getProfile().getId();
+-        this.c = MathHelper.floor(entityhuman.locX * 32.0D);
+-        this.d = MathHelper.floor(entityhuman.locY * 32.0D);
+-        this.e = MathHelper.floor(entityhuman.locZ * 32.0D);
++        // SportPaper start - fix southern bug
++        this.c = (int) Math.round(entityhuman.locX * 32.0D);
++        this.d = (int) Math.round(entityhuman.locY * 32.0D);
++        this.e = (int) Math.round(entityhuman.locZ * 32.0D);
++        // SportPaper end
+         this.f = (byte) ((int) (entityhuman.yaw * 256.0F / 360.0F));
+         this.g = (byte) ((int) (entityhuman.pitch * 256.0F / 360.0F));
+         ItemStack itemstack = entityhuman.inventory.getItemInHand();
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntity.java b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntity.java
+index 8a6accf5..33aa06b4 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntity.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntity.java
+@@ -3,6 +3,10 @@ package net.minecraft.server;
+ import java.io.IOException;
+ import java.util.UUID;
+ 
++// SportPaper start
++import java.lang.Math;
++// SportPaper end
++
+ public class PacketPlayOutSpawnEntity implements Packet<PacketListenerPlayOut> {
+ 
+     private int a;
+@@ -26,9 +30,10 @@ public class PacketPlayOutSpawnEntity implements Packet<PacketListenerPlayOut> {
+     // SportPaper start - add constructor
+     public PacketPlayOutSpawnEntity(int id, double xPos, double yPos, double zPos, int xVel, int yVel, int zVel, int pitch, int yaw, int type, int data) {
+         this.a = id;
+-        this.b = MathHelper.floor(xPos * 32.0D);
+-        this.c = MathHelper.floor(yPos * 32.0D);
+-        this.d = MathHelper.floor(zPos * 32.0D);
++        // SportPaper - fix southern bug
++        this.b = (int) Math.round(xPos * 32.0D);
++        this.c = (int) Math.round(yPos * 32.0D);
++        this.d = (int) Math.round(zPos * 32.0D);
+         this.e = xVel;
+         this.f = yVel;
+         this.g = zVel;
+@@ -41,9 +46,11 @@ public class PacketPlayOutSpawnEntity implements Packet<PacketListenerPlayOut> {
+ 
+     public PacketPlayOutSpawnEntity(Entity entity, int i, int j) {
+         this.a = entity.getId();
+-        this.b = MathHelper.floor(entity.locX * 32.0D);
+-        this.c = MathHelper.floor(entity.locY * 32.0D);
+-        this.d = MathHelper.floor(entity.locZ * 32.0D);
++        // SportPaper start - fix southern bug
++        this.b = (int) Math.round(entity.locX * 32.0D);
++        this.c = (int) Math.round(entity.locY * 32.0D);
++        this.d = (int) Math.round(entity.locZ * 32.0D);
++        // SportPaper end
+         this.h = MathHelper.d(entity.pitch * 256.0F / 360.0F);
+         this.i = MathHelper.d(entity.yaw * 256.0F / 360.0F);
+         this.j = i;
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
+index bb65af14..9ec5af8e 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
+@@ -3,6 +3,10 @@ package net.minecraft.server;
+ import java.io.IOException;
+ import java.util.List;
+ 
++// SportPaper start
++import java.lang.Math;
++// SportPaper end
++
+ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlayOut> {
+ 
+     private int a;
+@@ -23,9 +27,10 @@ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlay
+     public PacketPlayOutSpawnEntityLiving(int entityId, byte entityType, double xPos, double yPos, double zPos, float yaw, float pitch, float headPitch, double xVel, double yVel, double zVel, DataWatcher watcher) {
+         this.a = entityId;
+         this.b = entityType;
+-        this.c = MathHelper.floor(xPos * 32.0D);
+-        this.d = MathHelper.floor(yPos * 32.0D);
+-        this.e = MathHelper.floor(zPos * 32.0D);
++        // SportPaper - fix southern bug
++        this.c = (int) Math.round(xPos * 32.0D);
++        this.d = (int) Math.round(yPos * 32.0D);
++        this.e = (int) Math.round(zPos * 32.0D);
+         this.i = (byte) ((int) (yaw * 256.0F / 360.0F));
+         this.j = (byte) ((int) (pitch * 256.0F / 360.0F));
+         this.k = (byte) ((int) (headPitch * 256.0F / 360.0F));
+@@ -41,9 +46,11 @@ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlay
+     public PacketPlayOutSpawnEntityLiving(EntityLiving entityliving) {
+         this.a = entityliving.getId();
+         this.b = (byte) EntityTypes.a(entityliving);
+-        this.c = MathHelper.floor(entityliving.locX * 32.0D);
+-        this.d = MathHelper.floor(entityliving.locY * 32.0D);
+-        this.e = MathHelper.floor(entityliving.locZ * 32.0D);
++        // SportPaper start - fix southern bug
++        this.c = (int) Math.round(entityliving.locX * 32.0D);
++        this.d = (int) Math.round(entityliving.locY * 32.0D);
++        this.e = (int) Math.round(entityliving.locZ * 32.0D);
++        // SportPaper end
+         this.i = (byte) ((int) (entityliving.yaw * 256.0F / 360.0F));
+         this.j = (byte) ((int) (entityliving.pitch * 256.0F / 360.0F));
+         this.k = (byte) ((int) (entityliving.aK * 256.0F / 360.0F));
+-- 
+2.39.5
+
