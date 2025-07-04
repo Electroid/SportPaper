@@ -1,11 +1,11 @@
-From fba402aaeddb102e5c129501882793e896546082 Mon Sep 17 00:00:00 2001
+From 3f47e449dda883c211475e9924be1492d20ac99b Mon Sep 17 00:00:00 2001
 From: hpfxd <me@hpfxd.com>
 Date: Wed, 27 Oct 2021 06:29:44 -0400
-Subject: [PATCH] Update to Netty 4.1.x
+Subject: [PATCH] Update to Netty 4.1.118
 
 
 diff --git a/pom.xml b/pom.xml
-index d8e35ef2..a52663c2 100644
+index d8e35ef2..2a02fbcb 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -27,6 +27,11 @@
@@ -15,11 +15,19 @@ index d8e35ef2..a52663c2 100644
 +        <dependency>
 +            <groupId>io.netty</groupId>
 +            <artifactId>netty-all</artifactId>
-+            <version>4.1.105.Final</version>
++            <version>4.1.118.Final</version>
 +        </dependency>
          <dependency>
              <groupId>it.unimi.dsi</groupId>
              <artifactId>fastutil</artifactId>
+@@ -228,6 +233,7 @@
+                                 <filter>
+                                     <artifact>org.spigotmc:minecraft-server:**</artifact>
+                                     <excludes>
++                                        <exclude>io/netty/**</exclude>
+                                         <exclude>org/apache/logging/log4j/**</exclude>
+                                     </excludes>
+                                 </filter>
 diff --git a/src/main/java/net/minecraft/server/PacketDataSerializer.java b/src/main/java/net/minecraft/server/PacketDataSerializer.java
 index e2eb3054..9a075fef 100644
 --- a/src/main/java/net/minecraft/server/PacketDataSerializer.java

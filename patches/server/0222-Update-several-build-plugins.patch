@@ -1,11 +1,11 @@
-From 5e17a4f4023fd43353189f4537caf57a684db163 Mon Sep 17 00:00:00 2001
+From ea31acbbae4a5e75d6db743078d16ded234d14d1 Mon Sep 17 00:00:00 2001
 From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
 Date: Tue, 22 Aug 2023 10:11:12 -0700
 Subject: [PATCH] Update several build plugins
 
 
 diff --git a/pom.xml b/pom.xml
-index 4aff3f3d..4f756286 100644
+index f38265d6..c31fc87a 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -120,7 +120,7 @@
@@ -35,7 +35,7 @@ index 4aff3f3d..4f756286 100644
                  <executions>
                      <execution>
                          <phase>package</phase>
-@@ -287,12 +287,12 @@
+@@ -288,12 +288,12 @@
              <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
                  <artifactId>maven-compiler-plugin</artifactId>
