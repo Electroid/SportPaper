@@ -1,4 +1,4 @@
-From 6c66a4688988518aa4cb3970dbbf9366fa4fd949 Mon Sep 17 00:00:00 2001
+From 1e090794b1688f04ec20c47f4cd1a3f3d2092585 Mon Sep 17 00:00:00 2001
 From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
 Date: Sun, 31 Dec 2023 22:03:05 -0800
 Subject: [PATCH] Make dimension field non-final

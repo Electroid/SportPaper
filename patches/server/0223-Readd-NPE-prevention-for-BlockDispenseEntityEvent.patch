@@ -1,4 +1,4 @@
-From 504fc94bf00275e51b03aa0c5ede95fb5edc8291 Mon Sep 17 00:00:00 2001
+From e7fb21b1d7f2eb9e6903b08207fb5f8fc0b84273 Mon Sep 17 00:00:00 2001
 From: Christopher White <18whitechristop@gmail.com>
 Date: Sat, 20 Jul 2024 11:28:20 -0700
 Subject: [PATCH] Readd NPE prevention for BlockDispenseEntityEvent

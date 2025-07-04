@@ -1,4 +1,4 @@
-From fa4c43d1f83aae486ed04bb33734bfba83541a64 Mon Sep 17 00:00:00 2001
+From 9a88115fc24f0b63898f0b617e00c541cee10152 Mon Sep 17 00:00:00 2001
 From: AmbrosL <AmbrosL@users.noreply.github.com>
 Date: Sat, 10 Mar 2018 02:33:28 +0100
 Subject: [PATCH] Fix east/west cannoning
@@ -7,18 +7,10 @@ Ported to SportPaper from TacoSpigot and Titanium
 https://github.com/TacoSpigot/TacoSpigot/pull/89
 
 diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
-index 0d95a296..2790207d 100644
+index 0d95a296..f9d7e660 100644
 --- a/src/main/java/net/minecraft/server/Entity.java
 +++ b/src/main/java/net/minecraft/server/Entity.java
-@@ -38,6 +38,7 @@ import org.bukkit.plugin.PluginManager;
- // CraftBukkit end
- 
- // PaperSpigot start
-+import org.github.paperspigot.PaperSpigotWorldConfig;
- import org.spigotmc.event.entity.EntityDismountEvent;
- // PaperSpigot end
- 
-@@ -555,17 +556,34 @@ public abstract class Entity implements ICommandListener {
+@@ -555,17 +555,34 @@ public abstract class Entity implements ICommandListener {
              AxisAlignedBB axisalignedbb2;
              Iterator iterator1;
  
@@ -26,7 +18,7 @@ index 0d95a296..2790207d 100644
 -                axisalignedbb2 = (AxisAlignedBB) iterator1.next();
 -            }
 +            // SportPaper start - fix east/west cannoning by calculating the z movement before x if the x velocity is greater
-+            if (PaperSpigotWorldConfig.fixCannons && Math.abs(d0) > Math.abs(d2)) {
++            if (Math.abs(d0) > Math.abs(d2)) {
 +                for (iterator1 = list.iterator(); iterator1.hasNext(); d2 = axisalignedbb2.c(this.getBoundingBox(), d2)) {
 +                    axisalignedbb2 = (AxisAlignedBB) iterator1.next();
 +                }
