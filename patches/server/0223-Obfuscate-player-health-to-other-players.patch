@@ -1,0 +1,93 @@
+From eaf8ee98555c310f1612710e51adf00569b48865 Mon Sep 17 00:00:00 2001
+From: Beanes <sikyserver@gmail.com>
+Date: Sun, 2 Apr 2023 16:33:30 +0200
+Subject: [PATCH] Obfuscate player health to other players
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+index 97fbf0ea..6aa06650 100644
+--- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
++++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
+ // CraftBukkit start
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerVelocityEvent;
++import org.github.paperspigot.PaperSpigotConfig;
+ // CraftBukkit end
+ 
+ // SportPaper start
+@@ -279,7 +280,39 @@ public class EntityTrackerEntry {
+         DataWatcher datawatcher = this.tracker.getDataWatcher();
+ 
+         if (datawatcher.a()) {
+-            this.broadcastIncludingSelf(new PacketPlayOutEntityMetadata(this.tracker.getId(), datawatcher, false));
++            // SportPaper start
++            if (PaperSpigotConfig.obfuscatePlayerHealth && this.tracker instanceof EntityHuman) {
++                List<DataWatcher.WatchableObject> changedMetadata = datawatcher.c(); // Clone the data watcher elements
++                Iterator<DataWatcher.WatchableObject> iterator = changedMetadata.iterator();
++                boolean found = false;
++
++                // We iterate over every data watcher element
++                while (iterator.hasNext()) {
++                    DataWatcher.WatchableObject watchable = iterator.next();
++                    // If the index is 6 (player health) we can replace it with an obfuscated value. We have to make sure the health is also over 0 otherwise death animations won't show
++                    // https://wiki.vg/index.php?title=Entity_metadata&oldid=7415#Living_Entity_Base
++                    if (watchable.a() == 6 && (float) watchable.b() > 0) {
++                        iterator.remove();
++                        found = true;
++                    }
++                }
++
++                // Put in the fake hp value
++                if (found) {
++                    changedMetadata.add(new DataWatcher.WatchableObject(3, 6, 1.0F));
++                }
++
++                // Create a new packet with the obfuscated player health
++                PacketPlayOutEntityMetadata modifiedPacket = new PacketPlayOutEntityMetadata(this.tracker.getId(), changedMetadata);
++
++                // Broadcast the modified metadata packet to everyone and send the correct packet to the player
++                this.broadcast(modifiedPacket);
++                if (this.tracker instanceof EntityPlayer)
++                    ((EntityPlayer) this.tracker).playerConnection.sendPacket(new PacketPlayOutEntityMetadata(this.tracker.getId(), datawatcher, false));
++            } else {
++                // SportPaper end
++                this.broadcastIncludingSelf(new PacketPlayOutEntityMetadata(this.tracker.getId(), datawatcher, false));
++            }
+         }
+ 
+         if (this.tracker instanceof EntityLiving) {
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+index 043ce662..085f9989 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+@@ -20,6 +20,13 @@ public class PacketPlayOutEntityMetadata implements Packet<PacketListenerPlayOut
+ 
+     }
+ 
++    // SportPaper start
++    public PacketPlayOutEntityMetadata(int i, List<DataWatcher.WatchableObject> list) {
++        this.a = i;
++        this.b = list;
++    }
++    // SportPaper end
++
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+         this.a = packetdataserializer.e();
+         this.b = DataWatcher.b(packetdataserializer);
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 8cdcaf3a..4bd60ff2 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -235,4 +235,8 @@ public class PaperSpigotConfig
+         criticalHitMultiplier = (float) getDouble("settings.critical-hit-multiplier", (double) criticalHitMultiplier);
+     }
+ 
++    public static boolean obfuscatePlayerHealth = true;
++    private static void obfuscatePlayerHealth() {
++        obfuscatePlayerHealth = getBoolean("settings.obfuscate-player-health", obfuscatePlayerHealth);
++    }
+ }
+-- 
+2.37.3.windows.1
+
