@@ -1,0 +1,26 @@
+From 7b90a8e2fb6b7c68343c9e75565ceef5fea91fbd Mon Sep 17 00:00:00 2001
+From: Pablete1234 <pabloherrerapalacio@gmail.com>
+Date: Sun, 5 Dec 2021 06:18:48 +0100
+Subject: [PATCH] Optimize toLegacyData removing sanity checks
+
+
+diff --git a/src/main/java/net/minecraft/server/Block.java b/src/main/java/net/minecraft/server/Block.java
+index db09989e..874af8a3 100644
+--- a/src/main/java/net/minecraft/server/Block.java
++++ b/src/main/java/net/minecraft/server/Block.java
+@@ -158,11 +158,7 @@ public class Block {
+     }
+ 
+     public int toLegacyData(IBlockData iblockdata) {
+-        if (iblockdata != null && !iblockdata.a().isEmpty()) {
+-            throw new IllegalArgumentException("Don\'t know how to convert " + iblockdata + " back into data...");
+-        } else {
+-            return 0;
+-        }
++        return 0; // Sportpaper - optimize toLegacyData removing unneeded sanity checks
+     }
+ 
+     public IBlockData updateState(IBlockData iblockdata, IBlockAccess iblockaccess, BlockPosition blockposition) {
+-- 
+2.51.0
+
