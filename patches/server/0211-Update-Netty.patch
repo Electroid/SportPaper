@@ -1,11 +1,11 @@
-From d67b1ce0d734b0d99f800f61f57f4c1cc1dec559 Mon Sep 17 00:00:00 2001
+From 8557947a7dca00692fe9407335cbc232e16c4a2d Mon Sep 17 00:00:00 2001
 From: hpfxd <me@hpfxd.com>
 Date: Wed, 27 Oct 2021 06:29:44 -0400
 Subject: [PATCH] Update Netty
 
 
 diff --git a/pom.xml b/pom.xml
-index c97310f0d..c2edc025c 100644
+index c97310f0d..d67184ab8 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -26,7 +26,62 @@
@@ -17,7 +17,7 @@ index c97310f0d..c2edc025c 100644
 +            <dependency>
 +                <groupId>io.netty</groupId>
 +                <artifactId>netty-bom</artifactId>
-+                <version>4.2.9.Final</version>
++                <version>4.2.10.Final</version>
 +                <scope>import</scope>
 +                <type>pom</type>
 +            </dependency>
@@ -396,5 +396,5 @@ index e2eb30546..baa12427d 100644
 +    // SportPaper end
  }
 -- 
-2.52.0
+2.50.1 (Apple Git-155)
 

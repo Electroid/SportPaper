@@ -1,14 +1,14 @@
-From 052cde97dd6eee5a31a800eab0e9785d16ca8366 Mon Sep 17 00:00:00 2001
+From 07a2bb1ce7d2a989e1bc98e278ef6c59bf3731cf Mon Sep 17 00:00:00 2001
 From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
 Date: Wed, 10 Dec 2025 03:11:50 -0800
 Subject: [PATCH] Migrate from Trove to fastutil
 
 
 diff --git a/pom.xml b/pom.xml
-index 94108b33e..82f4c4e6f 100644
+index 69e592264..ca6fe8cd4 100644
 --- a/pom.xml
 +++ b/pom.xml
-@@ -103,16 +103,6 @@
+@@ -89,16 +89,6 @@
              <groupId>io.netty</groupId>
              <artifactId>netty-transport-native-unix-common</artifactId>
          </dependency>
@@ -60,7 +60,7 @@ index 2c92e1766..64a80c9ce 100644
          }
          // Spigot end
 diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
-index 5113799e7..8212928e7 100644
+index e42a5ee82..6c1792945 100644
 --- a/src/main/java/net/minecraft/server/PlayerList.java
 +++ b/src/main/java/net/minecraft/server/PlayerList.java
 @@ -67,7 +67,7 @@ public abstract class PlayerList {
@@ -236,5 +236,5 @@ index 1ad321639..a8736e993 100644
      {
          disableStatSaving = getBoolean( "stats.disable-saving", false );
 -- 
-2.52.0
+2.50.1 (Apple Git-155)
 
