@@ -1,0 +1,432 @@
+From f82ba39ea901195bcd7ff7dd41e05b01f4b16f2d Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Mon, 24 Nov 2025 18:13:00 -0800
+Subject: [PATCH] Move Paper-specific code to com.destroystokyo namespace
+
+
+diff --git a/src/main/java/org/github/paperspigot/Title.java b/src/main/java/com/destroystokyo/paper/Title.java
+similarity index 99%
+rename from src/main/java/org/github/paperspigot/Title.java
+rename to src/main/java/com/destroystokyo/paper/Title.java
+index 27f9bc26..e26c2df4 100644
+--- a/src/main/java/org/github/paperspigot/Title.java
++++ b/src/main/java/com/destroystokyo/paper/Title.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot;
++package com.destroystokyo.paper;
+ 
+ import net.md_5.bungee.api.chat.BaseComponent;
+ import net.md_5.bungee.api.chat.TextComponent;
+diff --git a/src/main/java/org/github/paperspigot/event/block/BeaconEffectEvent.java b/src/main/java/com/destroystokyo/paper/event/block/BeaconEffectEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/block/BeaconEffectEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/block/BeaconEffectEvent.java
+index d9f9b95a..6579ae99 100644
+--- a/src/main/java/org/github/paperspigot/event/block/BeaconEffectEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/block/BeaconEffectEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.block;
++package com.destroystokyo.paper.event.block;
+ 
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/EntityAddToWorldEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityAddToWorldEvent.java
+similarity index 93%
+rename from src/main/java/org/github/paperspigot/event/entity/EntityAddToWorldEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/EntityAddToWorldEvent.java
+index 5aad9c7e..18b158cd 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/EntityAddToWorldEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityAddToWorldEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import org.bukkit.entity.Entity;
+ import org.bukkit.event.Event;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/EntityKnockbackByEntityEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityKnockbackByEntityEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/entity/EntityKnockbackByEntityEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/EntityKnockbackByEntityEvent.java
+index c34fb1a3..f6ef1162 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/EntityKnockbackByEntityEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityKnockbackByEntityEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.LivingEntity;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/EntityPathfindEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/entity/EntityPathfindEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEvent.java
+index 07af8e8b..0e4902d9 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/EntityPathfindEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import org.bukkit.Location;
+ import org.bukkit.entity.Entity;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/EntityRemoveFromWorldEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityRemoveFromWorldEvent.java
+similarity index 92%
+rename from src/main/java/org/github/paperspigot/event/entity/EntityRemoveFromWorldEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/EntityRemoveFromWorldEvent.java
+index 9f5ea4a0..800be6aa 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/EntityRemoveFromWorldEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityRemoveFromWorldEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import org.bukkit.entity.Entity;
+ import org.bukkit.event.Event;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/EntityZapEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityZapEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/entity/EntityZapEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/EntityZapEvent.java
+index 70436c56..23d63ed1 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/EntityZapEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityZapEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import org.apache.commons.lang3.Validate;
+ import org.bukkit.entity.Entity;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/PreCreatureSpawnEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/PreCreatureSpawnEvent.java
+similarity index 98%
+rename from src/main/java/org/github/paperspigot/event/entity/PreCreatureSpawnEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/PreCreatureSpawnEvent.java
+index b48a7875..f4826d81 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/PreCreatureSpawnEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/PreCreatureSpawnEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import com.google.common.base.Preconditions;
+ import org.bukkit.Location;
+diff --git a/src/main/java/org/github/paperspigot/event/entity/ProjectileCollideEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/ProjectileCollideEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/entity/ProjectileCollideEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/entity/ProjectileCollideEvent.java
+index 3485833e..f42e9851 100644
+--- a/src/main/java/org/github/paperspigot/event/entity/ProjectileCollideEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/entity/ProjectileCollideEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.entity;
++package com.destroystokyo.paper.event.entity;
+ 
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Projectile;
+diff --git a/src/main/java/org/github/paperspigot/event/player/IllegalPacketEvent.java b/src/main/java/com/destroystokyo/paper/event/player/IllegalPacketEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/player/IllegalPacketEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/player/IllegalPacketEvent.java
+index e79b3c9b..e11f74fc 100644
+--- a/src/main/java/org/github/paperspigot/event/player/IllegalPacketEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/player/IllegalPacketEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.player;
++package com.destroystokyo.paper.event.player;
+ 
+ import org.bukkit.Bukkit;
+ import org.bukkit.entity.Player;
+diff --git a/src/main/java/org/github/paperspigot/event/player/PlayerJumpEvent.java b/src/main/java/com/destroystokyo/paper/event/player/PlayerJumpEvent.java
+similarity index 98%
+rename from src/main/java/org/github/paperspigot/event/player/PlayerJumpEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/player/PlayerJumpEvent.java
+index 0dd48fdd..dd24f9b0 100644
+--- a/src/main/java/org/github/paperspigot/event/player/PlayerJumpEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/player/PlayerJumpEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.player;
++package com.destroystokyo.paper.event.player;
+ 
+ import com.google.common.base.Preconditions;
+ import org.bukkit.Location;
+diff --git a/src/main/java/org/github/paperspigot/event/player/PlayerNaturallySpawnCreaturesEvent.java b/src/main/java/com/destroystokyo/paper/event/player/PlayerNaturallySpawnCreaturesEvent.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/event/player/PlayerNaturallySpawnCreaturesEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/player/PlayerNaturallySpawnCreaturesEvent.java
+index 85cb04f5..02d6560b 100644
+--- a/src/main/java/org/github/paperspigot/event/player/PlayerNaturallySpawnCreaturesEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/player/PlayerNaturallySpawnCreaturesEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.player;
++package com.destroystokyo.paper.event.player;
+ 
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+diff --git a/src/main/java/org/github/paperspigot/event/player/PlayerUseUnknownEntityEvent.java b/src/main/java/com/destroystokyo/paper/event/player/PlayerUseUnknownEntityEvent.java
+similarity index 94%
+rename from src/main/java/org/github/paperspigot/event/player/PlayerUseUnknownEntityEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/player/PlayerUseUnknownEntityEvent.java
+index 9b1047b5..a1c08c53 100644
+--- a/src/main/java/org/github/paperspigot/event/player/PlayerUseUnknownEntityEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/player/PlayerUseUnknownEntityEvent.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.event.player;
++package com.destroystokyo.paper.event.player;
+ 
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+diff --git a/src/main/java/org/github/paperspigot/event/ServerExceptionEvent.java b/src/main/java/com/destroystokyo/paper/event/server/ServerExceptionEvent.java
+similarity index 86%
+rename from src/main/java/org/github/paperspigot/event/ServerExceptionEvent.java
+rename to src/main/java/com/destroystokyo/paper/event/server/ServerExceptionEvent.java
+index fbe64f17..9e5167d6 100644
+--- a/src/main/java/org/github/paperspigot/event/ServerExceptionEvent.java
++++ b/src/main/java/com/destroystokyo/paper/event/server/ServerExceptionEvent.java
+@@ -1,10 +1,9 @@
+-package org.github.paperspigot.event;
++package com.destroystokyo.paper.event.server;
+ 
+ import com.google.common.base.Preconditions;
+-import org.apache.commons.lang3.Validate;
+ import org.bukkit.event.Event;
+ import org.bukkit.event.HandlerList;
+-import org.github.paperspigot.exception.ServerException;
++import com.destroystokyo.paper.exception.ServerException;
+ 
+ /**
+  * Called whenever an exception is thrown in a recoverable section of the server.
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerCommandException.java b/src/main/java/com/destroystokyo/paper/exception/ServerCommandException.java
+similarity index 98%
+rename from src/main/java/org/github/paperspigot/exception/ServerCommandException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerCommandException.java
+index aae647a3..6fb39af0 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerCommandException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerCommandException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerEventException.java b/src/main/java/com/destroystokyo/paper/exception/ServerEventException.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/exception/ServerEventException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerEventException.java
+index d99cab82..410b2413 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerEventException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerEventException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.event.Event;
+ import org.bukkit.event.Listener;
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerException.java b/src/main/java/com/destroystokyo/paper/exception/ServerException.java
+similarity index 93%
+rename from src/main/java/org/github/paperspigot/exception/ServerException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerException.java
+index f7aad05f..c06ea394 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ /**
+  * Wrapper exception for all exceptions that are thrown by the server.
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerInternalException.java b/src/main/java/com/destroystokyo/paper/exception/ServerInternalException.java
+similarity index 86%
+rename from src/main/java/org/github/paperspigot/exception/ServerInternalException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerInternalException.java
+index 17ad4cb4..e9866205 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerInternalException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerInternalException.java
+@@ -1,8 +1,7 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.Bukkit;
+-import org.bukkit.entity.ThrownExpBottle;
+-import org.github.paperspigot.event.ServerExceptionEvent;
++import com.destroystokyo.paper.event.server.ServerExceptionEvent;
+ 
+ /**
+  * Thrown when the internal server throws a recoverable exception.
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerPluginEnableDisableException.java b/src/main/java/com/destroystokyo/paper/exception/ServerPluginEnableDisableException.java
+similarity index 94%
+rename from src/main/java/org/github/paperspigot/exception/ServerPluginEnableDisableException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerPluginEnableDisableException.java
+index 8c938d0e..a76bcc85 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerPluginEnableDisableException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerPluginEnableDisableException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.plugin.Plugin;
+ 
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerPluginException.java b/src/main/java/com/destroystokyo/paper/exception/ServerPluginException.java
+similarity index 90%
+rename from src/main/java/org/github/paperspigot/exception/ServerPluginException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerPluginException.java
+index 9e37d39a..9ae57634 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerPluginException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerPluginException.java
+@@ -1,7 +1,5 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+-import com.google.common.base.Preconditions;
+-import org.apache.commons.lang3.Validate;
+ import org.bukkit.plugin.Plugin;
+ 
+ import static com.google.common.base.Preconditions.*;
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerPluginMessageException.java b/src/main/java/com/destroystokyo/paper/exception/ServerPluginMessageException.java
+similarity index 97%
+rename from src/main/java/org/github/paperspigot/exception/ServerPluginMessageException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerPluginMessageException.java
+index b71303b4..0225006f 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerPluginMessageException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerPluginMessageException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.entity.Player;
+ import org.bukkit.plugin.Plugin;
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerSchedulerException.java b/src/main/java/com/destroystokyo/paper/exception/ServerSchedulerException.java
+similarity index 96%
+rename from src/main/java/org/github/paperspigot/exception/ServerSchedulerException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerSchedulerException.java
+index 99757eeb..ccad1d4a 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerSchedulerException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerSchedulerException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.scheduler.BukkitTask;
+ 
+diff --git a/src/main/java/org/github/paperspigot/exception/ServerTabCompleteException.java b/src/main/java/com/destroystokyo/paper/exception/ServerTabCompleteException.java
+similarity index 95%
+rename from src/main/java/org/github/paperspigot/exception/ServerTabCompleteException.java
+rename to src/main/java/com/destroystokyo/paper/exception/ServerTabCompleteException.java
+index 6e1e2abd..5582999f 100644
+--- a/src/main/java/org/github/paperspigot/exception/ServerTabCompleteException.java
++++ b/src/main/java/com/destroystokyo/paper/exception/ServerTabCompleteException.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.exception;
++package com.destroystokyo.paper.exception;
+ 
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
+diff --git a/src/main/java/org/github/paperspigot/utils/CachedSizeConcurrentLinkedQueue.java b/src/main/java/com/destroystokyo/paper/utils/CachedSizeConcurrentLinkedQueue.java
+similarity index 94%
+rename from src/main/java/org/github/paperspigot/utils/CachedSizeConcurrentLinkedQueue.java
+rename to src/main/java/com/destroystokyo/paper/utils/CachedSizeConcurrentLinkedQueue.java
+index c45e2f36..d60ecbb1 100644
+--- a/src/main/java/org/github/paperspigot/utils/CachedSizeConcurrentLinkedQueue.java
++++ b/src/main/java/com/destroystokyo/paper/utils/CachedSizeConcurrentLinkedQueue.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.utils;
++package com.destroystokyo.paper.utils;
+ 
+ import java.util.concurrent.ConcurrentLinkedQueue;
+ import java.util.concurrent.atomic.LongAdder;
+diff --git a/src/main/java/org/github/paperspigot/utils/DebugUtils.java b/src/main/java/com/destroystokyo/paper/utils/DebugUtils.java
+similarity index 94%
+rename from src/main/java/org/github/paperspigot/utils/DebugUtils.java
+rename to src/main/java/com/destroystokyo/paper/utils/DebugUtils.java
+index cb33fc11..e9771896 100644
+--- a/src/main/java/org/github/paperspigot/utils/DebugUtils.java
++++ b/src/main/java/com/destroystokyo/paper/utils/DebugUtils.java
+@@ -1,4 +1,4 @@
+-package org.github.paperspigot.utils;
++package com.destroystokyo.paper.utils;
+ 
+ import org.apache.commons.lang3.exception.ExceptionUtils;
+ 
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index 80c48dfa..cf7b3146 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -18,9 +18,9 @@ import org.bukkit.Server;
+ import org.bukkit.command.defaults.*;
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.StringUtil;
+-import org.github.paperspigot.event.ServerExceptionEvent;
+-import org.github.paperspigot.exception.ServerCommandException;
+-import org.github.paperspigot.exception.ServerTabCompleteException;
++import com.destroystokyo.paper.event.server.ServerExceptionEvent;
++import com.destroystokyo.paper.exception.ServerCommandException;
++import com.destroystokyo.paper.exception.ServerTabCompleteException;
+ 
+ public class SimpleCommandMap implements CommandMap {
+     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index 05c98d2e..d7eb4143 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -24,7 +24,7 @@ import org.bukkit.plugin.messaging.PluginMessageRecipient;
+ import org.bukkit.scoreboard.Scoreboard;
+ // PaperSpigot start
+ import org.bukkit.util.RayBlockIntersection;
+-import org.github.paperspigot.Title;
++import com.destroystokyo.paper.Title;
+ // PaperSpigot end
+ 
+ /**
+diff --git a/src/main/java/org/bukkit/event/entity/PigZapEvent.java b/src/main/java/org/bukkit/event/entity/PigZapEvent.java
+index 7a1337b1..78607788 100644
+--- a/src/main/java/org/bukkit/event/entity/PigZapEvent.java
++++ b/src/main/java/org/bukkit/event/entity/PigZapEvent.java
+@@ -5,8 +5,7 @@ import org.bukkit.entity.Pig;
+ import org.bukkit.entity.PigZombie;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.EntityAction;
+-import org.bukkit.event.HandlerList;
+-import org.github.paperspigot.event.entity.EntityZapEvent;
++import com.destroystokyo.paper.event.entity.EntityZapEvent;
+ 
+ /**
+  * Stores data for pigs being zapped
+diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+index 91c66f64..c5e6e39d 100644
+--- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
++++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+@@ -2,7 +2,6 @@ package org.bukkit.plugin;
+ 
+ import java.io.File;
+ import java.lang.reflect.Constructor;
+-import java.lang.reflect.Method;
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.HashMap;
+@@ -35,9 +34,8 @@ import org.bukkit.permissions.PermissionDefault;
+ import org.bukkit.util.FileUtil;
+ 
+ import com.google.common.collect.ImmutableSet;
+-import org.github.paperspigot.event.ServerExceptionEvent;
+-import org.github.paperspigot.exception.ServerEventException;
+-import org.github.paperspigot.exception.ServerPluginEnableDisableException;
++import com.destroystokyo.paper.event.server.ServerExceptionEvent;
++import com.destroystokyo.paper.exception.ServerPluginEnableDisableException;
+ 
+ /**
+  * Handles all plugin management from the Server
+diff --git a/src/main/java/org/bukkit/plugin/messaging/StandardMessenger.java b/src/main/java/org/bukkit/plugin/messaging/StandardMessenger.java
+index 9ef65255..b9bd8ea8 100644
+--- a/src/main/java/org/bukkit/plugin/messaging/StandardMessenger.java
++++ b/src/main/java/org/bukkit/plugin/messaging/StandardMessenger.java
+@@ -8,8 +8,8 @@ import java.util.Map;
+ import java.util.Set;
+ import org.bukkit.entity.Player;
+ import org.bukkit.plugin.Plugin;
+-import org.github.paperspigot.event.ServerExceptionEvent;
+-import org.github.paperspigot.exception.ServerPluginMessageException;
++import com.destroystokyo.paper.event.server.ServerExceptionEvent;
++import com.destroystokyo.paper.exception.ServerPluginMessageException;
+ 
+ /**
+  * Standard implementation to {@link Messenger}
+-- 
+2.52.0
+

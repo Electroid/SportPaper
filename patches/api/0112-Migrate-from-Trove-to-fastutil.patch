@@ -1,0 +1,94 @@
+From c50b5c4a15016b5317bf89125b3973f144b55f8f Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Wed, 10 Dec 2025 03:12:03 -0800
+Subject: [PATCH] Migrate from Trove to fastutil
+
+
+diff --git a/pom.xml b/pom.xml
+index 9231686a..343b4040 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -35,11 +35,9 @@
+             <version>3.0.2</version>
+         </dependency>
+         <dependency>
+-            <groupId>net.sf.trove4j</groupId>
+-            <artifactId>trove4j</artifactId>
+-            <version>3.0.3</version>
+-            <!-- Trove Provided by CraftBukkit -->
+-            <scope>provided</scope>
++            <groupId>it.unimi.dsi</groupId>
++            <artifactId>fastutil</artifactId>
++            <version>8.5.16</version>
+         </dependency>
+         <dependency>
+             <groupId>org.apache.commons</groupId>
+diff --git a/src/main/java/co/aikar/timings/TimingHandler.java b/src/main/java/co/aikar/timings/TimingHandler.java
+index 4918a17c..6b7f512d 100644
+--- a/src/main/java/co/aikar/timings/TimingHandler.java
++++ b/src/main/java/co/aikar/timings/TimingHandler.java
+@@ -23,7 +23,7 @@
+  */
+ package co.aikar.timings;
+ 
+-import gnu.trove.map.hash.TIntObjectHashMap;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import org.bukkit.Bukkit;
+ import co.aikar.util.LoadingIntMap;
+ import co.aikar.util.LoadingMap;
+@@ -40,7 +40,7 @@ class TimingHandler implements Timing {
+     final String name;
+     final boolean verbose;
+ 
+-    final TIntObjectHashMap<TimingData> children = new LoadingIntMap<TimingData>(TimingData.LOADER);
++    final Int2ObjectOpenHashMap<TimingData> children = new LoadingIntMap<>(TimingData.LOADER);
+ 
+     final TimingData record;
+     final TimingHandler groupHandler;
+@@ -80,7 +80,7 @@ class TimingHandler implements Timing {
+         }
+ 
+         record.processTick(violated);
+-        for (TimingData handler : children.valueCollection()) {
++        for (TimingData handler : children.values()) {
+             handler.processTick(violated);
+         }
+     }
+diff --git a/src/main/java/co/aikar/timings/TimingHistoryEntry.java b/src/main/java/co/aikar/timings/TimingHistoryEntry.java
+index eac4e218..a5c5dfd8 100644
+--- a/src/main/java/co/aikar/timings/TimingHistoryEntry.java
++++ b/src/main/java/co/aikar/timings/TimingHistoryEntry.java
+@@ -37,7 +37,7 @@ class TimingHistoryEntry {
+         this.data = handler.record.clone();
+         children = new TimingData[handler.children.size()];
+         int i = 0;
+-        for (TimingData child : handler.children.valueCollection()) {
++        for (TimingData child : handler.children.values()) {
+             children[i++] = child.clone();
+         }
+     }
+diff --git a/src/main/java/co/aikar/util/LoadingIntMap.java b/src/main/java/co/aikar/util/LoadingIntMap.java
+index 8d0f2691..64a7b52b 100644
+--- a/src/main/java/co/aikar/util/LoadingIntMap.java
++++ b/src/main/java/co/aikar/util/LoadingIntMap.java
+@@ -8,7 +8,7 @@ package co.aikar.util;
+ 
+ 
+ import com.google.common.base.Function;
+-import gnu.trove.map.hash.TIntObjectHashMap;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ 
+ /**
+  * Allows you to pass a Loader function that when a key is accessed that doesn't exist,
+@@ -24,7 +24,7 @@ import gnu.trove.map.hash.TIntObjectHashMap;
+  *
+  * @param <V> Value
+  */
+-public class LoadingIntMap<V> extends TIntObjectHashMap<V> {
++public class LoadingIntMap<V> extends Int2ObjectOpenHashMap<V> {
+     private final Function<Integer, V> loader;
+ 
+     /**
+-- 
+2.52.0
+

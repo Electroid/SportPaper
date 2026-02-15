@@ -1,0 +1,55 @@
+From 7392ef2a71079385480176cd9bbc5bea60ec6d3a Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Tue, 22 Sep 2020 01:49:19 -0700
+Subject: [PATCH] Optimise non-flush packet sending
+
+Places like entity tracking make heavy use of packet sending,
+and internally netty will use some very expensive thread wakeup
+calls when scheduling.
+
+Thanks to various hacks in ProtocolLib as well as other
+plugins, we cannot simply use a queue of packets to group
+send on execute. We have to call execute for each packet.
+
+Tux's suggestion here is exactly what was needed - tag
+the Runnable indicating it should not make a wakeup call.
+
+Big thanks to Tux for making this possible as I had given
+up on this optimisation before he came along.
+
+Locally this patch drops the entity tracker tick by a full 1.5x.
+
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index a61e8f9b9..439f259f5 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -14,6 +14,7 @@ import io.netty.channel.local.LocalServerChannel;
+ import io.netty.channel.nio.NioEventLoopGroup;
+ import io.netty.handler.timeout.TimeoutException;
+ import io.netty.util.AttributeKey;
++import io.netty.util.concurrent.AbstractEventExecutor; // Paper
+ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import java.net.SocketAddress;
+@@ -242,7 +243,17 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+         if (this.channel.eventLoop().inEventLoop()) {
+             doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, flush);
+         } else {
+-            this.channel.eventLoop().execute(() -> doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, flush));
++            // Paper start - optimise packets that are not flushed
++            // note: since the type is not dynamic here, we need to actually copy the old executor code
++            // into two branches. On conflict, just re-copy - no changes were made inside the executor code.
++            if (!flush) {
++                AbstractEventExecutor.LazyRunnable run = () -> {
++                    this.doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, flush); // Paper - add flush parameter
++                };
++                this.channel.eventLoop().execute(run);
++            } else {
++                this.channel.eventLoop().execute(() -> doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, flush)); // Paper - add flush parameter // Paper - diff on change
++            } // Paper end - optimise packets that are not flushed
+         }
+ 
+     }
+-- 
+2.52.0
+

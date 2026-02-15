@@ -1,0 +1,57 @@
+From 2403d124d1d7bb4feb43b6eaa75f73eae05edf56 Mon Sep 17 00:00:00 2001
+From: Axel Uhl <axel.uhl@sap.com>
+Date: Thu, 11 Jan 2018 10:34:56 +1100
+Subject: [PATCH] Cache BlockState.hashCode
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockState.java b/src/main/java/net/minecraft/server/BlockState.java
+index 3cada5afc..a0d96b3c8 100644
+--- a/src/main/java/net/minecraft/server/BlockState.java
++++ b/src/main/java/net/minecraft/server/BlockState.java
+@@ -36,7 +36,15 @@ public abstract class BlockState<T extends Comparable<T>> implements IBlockState
+         }
+     }
+ 
++    // Spigot start
++    private int hashCode;
+     public int hashCode() {
+-        return 31 * this.a.hashCode() + this.b.hashCode();
++        int hash = hashCode;
++        if (hash == 0) {
++            hash = 31 * this.a.hashCode() + this.b.hashCode();
++            hashCode = hash;
++        }
++        return hash;
+     }
++    // Spigot end
+ }
+diff --git a/src/main/java/net/minecraft/server/BlockStateInteger.java b/src/main/java/net/minecraft/server/BlockStateInteger.java
+index 7eefc2261..e4e61b8e9 100644
+--- a/src/main/java/net/minecraft/server/BlockStateInteger.java
++++ b/src/main/java/net/minecraft/server/BlockStateInteger.java
+@@ -46,12 +46,19 @@ public class BlockStateInteger extends BlockState<Integer> {
+         }
+     }
+ 
++    // Spigot start
++    private int hashCode;
+     public int hashCode() {
+-        int i = super.hashCode();
++        int hash = hashCode;
++        if (hash == 0) {
++            int i = super.hashCode();
+ 
+-        i = 31 * i + this.a.hashCode();
+-        return i;
++            i = 31 * i + this.a.hashCode();
++            hashCode = hash = i;
++        }
++        return hash;
+     }
++    // Spigot end
+ 
+     public static BlockStateInteger of(String s, int i, int j) {
+         return new BlockStateInteger(s, i, j);
+-- 
+2.52.0
+

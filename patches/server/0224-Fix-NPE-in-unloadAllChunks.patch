@@ -1,0 +1,24 @@
+From 6ee8af5812ee216e3d96341077d8efd8515a2150 Mon Sep 17 00:00:00 2001
+From: Christopher White <18whitechristop@gmail.com>
+Date: Sun, 1 Oct 2023 13:24:05 -0700
+Subject: [PATCH] Fix NPE in unloadAllChunks
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 812686d5..8cdc6568 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -393,9 +393,7 @@ public class ChunkProviderServer implements IChunkProvider {
+ 
+     // SportPaper start
+     public void unloadAllChunks() {
+-        for(Chunk chunk : chunks.values()) {
+-            unloadChunk(chunk);
+-        }
++        chunks.forEach((ignore, chunk) -> unloadChunk(chunk));
+     }
+ 
+     public void unloadChunk(Chunk chunk) {
+-- 
+2.51.0
+

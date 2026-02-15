@@ -38,6 +38,8 @@ function import {
 
 import BlockBeacon
 import BlockCarpet
+import BlockState
+import BlockStateInteger
 import ChunkCache
 import ChunkCoordIntPair
 import DamageSource
@@ -48,6 +50,12 @@ import ItemFireworks
 import ItemGoldenApple
 import ItemPotion
 import MerchantRecipeList
+import NibbleArray
+import Packet
+import PacketCompressor
+import PacketDecompressor
+import PacketDecrypter
+import PacketEncrypter
 import PacketPlayInUseEntity
 import PacketPlayOutAttachEntity
 import PacketPlayOutEntityMetadata
@@ -56,7 +64,10 @@ import PacketPlayOutPlayerInfo
 import PacketPlayOutScoreboardTeam
 import PacketPlayOutSpawnEntity
 import PacketPlayOutSpawnEntityLiving
+import PacketPrepender
+import PacketSplitter
 import PersistentScoreboard
+import RemoteControlListener
 import ServerNBTManager
 import ServerPing
 import SlotResult

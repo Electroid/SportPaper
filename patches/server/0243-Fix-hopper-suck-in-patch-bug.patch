@@ -1,0 +1,23 @@
+From 196c508990572fd1d46db0de955ff9def4703bba Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 5 May 2016 20:22:01 -0400
+Subject: [PATCH] Fix hopper suck in patch bug
+
+was checking for ItemStack's instead of EntityItem
+
+diff --git a/src/main/java/net/minecraft/server/Chunk.java b/src/main/java/net/minecraft/server/Chunk.java
+index c6cf87949..2c92e1766 100644
+--- a/src/main/java/net/minecraft/server/Chunk.java
++++ b/src/main/java/net/minecraft/server/Chunk.java
+@@ -1036,7 +1036,7 @@ public class Chunk {
+ 
+         // PaperSpigot start
+         int[] counts;
+-        if (ItemStack.class.isAssignableFrom(oclass)) {
++        if (EntityItem.class.isAssignableFrom(oclass)) {
+             counts = itemCounts;
+         } else if (IInventory.class.isAssignableFrom(oclass)) {
+             counts = inventoryEntityCounts;
+-- 
+2.52.0
+

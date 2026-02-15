@@ -1,0 +1,43 @@
+From 432b0484acc714f4db695c2a56d7ec3899500232 Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Mon, 24 Nov 2025 19:59:11 -0800
+Subject: [PATCH] Backport teleportAsync from Paper 1.13.2+
+
+
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index 060d2d5f..238178e1 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -110,6 +110,29 @@ public interface Entity extends Metadatable, CommandSender, Physical {
+      */
+     public boolean teleport(Entity destination, TeleportCause cause);
+ 
++    // Paper start
++    /**
++     * Loads/Generates the Chunk asynchronously, and then teleports the entity when the chunk is ready.
++     * @param loc Location to teleport to
++     * @return A future that will be completed with the result of the teleport
++     */
++    public default java.util.concurrent.CompletableFuture<Boolean> teleportAsync(Location loc) {
++        return teleportAsync(loc, TeleportCause.PLUGIN);
++    }
++
++    /**
++     * Loads/Generates the Chunk asynchronously, and then teleports the entity when the chunk is ready.
++     * @param loc Location to teleport to
++     * @param cause Reason for teleport
++     * @return A future that will be completed with the result of the teleport
++     */
++    public default java.util.concurrent.CompletableFuture<Boolean> teleportAsync(Location loc, TeleportCause cause) {
++        java.util.concurrent.CompletableFuture<Boolean> future = new java.util.concurrent.CompletableFuture<>();
++        loc.getWorld().getChunkAtAsync(loc).thenAccept((chunk) -> future.complete(teleport(loc, cause)));
++        return future;
++    }
++    // Paper end
++
+     /**
+      * Returns a list of entities within a bounding box centered around this
+      * entity
+-- 
+2.52.0
+

@@ -1,0 +1,43 @@
+From 5916aa958fcc973f683a04cd01f8e45d524be02c Mon Sep 17 00:00:00 2001
+From: RoccoDev <hey@rocco.dev>
+Date: Sat, 6 Feb 2021 13:19:31 +0100
+Subject: [PATCH] Better Async Chunk API
+
+
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index a01ee01b..210d5a14 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -12,6 +12,7 @@ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.UUID;
++import java.util.concurrent.CompletableFuture;
+ import java.util.function.Predicate;
+ 
+ import org.bukkit.block.Biome;
+@@ -180,12 +181,21 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+     public Chunk getChunkAt(Block block);
+ 
+     // PaperSpigot start - Async chunk load API
++    @Deprecated
+     public static interface ChunkLoadCallback {
+         public void onLoad(Chunk chunk);
+     }
++    @Deprecated
+     public void getChunkAtAsync(int x, int z, ChunkLoadCallback cb);
++    @Deprecated
+     public void getChunkAtAsync(Location location, ChunkLoadCallback cb);
++    @Deprecated
+     public void getChunkAtAsync(Block block, ChunkLoadCallback cb);
++    // SportPaper start - better Java 8 API
++    CompletableFuture<Chunk> getChunkAtAsync(int x, int z);
++    CompletableFuture<Chunk> getChunkAtAsync(Location location);
++    CompletableFuture<Chunk> getChunkAtAsync(Block block);
++    // SportPaper end
+     // PaperSpigot end
+ 
+     /**
+-- 
+2.52.0
+

@@ -1,0 +1,107 @@
+From 1bafd985461235e27669ca95317f89fe7f47a130 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 27 Mar 2019 21:58:55 -0400
+Subject: [PATCH] Server Tick Events
+
+Fires event at start and end of a server tick
+
+diff --git a/src/main/java/com/destroystokyo/paper/event/server/ServerTickEndEvent.java b/src/main/java/com/destroystokyo/paper/event/server/ServerTickEndEvent.java
+new file mode 100644
+index 00000000..e16c093a
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/server/ServerTickEndEvent.java
+@@ -0,0 +1,56 @@
++package com.destroystokyo.paper.event.server;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++/**
++ * Called when the server has finished ticking the main loop
++ */
++public class ServerTickEndEvent extends Event {
++
++    private static final HandlerList handlers = new HandlerList();
++    private final int tickNumber;
++    private final double tickDuration;
++    private final long timeEnd;
++
++    public ServerTickEndEvent(int tickNumber, double tickDuration, long timeRemaining) {
++        this.tickNumber = tickNumber;
++        this.tickDuration = tickDuration;
++        this.timeEnd = System.nanoTime() + timeRemaining;
++    }
++
++    /**
++     * @return What tick this was since start (first tick = 1)
++     */
++    public int getTickNumber() {
++        return tickNumber;
++    }
++
++    /**
++     * @return Time in milliseconds of how long this tick took
++     */
++    public double getTickDuration() {
++        return tickDuration;
++    }
++
++    /**
++     * Amount of nanoseconds remaining before the next tick should start.
++     *
++     * If this value is negative, then that means the server has exceeded the tick time limit and TPS has been lost.
++     *
++     * Method will continously return the updated time remaining value. (return value is not static)
++     *
++     * @return Amount of nanoseconds remaining before the next tick should start
++     */
++    public long getTimeRemaining() {
++        return this.timeEnd - System.nanoTime();
++    }
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/com/destroystokyo/paper/event/server/ServerTickStartEvent.java b/src/main/java/com/destroystokyo/paper/event/server/ServerTickStartEvent.java
+new file mode 100644
+index 00000000..6aa0d1fe
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/server/ServerTickStartEvent.java
+@@ -0,0 +1,29 @@
++package com.destroystokyo.paper.event.server;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ServerTickStartEvent extends Event {
++
++    private static final HandlerList handlers = new HandlerList();
++    private final int tickNumber;
++
++    public ServerTickStartEvent(int tickNumber) {
++        this.tickNumber = tickNumber;
++    }
++
++    /**
++     * @return What tick this is going be since start (first tick = 1)
++     */
++    public int getTickNumber() {
++        return tickNumber;
++    }
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.52.0
+

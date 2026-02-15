@@ -1,0 +1,80 @@
+From 32727e0b02fdcb85f618756609cb2e1fceb0b3bb Mon Sep 17 00:00:00 2001
+From: Christopher White <18whitechristop@gmail.com>
+Date: Fri, 8 Dec 2023 17:37:15 -0800
+Subject: [PATCH] Optimize CraftPlayer.playEffect
+
+Signed-off-by: Christopher White <18whitechristop@gmail.com>
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index ff4236cc..91007509 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -14,6 +14,8 @@ import java.net.SocketAddress;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collection;
++import java.util.EnumMap;
++import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.LinkedHashMap;
+ import java.util.List;
+@@ -1838,6 +1840,23 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return getHandle().protocolVersion;
+     }
+ 
++    private static final Map<Effect, EnumParticle> effectParticleMap = buildEffectMap();
++
++    static Map<Effect, EnumParticle> buildEffectMap() {
++        Map<Effect, EnumParticle> effectEnumParticleMap = new EnumMap<>(Effect.class);
++        for (Effect effect : Effect.values()) {
++            if (Effect.Type.PARTICLE.equals(effect.getType())) {
++                for (net.minecraft.server.EnumParticle particle : net.minecraft.server.EnumParticle.values()) {
++                    if (effect.getName().startsWith(particle.b().replace("_", ""))) {
++                        effectEnumParticleMap.put(effect, particle);
++                        break;
++                    }
++                }
++            }
++        }
++        return effectEnumParticleMap;
++    }
++
+     // Spigot start
+     private final Player.Spigot spigot = new Player.Spigot()
+     {
+@@ -1883,24 +1902,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+                 packet = new PacketPlayOutWorldEvent( packetData, new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ() ), id, false );
+             } else
+             {
+-                net.minecraft.server.EnumParticle particle = null;
+                 int[] extra = null;
+-                for ( net.minecraft.server.EnumParticle p : net.minecraft.server.EnumParticle.values() )
++
++                net.minecraft.server.EnumParticle particle = effectParticleMap.get(effect);
++                if ( effect.getData() != null )
+                 {
+-                    if ( effect.getName().startsWith( p.b().replace("_", "") ) )
++                    if ( effect.getData().equals( org.bukkit.Material.class ) )
+                     {
+-                        particle = p;
+-                        if ( effect.getData() != null ) 
+-                        {
+-                            if ( effect.getData().equals( org.bukkit.Material.class ) )
+-                            {
+-                                extra = new int[]{ id };
+-                            } else 
+-                            {
+-                                extra = new int[]{ (data << 12) | (id & 0xFFF) };
+-                            }
+-                        }
+-                        break;
++                        extra = new int[]{ id };
++                    } else
++                    {
++                        extra = new int[]{ (data << 12) | (id & 0xFFF) };
+                     }
+                 }
+                 if ( extra == null )
+-- 
+2.51.0
+

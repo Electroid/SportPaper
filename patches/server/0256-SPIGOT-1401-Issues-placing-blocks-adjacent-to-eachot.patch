@@ -1,0 +1,22 @@
+From f144568bdc2e4cb53c6700684b4cea8fe12a2565 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Mon, 28 Nov 2016 10:13:49 +1100
+Subject: [PATCH] SPIGOT-1401: Issues placing blocks adjacent to eachother
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index 0abe08d6d..6ae86ab5f 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -183,7 +183,7 @@ public final class ItemStack {
+                     BlockPosition newblockposition = new BlockPosition(x, y, z);
+                     IBlockData block = world.getType(newblockposition);
+ 
+-                    if (!(block instanceof BlockContainer)) { // Containers get placed automatically
++                    if (!(block.getBlock() instanceof BlockContainer)) { // Containers get placed automatically
+                         block.getBlock().onPlace(world, newblockposition, block);
+                     }
+ 
+-- 
+2.52.0
+

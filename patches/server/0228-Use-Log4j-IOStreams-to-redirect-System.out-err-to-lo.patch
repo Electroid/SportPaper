@@ -1,0 +1,76 @@
+From f410793ada0c22aa9a15695a438efad690fcc4a1 Mon Sep 17 00:00:00 2001
+From: Minecrell <minecrell@minecrell.net>
+Date: Mon, 18 Sep 2017 12:00:03 +0200
+Subject: [PATCH] Use Log4j IOStreams to redirect System.out/err to logger
+
+Log4j2 provides an optimized implementation of PrintStream that
+redirects its output to a logger. Use it instead of a custom
+implementation for minor performance improvements and some fixes.
+
+With the old implementation, each call to System.print()
+results in a separate line, even though it should not result in
+a line break. Log4j's implementation handles it correctly.
+
+diff --git a/pom.xml b/pom.xml
+index f71b77de9..87e29435b 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -116,6 +116,10 @@
+             <groupId>org.apache.logging.log4j</groupId>
+             <artifactId>log4j-api</artifactId>
+         </dependency>
++        <dependency>
++            <groupId>org.apache.logging.log4j</groupId>
++            <artifactId>log4j-iostreams</artifactId>
++        </dependency>
+         <!-- SportPaper end - Update Log4j -->
+         <dependency>
+             <groupId>org.spigotmc</groupId>
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 194609e7e..a833297ea 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
+ import java.io.PrintStream;
+ import org.apache.logging.log4j.Level;
+ 
+-import org.bukkit.craftbukkit.LoggerOutputStream;
++// import org.bukkit.craftbukkit.LoggerOutputStream; // SportPaper - Use Log4j IOStreams
+ import co.aikar.timings.SpigotTimings; // Spigot
+ import org.bukkit.event.server.ServerCommandEvent;
+ import org.bukkit.craftbukkit.util.Waitable;
+@@ -119,8 +119,10 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+         */
+         // SportPaper end
+ 
+-        System.setOut(new PrintStream(new LoggerOutputStream(logger, Level.INFO), true));
+-        System.setErr(new PrintStream(new LoggerOutputStream(logger, Level.WARN), true));
++        // SportPaper start - Use Log4j IOStreams
++        System.setOut(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
++        System.setErr(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
++        // SportPaper end
+         // CraftBukkit end
+ 
+         thread.setDaemon(true);
+diff --git a/src/main/java/org/bukkit/craftbukkit/LoggerOutputStream.java b/src/main/java/org/bukkit/craftbukkit/LoggerOutputStream.java
+index 93526ab60..7dd83f9b2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/LoggerOutputStream.java
++++ b/src/main/java/org/bukkit/craftbukkit/LoggerOutputStream.java
+@@ -5,7 +5,7 @@ import java.io.IOException;
+ import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class LoggerOutputStream extends ByteArrayOutputStream {
++public class LoggerOutputStream extends ByteArrayOutputStream { /* SportPaper - comment out whole class
+     private final String separator = System.getProperty("line.separator");
+     private final Logger logger;
+     private final Level level;
+@@ -28,4 +28,5 @@ public class LoggerOutputStream extends ByteArrayOutputStream {
+             }
+         }
+     }
++    */
+ }
+-- 
+2.52.0
+

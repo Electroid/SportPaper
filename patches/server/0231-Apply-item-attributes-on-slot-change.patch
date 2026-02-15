@@ -1,0 +1,90 @@
+From 01974cec03608c13a00b95791f55569cf986fe73 Mon Sep 17 00:00:00 2001
+From: RoccoDev <hey@rocco.dev>
+Date: Thu, 13 Nov 2025 09:00:39 +0100
+Subject: [PATCH] Apply item attributes on slot change
+
+Fixes MC-28289
+
+Previously, held item attributes would only be updated at the end of the tick, meaning subsequent actions (like attacks) sent in the same tick would use the attributes of the old selected item.
+
+Notably, this would often cause swords to deal punch damage when switching and quickly attacking.
+
+The fix updates attributes immediately on slot change, while still deferring equipment tracker broadcasts until the end of the tick.
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index f311373fe..94e0203ea 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -1538,23 +1538,7 @@ public abstract class EntityLiving extends Entity {
+                 }
+             }
+ 
+-            for (int j = 0; j < 5; ++j) {
+-                ItemStack itemstack = this.h[j];
+-                ItemStack itemstack1 = this.getEquipment(j);
+-
+-                if (!ItemStack.matches(itemstack1, itemstack)) {
+-                    ((WorldServer) this.world).getTracker().a((Entity) this, (Packet) (new PacketPlayOutEntityEquipment(this.getId(), j, itemstack1)));
+-                    if (itemstack != null) {
+-                        this.c.a(itemstack.B());
+-                    }
+-
+-                    if (itemstack1 != null) {
+-                        this.c.b(itemstack1.B());
+-                    }
+-
+-                    this.h[j] = itemstack1 == null ? null : itemstack1.cloneItemStack();
+-                }
+-            }
++            syncEquipment(true); // SportPaper
+ 
+             if (this.ticksLived % 20 == 0) {
+                 this.bs().g();
+@@ -1628,6 +1612,32 @@ public abstract class EntityLiving extends Entity {
+         this.aT += f2;
+     }
+ 
++    // SportPaper start
++    private byte equipmentNeedsTrackerUpdate;
++    public void syncEquipment(boolean updateTracker) {
++        for (int j = 0; j < 5; ++j) {
++            byte mask = (byte) (1 << j);
++            ItemStack oldItem = this.h[j];
++            ItemStack newItem = this.getEquipment(j);
++            boolean diffItem = !ItemStack.matches(newItem, oldItem);
++            if (diffItem) {
++                if (oldItem != null) {
++                    this.c.a(oldItem.B());
++                }
++                if (newItem != null) {
++                    this.c.b(newItem.B());
++                }
++                this.h[j] = newItem == null ? null : newItem.cloneItemStack();
++                equipmentNeedsTrackerUpdate |= mask;
++            }
++            if (updateTracker && (equipmentNeedsTrackerUpdate & mask) != 0) {
++                ((WorldServer) this.world).getTracker().a(this, new PacketPlayOutEntityEquipment(this.getId(), j, newItem));
++                equipmentNeedsTrackerUpdate &= (byte) ~mask;
++            }
++        }
++    }
++    // SportPaper end
++
+     protected float h(float f, float f1) {
+         float f2 = MathHelper.g(f - this.aI);
+ 
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index d3c6c3ffc..c58dd59ab 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1083,6 +1083,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+             // CraftBukkit end
+             this.player.inventory.itemInHandIndex = packetplayinhelditemslot.a();
+             this.player.resetIdleTimer();
++            this.player.syncEquipment(false); // SportPaper
+         } else {
+             PlayerConnection.c.warn(this.player.getName() + " tried to set an invalid carried item");
+             this.disconnect("Invalid hotbar selection (Hacking?)"); // CraftBukkit //Spigot "Nope" -> Descriptive reason
+-- 
+2.52.0
+

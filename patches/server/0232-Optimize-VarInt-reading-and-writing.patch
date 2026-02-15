@@ -1,0 +1,429 @@
+From 29ca73455a6d00dc9f5dc1db6d287675a992503b Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Thu, 20 Nov 2025 20:52:13 -0800
+Subject: [PATCH] Optimize VarInt reading and writing
+
+Borrows from Velocity and PandaSpigot
+
+Co-authored-by: hpfxd <me@hpfxd.com>
+
+diff --git a/src/main/java/app/ashcon/sportpaper/network/VarIntUtil.java b/src/main/java/app/ashcon/sportpaper/network/VarIntUtil.java
+new file mode 100644
+index 000000000..f2332dc9d
+--- /dev/null
++++ b/src/main/java/app/ashcon/sportpaper/network/VarIntUtil.java
+@@ -0,0 +1,197 @@
++/*
++ * Copyright (C) 2018-2023 Velocity Contributors
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation, either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
++ */
++
++package app.ashcon.sportpaper.network;
++
++import io.netty.buffer.ByteBuf;
++import io.netty.handler.codec.CorruptedFrameException;
++import io.netty.handler.codec.DecoderException;
++
++public class VarIntUtil {
++    private static final int MAXIMUM_VARINT_SIZE = 5;
++    private static final int[] VAR_INT_LENGTHS = new int[33];
++
++    static {
++        for (int i = 0; i <= 32; ++i) {
++            VAR_INT_LENGTHS[i] = (int) Math.ceil((31d - (i - 1)) / 7d);
++        }
++        VAR_INT_LENGTHS[32] = 1; // Special case for the number 0.
++    }
++
++    private static DecoderException badVarInt() {
++        return new CorruptedFrameException("Bad VarInt decoded");
++    }
++
++    private static DecoderException varIntTooBig() {
++        return new CorruptedFrameException("VarInt too big");
++    }
++
++    /**
++     * Reads a Minecraft-style VarInt from the specified {@code buf}.
++     *
++     * @param buf the buffer to read from
++     * @return the decoded VarInt
++     */
++    public static int readVarInt(ByteBuf buf) {
++        int readable = buf.readableBytes();
++        if (readable == 0) {
++            // special case for empty buffer
++            throw badVarInt();
++        }
++
++        // we can read at least one byte, and this should be a common case
++        int k = buf.readByte();
++        if ((k & 0x80) != 128) {
++            return k;
++        }
++
++        // in case decoding one byte was not enough, use a loop to decode up to the next 4 bytes
++        int maxRead = Math.min(MAXIMUM_VARINT_SIZE, readable);
++        int i = k & 0x7F;
++        for (int j = 1; j < maxRead; j++) {
++            k = buf.readByte();
++            i |= (k & 0x7F) << j * 7;
++            if ((k & 0x80) != 128) {
++                return i;
++            }
++        }
++        throw badVarInt();
++    }
++
++    /**
++     * Returns the exact byte size of {@code value} if it were encoded as a VarInt.
++     *
++     * @param value the value to encode
++     * @return the byte size of {@code value} if encoded as a VarInt
++     */
++    public static int varIntBytes(int value) {
++        return VAR_INT_LENGTHS[Integer.numberOfLeadingZeros(value)];
++    }
++
++    /**
++     * Writes a Minecraft-style VarInt to the specified {@code buf}.
++     *
++     * @param buf   the buffer to read from
++     * @param value the integer to write
++     */
++    public static void writeVarInt(ByteBuf buf, int value) {
++        // Peel the one and two byte count cases explicitly as they are the most common VarInt sizes
++        // that the proxy will write, to improve inlining.
++        if ((value & (0xFFFFFFFF << 7)) == 0) {
++            buf.writeByte(value);
++        } else if ((value & (0xFFFFFFFF << 14)) == 0) {
++            int w = (value & 0x7F | 0x80) << 8 | (value >>> 7);
++            buf.writeShort(w);
++        } else {
++            writeVarIntFull(buf, value);
++        }
++    }
++
++    private static void writeVarIntFull(ByteBuf buf, int value) {
++        // See https://steinborn.me/posts/performance/how-fast-can-you-write-a-varint/
++
++        // This essentially is an unrolled version of the "traditional" VarInt encoding.
++        if ((value & (0xFFFFFFFF << 7)) == 0) {
++            buf.writeByte(value);
++        } else if ((value & (0xFFFFFFFF << 14)) == 0) {
++            int w = (value & 0x7F | 0x80) << 8 | (value >>> 7);
++            buf.writeShort(w);
++        } else if ((value & (0xFFFFFFFF << 21)) == 0) {
++            int w = (value & 0x7F | 0x80) << 16 | ((value >>> 7) & 0x7F | 0x80) << 8 | (value >>> 14);
++            buf.writeMedium(w);
++        } else if ((value & (0xFFFFFFFF << 28)) == 0) {
++            int w = (value & 0x7F | 0x80) << 24 | (((value >>> 7) & 0x7F | 0x80) << 16)
++                    | ((value >>> 14) & 0x7F | 0x80) << 8 | (value >>> 21);
++            buf.writeInt(w);
++        } else {
++            int w = (value & 0x7F | 0x80) << 24 | ((value >>> 7) & 0x7F | 0x80) << 16
++                    | ((value >>> 14) & 0x7F | 0x80) << 8 | ((value >>> 21) & 0x7F | 0x80);
++            buf.writeInt(w);
++            buf.writeByte(value >>> 28);
++        }
++    }
++
++    /**
++     * Reads a VarInt from the buffer of up to 21 bits in size.
++     *
++     * @param buffer the buffer to read from
++     * @return the VarInt decoded, {@code 0} if no varint could be read
++     * @throws DecoderException if the VarInt is too big to be decoded
++     */
++    public static int readRawVarInt21(ByteBuf buffer) {
++        if (buffer.readableBytes() < 4) {
++            // we don't have enough that we can read a potentially full varint, so fall back to
++            // the slow path.
++            return readRawVarintSmallBuf(buffer);
++        }
++        int wholeOrMore = buffer.getIntLE(buffer.readerIndex());
++
++        // take the last three bytes and check if any of them have the high bit set
++        int atStop = ~wholeOrMore & 0x808080;
++        if (atStop == 0) {
++            // all bytes have the high bit set, so the varint we are trying to decode is too wide
++            throw varIntTooBig();
++        }
++
++        int bitsToKeep = Integer.numberOfTrailingZeros(atStop) + 1;
++        buffer.skipBytes(bitsToKeep >> 3);
++
++        // remove all bits we don't need to keep, a trick from
++        // https://github.com/netty/netty/pull/14050#issuecomment-2107750734:
++        //
++        // > The idea is that thisVarintMask has 0s above the first one of firstOneOnStop, and 1s at
++        // > and below it. For example if firstOneOnStop is 0x800080 (where the last 0x80 is the only
++        // > one that matters), then thisVarintMask is 0xFF.
++        //
++        // this is also documented in Hacker's Delight, section 2-1 "Manipulating Rightmost Bits"
++        int preservedBytes = wholeOrMore & (atStop ^ (atStop - 1));
++
++        // merge together using this trick: https://github.com/netty/netty/pull/14050#discussion_r1597896639
++        preservedBytes = (preservedBytes & 0x007F007F) | ((preservedBytes & 0x00007F00) >> 1);
++        preservedBytes = (preservedBytes & 0x00003FFF) | ((preservedBytes & 0x3FFF0000) >> 2);
++        return preservedBytes;
++    }
++
++    private static int readRawVarintSmallBuf(ByteBuf buffer) {
++        if (!buffer.isReadable()) {
++            return 0;
++        }
++        buffer.markReaderIndex();
++
++        byte tmp = buffer.readByte();
++        if (tmp >= 0) {
++            return tmp;
++        }
++        int result = tmp & 0x7F;
++        if (!buffer.isReadable()) {
++            buffer.resetReaderIndex();
++            return 0;
++        }
++        if ((tmp = buffer.readByte()) >= 0) {
++            return result | tmp << 7;
++        }
++        result |= (tmp & 0x7F) << 7;
++        if (!buffer.isReadable()) {
++            buffer.resetReaderIndex();
++            return 0;
++        }
++        if ((tmp = buffer.readByte()) >= 0) {
++            return result | tmp << 14;
++        }
++        return result | (tmp & 0x7F) << 14;
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/PacketDataSerializer.java b/src/main/java/net/minecraft/server/PacketDataSerializer.java
+index baa12427d..649fed7df 100644
+--- a/src/main/java/net/minecraft/server/PacketDataSerializer.java
++++ b/src/main/java/net/minecraft/server/PacketDataSerializer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import app.ashcon.sportpaper.network.VarIntUtil; // SportPaper
+ import com.google.common.base.Charsets;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufAllocator;
+@@ -90,20 +91,7 @@ public class PacketDataSerializer extends ByteBuf {
+     }
+ 
+     public int e() {
+-        int i = 0;
+-        int j = 0;
+-
+-        byte b0;
+-
+-        do {
+-            b0 = this.readByte();
+-            i |= (b0 & 127) << j++ * 7;
+-            if (j > 5) {
+-                throw new RuntimeException("VarInt too big");
+-            }
+-        } while ((b0 & 128) == 128);
+-
+-        return i;
++        return VarIntUtil.readVarInt(this.a);
+     }
+ 
+     public long f() {
+@@ -133,12 +121,7 @@ public class PacketDataSerializer extends ByteBuf {
+     }
+ 
+     public void b(int i) {
+-        while ((i & -128) != 0) {
+-            this.writeByte(i & 127 | 128);
+-            i >>>= 7;
+-        }
+-
+-        this.writeByte(i);
++        VarIntUtil.writeVarInt(this.a, i);
+     }
+ 
+     public void b(long i) {
+@@ -240,13 +223,13 @@ public class PacketDataSerializer extends ByteBuf {
+     }
+ 
+     public PacketDataSerializer a(String s) {
+-        byte[] abyte = s.getBytes(Charsets.UTF_8);
++        int utf8Bytes = io.netty.buffer.ByteBufUtil.utf8Bytes(s);
+ 
+-        if (abyte.length > 32767) {
++        if (utf8Bytes > 32767) {
+             throw new EncoderException("String too big (was " + s.length() + " bytes encoded, max " + 32767 + ")");
+         } else {
+-            this.b(abyte.length);
+-            this.writeBytes(abyte);
++            this.b(utf8Bytes);
++            this.writeCharSequence(s, Charsets.UTF_8);
+             return this;
+         }
+     }
+diff --git a/src/main/java/net/minecraft/server/PacketPrepender.java b/src/main/java/net/minecraft/server/PacketPrepender.java
+index d264e8c2d..0b02b4e7c 100644
+--- a/src/main/java/net/minecraft/server/PacketPrepender.java
++++ b/src/main/java/net/minecraft/server/PacketPrepender.java
+@@ -1,25 +1,29 @@
+ package net.minecraft.server;
+ 
++import app.ashcon.sportpaper.network.VarIntUtil; // SportPaper
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.MessageToByteEncoder;
+ 
++@io.netty.channel.ChannelHandler.Sharable // SportPaper
+ public class PacketPrepender extends MessageToByteEncoder<ByteBuf> {
+ 
+-    public PacketPrepender() {}
++    public static final PacketPrepender INSTANCE = new PacketPrepender(); // SportPaper
++    private PacketPrepender() {} // SportPaper - private
+ 
+     protected void encode(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, ByteBuf bytebuf1) throws Exception {
+-        int i = bytebuf.readableBytes();
+-        int j = PacketDataSerializer.a(i);
+-
+-        if (j > 3) {
+-            throw new IllegalArgumentException("unable to fit " + i + " into " + 3);
+-        } else {
+-            PacketDataSerializer packetdataserializer = new PacketDataSerializer(bytebuf1);
++        // SportPaper start
++        VarIntUtil.writeVarInt(bytebuf1, bytebuf.readableBytes());
++        bytebuf1.writeBytes(bytebuf);
++        // SportPaper end
++    }
+ 
+-            packetdataserializer.ensureWritable(j + i);
+-            packetdataserializer.b(i);
+-            packetdataserializer.writeBytes(bytebuf, bytebuf.readerIndex(), i);
+-        }
++    // SportPaper start
++    @Override
++    protected ByteBuf allocateBuffer(ChannelHandlerContext ctx, ByteBuf msg, boolean preferDirect) throws Exception {
++        int anticipatedRequiredCapacity = VarIntUtil.varIntBytes(msg.readableBytes())
++                + msg.readableBytes();
++        return ctx.alloc().directBuffer(anticipatedRequiredCapacity);
+     }
++    // SportPaper end
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketSplitter.java b/src/main/java/net/minecraft/server/PacketSplitter.java
+index c51a1f7d1..4232992c9 100644
+--- a/src/main/java/net/minecraft/server/PacketSplitter.java
++++ b/src/main/java/net/minecraft/server/PacketSplitter.java
+@@ -1,47 +1,51 @@
+ package net.minecraft.server;
+ 
++import app.ashcon.sportpaper.network.VarIntUtil; // SportPaper
+ import io.netty.buffer.ByteBuf;
+-import io.netty.buffer.Unpooled;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.ByteToMessageDecoder;
+ import io.netty.handler.codec.CorruptedFrameException;
+ import java.util.List;
+ 
++import static io.netty.util.ByteProcessor.FIND_NON_NUL;
++
+ public class PacketSplitter extends ByteToMessageDecoder {
+ 
+     public PacketSplitter() {}
+ 
+     protected void decode(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, List<Object> list) throws Exception {
+-        bytebuf.markReaderIndex();
+-        byte[] abyte = new byte[3];
+-
+-        for (int i = 0; i < abyte.length; ++i) {
+-            if (!bytebuf.isReadable()) {
+-                bytebuf.resetReaderIndex();
+-                return;
+-            }
+-
+-            abyte[i] = bytebuf.readByte();
+-            if (abyte[i] >= 0) {
+-                PacketDataSerializer packetdataserializer = new PacketDataSerializer(Unpooled.wrappedBuffer(abyte));
+-
+-                try {
+-                    int j = packetdataserializer.e();
++        // SportPaper start
++        if (!channelhandlercontext.channel().isActive()) {
++            bytebuf.clear();
++            return;
++        }
+ 
+-                    if (bytebuf.readableBytes() >= j) {
+-                        list.add(bytebuf.readBytes(j));
+-                        return;
+-                    }
++        // skip any runs of 0x00 we might find
++        int packetStart = bytebuf.forEachByte(FIND_NON_NUL);
++        if (packetStart == -1) {
++            bytebuf.clear();
++            return;
++        }
++        bytebuf.readerIndex(packetStart);
+ 
+-                    bytebuf.resetReaderIndex();
+-                } finally {
+-                    packetdataserializer.release();
+-                }
++        // try to read the length of the packet
++        bytebuf.markReaderIndex();
++        int length = VarIntUtil.readRawVarInt21(bytebuf);
++        if (packetStart == bytebuf.readerIndex()) {
++            return;
++        }
++        if (length < 0) {
++            throw new CorruptedFrameException("Bad packet length");
++        }
+ 
+-                return;
++        // note that zero-length packets are ignored
++        if (length > 0) {
++            if (bytebuf.readableBytes() < length) {
++                bytebuf.resetReaderIndex();
++            } else {
++                list.add(bytebuf.readRetainedSlice(length));
+             }
+         }
+-
+-        throw new CorruptedFrameException("length wider than 21-bit");
++        // SportPaper end
+     }
+ }
+diff --git a/src/main/java/net/minecraft/server/ServerConnection.java b/src/main/java/net/minecraft/server/ServerConnection.java
+index ddc7a9452..e64c8c4c3 100644
+--- a/src/main/java/net/minecraft/server/ServerConnection.java
++++ b/src/main/java/net/minecraft/server/ServerConnection.java
+@@ -103,7 +103,14 @@ public class ServerConnection {
+                         ;
+                     }
+ 
+-                    channel.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyPingHandler(ServerConnection.this)).addLast("splitter", new PacketSplitter()).addLast("decoder", new PacketDecoder(EnumProtocolDirection.SERVERBOUND)).addLast("prepender", new PacketPrepender()).addLast("encoder", new PacketEncoder(EnumProtocolDirection.CLIENTBOUND));
++                    // SportPaper start - new lines
++                    channel.pipeline().addLast("timeout", new ReadTimeoutHandler(30))
++                            .addLast("legacy_query", new LegacyPingHandler(ServerConnection.this))
++                            .addLast("splitter", new PacketSplitter())
++                            .addLast("decoder", new PacketDecoder(EnumProtocolDirection.SERVERBOUND))
++                            .addLast("prepender", PacketPrepender.INSTANCE) // SportPaper - Share PacketPrepender instance
++                            .addLast("encoder", new PacketEncoder(EnumProtocolDirection.CLIENTBOUND));
++                    // SportPaper end
+                     NetworkManager networkmanager = new NetworkManager(EnumProtocolDirection.SERVERBOUND);
+ 
+                     pending.add(networkmanager); // Paper
+-- 
+2.52.0
+

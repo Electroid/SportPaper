@@ -1,0 +1,22 @@
+From 793a015725d9b708fb89651cd044977be1a8377a Mon Sep 17 00:00:00 2001
+From: Martin Panzer <postremus1996@googlemail.com>
+Date: Mon, 6 Jun 2016 21:14:35 +0200
+Subject: [PATCH] Make falling block height nerf respect doEntityDrops
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityFallingBlock.java b/src/main/java/net/minecraft/server/EntityFallingBlock.java
+index 303d9e44b..d9a64db75 100644
+--- a/src/main/java/net/minecraft/server/EntityFallingBlock.java
++++ b/src/main/java/net/minecraft/server/EntityFallingBlock.java
+@@ -94,7 +94,7 @@ public class EntityFallingBlock extends Entity {
+ 
+             // PaperSpigot start - Drop falling blocks above the specified height
+             if (this.world.paperSpigotConfig.fallingBlockHeightNerf != 0 && this.locY > this.world.paperSpigotConfig.fallingBlockHeightNerf) {
+-                if (this.dropItem) {
++                if (this.dropItem && this.world.getGameRules().getBoolean("doEntityDrops")) {
+                     this.a(new ItemStack(block, 1, block.getDropData(this.block)), 0.0F);
+                 }
+ 
+-- 
+2.52.0
+

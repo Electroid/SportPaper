@@ -1,0 +1,164 @@
+From 579d82c3d003e29d903502b18c0ee242ed85e5fa Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Sat, 4 Apr 2020 15:27:44 -0700
+Subject: [PATCH] Allow controlled flushing for network manager
+
+Only make one flush call when emptying the packet queue too
+
+This patch will be used to optimise out flush calls in later
+patches.
+
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index bdc5eb6b2..a61e8f9b9 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -86,6 +86,37 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+     public EnumProtocol protocol;
+     // Paper end - Optimize network
+ 
++    // Paper start - allow controlled flushing
++    volatile boolean canFlush = true;
++    private final java.util.concurrent.atomic.AtomicInteger packetWrites = new java.util.concurrent.atomic.AtomicInteger();
++    private int flushPacketsStart;
++    private final Object flushLock = new Object();
++
++    public void disableAutomaticFlush() {
++        synchronized (this.flushLock) {
++            this.flushPacketsStart = this.packetWrites.get(); // must be volatile and before canFlush = false
++            this.canFlush = false;
++        }
++    }
++
++    public void enableAutomaticFlush() {
++        synchronized (this.flushLock) {
++            this.canFlush = true;
++            if (this.packetWrites.get() != this.flushPacketsStart) { // must be after canFlush = true
++                this.flush(); // only make the flush call if we need to
++            }
++        }
++    }
++
++    private void flush() {
++        if (this.channel.eventLoop().inEventLoop()) {
++            this.channel.flush();
++        } else {
++            this.channel.eventLoop().execute(() -> this.channel.flush());
++        }
++    }
++    // Paper end - allow controlled flushing
++
+     public NetworkManager(EnumProtocolDirection enumprotocoldirection) {
+         this.h = enumprotocoldirection;
+     }
+@@ -148,8 +179,8 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+     }
+ 
+     public void handle(Packet packet) {
+-        // Paper - Optimize network
+-        this.a(packet, null);
++        // Paper - Optimize network; add flush paramter
++        this.a(packet, null, Boolean.TRUE);
+     }
+ 
+     public void a(Packet packet, GenericFutureListener<? extends Future<? super Void>> genericfuturelistener, GenericFutureListener<? extends Future<? super Void>>... agenericfuturelistener) {
+@@ -168,7 +199,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+         if (connected && (InnerUtil.canSendImmediate(this, packet)
+             || (MinecraftServer.getServer().isMainThread() && packet.isReady() && this.getQueuedPackets().isEmpty()
+             && (packet.getExtraPackets() == null || packet.getExtraPackets().isEmpty())))) {
+-            this.a(packet, listeners);
++            this.a(packet, listeners, null);
+         } else {
+             // Write the packets to the queue, then flush - antixray hooks there already
+             final java.util.List<Packet<?>> extraPackets = InnerUtil.buildExtraPackets(packet);
+@@ -193,7 +224,13 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+         // Paper end - Optimize network
+     }
+ 
+-    private void a(final Packet packet, final GenericFutureListener<? extends Future<? super Void>>[] agenericfuturelistener) {
++    private void a(final Packet packet, final GenericFutureListener<? extends Future<? super Void>>[] agenericfuturelistener, Boolean flushConditional) { // Paper - add flush parameter
++        // Paper start - add flush parameter
++        this.packetWrites.getAndIncrement(); // must be before using canFlush
++        boolean effectiveFlush = flushConditional == null ? this.canFlush : flushConditional;
++        final boolean flush = effectiveFlush || packet instanceof PacketPlayOutKeepAlive || packet instanceof PacketPlayOutKickDisconnect; // no delay for certain packets
++        // Paper end - add flush parameter
++
+         final EnumProtocol enumprotocol = EnumProtocol.a(packet);
+         final EnumProtocol enumprotocol1 = (EnumProtocol) this.channel.attr(NetworkManager.c).get();
+ 
+@@ -203,15 +240,21 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+         }
+ 
+         if (this.channel.eventLoop().inEventLoop()) {
+-            doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener);
++            doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, flush);
+         } else {
+-            this.channel.eventLoop().execute(() -> doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener));
++            this.channel.eventLoop().execute(() -> doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, flush));
+         }
+ 
+     }
+ 
+     // SportPaper start - move common code to helper method
+     private void doSendPacket(Packet<?> packet, EnumProtocol enumprotocol, EnumProtocol enumprotocol1, GenericFutureListener<? extends Future<? super Void>>[] agenericfuturelistener) {
++        // Paper start - add flush parameter
++        this.doSendPacket(packet, enumprotocol, enumprotocol1, agenericfuturelistener, true);
++    }
++
++    private void doSendPacket(Packet<?> packet, EnumProtocol enumprotocol, EnumProtocol enumprotocol1, GenericFutureListener<? extends Future<? super Void>>[] agenericfuturelistener, boolean flush) {
++        // Paper end - add flush parameter
+         if (enumprotocol != enumprotocol1) {
+             this.a(enumprotocol);
+         }
+@@ -225,7 +268,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+ 
+         try {
+         // Paper end - Optimize network
+-            ChannelFuture channelfuture = this.channel.writeAndFlush(packet);
++            ChannelFuture channelfuture = flush ? this.channel.writeAndFlush(packet) : this.channel.write(packet); // Paper - add flush parameter
+ 
+             if (agenericfuturelistener != null) {
+                 channelfuture.addListeners(agenericfuturelistener);
+@@ -271,6 +314,11 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+             return true;
+         }
+ 
++        // Paper start - make only one flush call per sendPacketQueue() call
++        final boolean needsFlush = this.canFlush;
++        boolean hasWrotePacket = false;
++        // Paper end - make only one flush call per sendPacketQueue() call
++
+         // If we are on main, we are safe here in that nothing else should be processing queue off main anymore
+         // But if we are not on main due to login/status, the parent is synchronized on packetQueue
+         final java.util.Iterator<QueuedPacket> iterator = this.getQueuedPackets().iterator();
+@@ -278,7 +326,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+             final QueuedPacket queued = iterator.next(); // poll -> peek
+ 
+             // Fix NPE (Spigot bug caused by handleDisconnection())
+-            if (queued == null) {
++            if (false && queued == null) { // Paper - diff on change, this logic is redundant: iterator guarantees ret of an element - on change, hook the flush logic here
+                 return true;
+             }
+ 
+@@ -288,12 +336,18 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+ 
+             final Packet<?> packet = queued.getPacket();
+             if (!packet.isReady()) {
++                // Paper start - make only one flush call per sendPacketQueue() call
++                if (hasWrotePacket && (needsFlush || this.canFlush)) {
++                    this.flush();
++                }
++                // Paper end - make only one flush call per sendPacketQueue() call
+                 return false;
+             }
+ 
+             iterator.remove();
+             if (queued.tryMarkConsumed()) {
+-                this.a(packet, queued.getListener());
++                this.a(packet, queued.getListener(), (!iterator.hasNext() && (needsFlush || this.canFlush)) ? Boolean.TRUE : Boolean.FALSE); // Paper - make only one flush call per sendPacketQueue() call
++                hasWrotePacket = true; // Paper - make only one flush call per sendPacketQueue() call
+             }
+         }
+         return true;
+-- 
+2.52.0
+

@@ -1,0 +1,84 @@
+From 153c6126f87a14a0b03e9eb4013ba83ba7dcd29a Mon Sep 17 00:00:00 2001
+From: VytskaLT <VytskaLT@protonmail.com>
+Date: Tue, 15 Dec 2020 18:59:08 +0200
+Subject: [PATCH] Update MySQL Connector and SQLite JDBC
+
+Exclude SQLite natives for unlikely platforms
+
+Co-authored-by: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+
+diff --git a/pom.xml b/pom.xml
+index f16c27bfb..c97310f0d 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -74,16 +74,14 @@
+         <dependency>
+             <groupId>org.xerial</groupId>
+             <artifactId>sqlite-jdbc</artifactId>
+-            <version>3.7.2</version>
+-            <type>jar</type>
+-            <scope>compile</scope>
++            <version>3.51.0.0</version>
++            <scope>runtime</scope>
+         </dependency>
+         <dependency>
+-            <groupId>mysql</groupId>
+-            <artifactId>mysql-connector-java</artifactId>
+-            <version>5.1.14</version>
+-            <type>jar</type>
+-            <scope>compile</scope>
++            <groupId>com.mysql</groupId>
++            <artifactId>mysql-connector-j</artifactId>
++            <version>9.5.0</version>
++            <scope>runtime</scope>
+         </dependency>
+         <!-- testing -->
+         <dependency>
+@@ -223,16 +221,30 @@
+                             <goal>shade</goal>
+                         </goals>
+                         <configuration>
+-                            <!-- Paper start - Update Log4j -->
+                             <filters>
++                                <!-- Paper start - Update Log4j -->
+                                 <filter>
+                                     <artifact>org.spigotmc:minecraft-server:**</artifact>
+                                     <excludes>
+                                         <exclude>org/apache/logging/log4j/**</exclude>
+                                     </excludes>
+                                 </filter>
++                                <!-- Paper end - Update Log4j -->
++                                <filter>
++                                    <artifact>org.xerial:sqlite-jdbc:**</artifact>
++                                    <excludes>
++                                        <exclude>org/sqlite/native/FreeBSD/x86/**</exclude>
++                                        <exclude>org/sqlite/native/Linux/arm/**</exclude>
++                                        <exclude>org/sqlite/native/Linux/armv6/**</exclude>
++                                        <exclude>org/sqlite/native/Linux/armv7/**</exclude>
++                                        <exclude>org/sqlite/native/Linux/x86/**</exclude>
++                                        <exclude>org/sqlite/native/Linux-Android/**</exclude>
++                                        <exclude>org/sqlite/native/Linux-Musl/x86/**</exclude>
++                                        <exclude>org/sqlite/native/Windows/armv7/**</exclude>
++                                        <exclude>org/sqlite/native/Windows/x86/**</exclude>
++                                    </excludes>
++                                </filter>
+                             </filters>
+-                            <!-- Paper end - Update Log4j -->
+                             <relocations>
+                                 <relocation>
+                                     <pattern>joptsimple</pattern>
+@@ -262,6 +274,11 @@
+                                     <shadedPattern>net.minecraft.server.v${minecraft_version}</shadedPattern>
+                                 </relocation>
+                             </relocations>
++                            <transformers>
++                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
++                                    <resource>META-INF/services/java.sql.Driver</resource>
++                                </transformer>
++                            </transformers>
+                         </configuration>
+                     </execution>
+                 </executions>
+-- 
+2.52.0
+

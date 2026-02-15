@@ -1,0 +1,26 @@
+From 16679ec1a2964568c9b0a6c3aa9bf9a8e1b61527 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 6 Jul 2019 10:08:52 +1000
+Subject: [PATCH] SPIGOT-5142: Ignore invalid firework effects
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaFirework.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaFirework.java
+index 1991edcbd..17fe2b05c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaFirework.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaFirework.java
+@@ -92,7 +92,11 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
+         List<FireworkEffect> effects = this.effects = new ArrayList<FireworkEffect>(fireworkEffects.size());
+ 
+         for (int i = 0; i < fireworkEffects.size(); i++) {
+-            effects.add(getEffect((NBTTagCompound) fireworkEffects.get(i)));
++            try {
++                effects.add(getEffect((NBTTagCompound) fireworkEffects.get(i)));
++            } catch (IllegalArgumentException ex) {
++                // SPIGOT-5142: Ignore invalid effects
++            }
+         }
+     }
+ 
+-- 
+2.52.0
+

@@ -1,0 +1,240 @@
+From 052cde97dd6eee5a31a800eab0e9785d16ca8366 Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Wed, 10 Dec 2025 03:11:50 -0800
+Subject: [PATCH] Migrate from Trove to fastutil
+
+
+diff --git a/pom.xml b/pom.xml
+index 94108b33e..82f4c4e6f 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -103,16 +103,6 @@
+             <groupId>io.netty</groupId>
+             <artifactId>netty-transport-native-unix-common</artifactId>
+         </dependency>
+-        <dependency>
+-            <groupId>it.unimi.dsi</groupId>
+-            <artifactId>fastutil</artifactId>
+-            <version>8.5.16</version>
+-        </dependency>
+-        <dependency>
+-            <groupId>net.sf.trove4j</groupId>
+-            <artifactId>trove4j</artifactId>
+-            <version>3.0.3</version>
+-        </dependency>
+         <dependency>
+             <groupId>app.ashcon</groupId>
+             <artifactId>sportpaper-api</artifactId>
+diff --git a/src/main/java/net/minecraft/server/Chunk.java b/src/main/java/net/minecraft/server/Chunk.java
+index 2c92e1766..64a80c9ce 100644
+--- a/src/main/java/net/minecraft/server/Chunk.java
++++ b/src/main/java/net/minecraft/server/Chunk.java
+@@ -52,7 +52,7 @@ public class Chunk {
+     private long u;
+     private int v;
+     private ConcurrentLinkedQueue<BlockPosition> w;
+-    protected gnu.trove.map.hash.TObjectIntHashMap<Class> entityCount = new gnu.trove.map.hash.TObjectIntHashMap<Class>(); // Spigot
++    protected it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<Class<?>> entityCount = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>(); // Spigot
+     // PaperSpigot start - Asynchronous light updates
+     public AtomicInteger pendingLightUpdates = new AtomicInteger();
+     public long lightUpdateTime;
+@@ -764,7 +764,7 @@ public class Chunk {
+         {
+             if ( creatureType.a().isAssignableFrom( entity.getClass() ) )
+             {
+-                this.entityCount.adjustOrPutValue( creatureType.a(), 1, 1 );
++                this.entityCount.addTo( creatureType.a(), 1 );
+             }
+         }
+         // Spigot end
+@@ -801,9 +801,9 @@ public class Chunk {
+         }
+         for ( EnumCreatureType creatureType : EnumCreatureType.values() )
+         {
+-            if ( creatureType.a().isAssignableFrom( entity.getClass() ) )
++            if ( creatureType.a().isAssignableFrom( entity.getClass() ) && this.entityCount.containsKey( creatureType.a() ) )
+             {
+-                this.entityCount.adjustValue( creatureType.a(), -1 );
++                this.entityCount.addTo( creatureType.a() , -1 );
+             }
+         }
+         // Spigot end
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 5113799e7..8212928e7 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -67,7 +67,7 @@ public abstract class PlayerList {
+ 
+     // CraftBukkit start
+     private CraftServer cserver;
+-    private final Map<String,EntityPlayer> playersByName = new org.spigotmc.CaseInsensitiveMap<EntityPlayer>();
++    private final Map<String,EntityPlayer> playersByName = new java.util.HashMap<>(); // SportPaper - stop using Trove
+ 
+     public PlayerList(MinecraftServer minecraftserver) {
+         this.cserver = minecraftserver.server = new CraftServer(minecraftserver, this);
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index f029d2bbb..d98287d6e 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -132,7 +132,7 @@ public abstract class World implements IBlockAccess {
+ 
+     // Spigot start
+     private boolean guardEntityList;
+-    protected final gnu.trove.map.hash.TLongShortHashMap chunkTickList;
++    protected final it.unimi.dsi.fastutil.longs.Long2ShortOpenHashMap chunkTickList;
+     protected float growthOdds = 100;
+     protected float modifiedOdds = 100;
+     private final byte chunkTickRadius;
+@@ -199,8 +199,7 @@ public abstract class World implements IBlockAccess {
+         // CraftBukkit end
+         // Spigot start
+         this.chunkTickRadius = (byte) ( ( this.getServer().getViewDistance() < 7 ) ? this.getServer().getViewDistance() : 7 );
+-        this.chunkTickList = new gnu.trove.map.hash.TLongShortHashMap( spigotConfig.chunksPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE );
+-        this.chunkTickList.setAutoCompactionFactor( 0 );
++        this.chunkTickList = new it.unimi.dsi.fastutil.longs.Long2ShortOpenHashMap( spigotConfig.chunksPerTick * 5, 0.7f );
+         // Spigot end
+ 
+         this.L = this.random.nextInt(12000);
+@@ -2351,7 +2350,7 @@ public abstract class World implements IBlockAccess {
+                 int dx = ( random.nextBoolean() ? 1 : -1 ) * random.nextInt( randRange );
+                 int dz = ( random.nextBoolean() ? 1 : -1 ) * random.nextInt( randRange );
+                 long hash = chunkToKey( dx + j, dz + k );
+-                if ( !chunkTickList.contains( hash ) && this.chunkProvider.isChunkLoaded(dx + j, dz + k ) )
++                if ( !chunkTickList.containsKey( hash ) && this.chunkProvider.isChunkLoaded(dx + j, dz + k ) )
+                 {
+                     chunkTickList.put( hash, (short) -1 ); // no players
+                 }
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index d55a8f348..eb97f4544 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -377,11 +377,11 @@ public class WorldServer extends World implements IAsyncTaskHandler {
+         super.h();
+         if (this.worldData.getType() == WorldType.DEBUG_ALL_BLOCK_STATES) {
+             // Spigot start
+-           gnu.trove.iterator.TLongShortIterator iterator = this.chunkTickList.iterator();
++           it.unimi.dsi.fastutil.objects.ObjectIterator<it.unimi.dsi.fastutil.longs.Long2ShortMap.Entry> iterator = this.chunkTickList.long2ShortEntrySet().fastIterator();
+ 
+             while (iterator.hasNext()) {
+-                iterator.advance();
+-                long chunkCoord = iterator.key();
++                it.unimi.dsi.fastutil.longs.Long2ShortMap.Entry entry = iterator.next();
++                long chunkCoord = entry.getLongKey();
+ 
+                 this.getChunkAt(World.keyToX( chunkCoord ), World.keyToZ( chunkCoord )).b(false);
+                 // Spigot end
+@@ -397,10 +397,10 @@ public class WorldServer extends World implements IAsyncTaskHandler {
+             //    int k = chunkcoordintpair1.x * 16;
+             //    int l = chunkcoordintpair1.z * 16;
+             // Spigot start
+-            for (gnu.trove.iterator.TLongShortIterator iter = chunkTickList.iterator(); iter.hasNext(); )
++            for (it.unimi.dsi.fastutil.objects.ObjectIterator<it.unimi.dsi.fastutil.longs.Long2ShortMap.Entry> iter = chunkTickList.long2ShortEntrySet().fastIterator(); iter.hasNext(); )
+             {
+-                iter.advance();
+-                long chunkCoord = iter.key();
++                it.unimi.dsi.fastutil.longs.Long2ShortMap.Entry entry = iter.next();
++                long chunkCoord = entry.getLongKey();
+                 int chunkX = World.keyToX( chunkCoord );
+                 int chunkZ = World.keyToZ( chunkCoord );
+                 // If unloaded, or in procedd of being unloaded, drop it
+diff --git a/src/main/java/org/spigotmc/AntiXray.java b/src/main/java/org/spigotmc/AntiXray.java
+index c2ad90c82..31a2863ae 100644
+--- a/src/main/java/org/spigotmc/AntiXray.java
++++ b/src/main/java/org/spigotmc/AntiXray.java
+@@ -1,7 +1,7 @@
+ package org.spigotmc;
+ 
+-import gnu.trove.set.TByteSet;
+-import gnu.trove.set.hash.TByteHashSet;
++import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
++import it.unimi.dsi.fastutil.bytes.ByteSet;
+ import net.minecraft.server.Block;
+ import net.minecraft.server.BlockPosition;
+ import net.minecraft.server.Blocks;
+@@ -35,7 +35,7 @@ public class AntiXray
+         }
+ 
+         // For every block
+-        TByteSet blocks = new TByteHashSet();
++        ByteSet blocks = new ByteOpenHashSet();
+         for ( Integer i : config.hiddenBlocks )
+         {
+             Block block = Block.getById( i );
+@@ -47,7 +47,7 @@ public class AntiXray
+             }
+         }
+         // Bake it to a flat array of replacements
+-        replacementOres = blocks.toArray();
++        replacementOres = blocks.toByteArray();
+     }
+ 
+     /**
+diff --git a/src/main/java/org/spigotmc/CaseInsensitiveHashingStrategy.java b/src/main/java/org/spigotmc/CaseInsensitiveHashingStrategy.java
+deleted file mode 100644
+index aafdd3682..000000000
+--- a/src/main/java/org/spigotmc/CaseInsensitiveHashingStrategy.java
++++ /dev/null
+@@ -1,18 +0,0 @@
+-package org.spigotmc;
+-
+-import gnu.trove.strategy.HashingStrategy;
+-
+-class CaseInsensitiveHashingStrategy implements HashingStrategy {
+-
+-    static final CaseInsensitiveHashingStrategy INSTANCE = new CaseInsensitiveHashingStrategy();
+-
+-    @Override
+-    public int computeHashCode(Object object) {
+-        return ((String) object).toLowerCase().hashCode();
+-    }
+-
+-    @Override
+-    public boolean equals(Object o1, Object o2) {
+-        return o1.equals(o2) || (o1 instanceof String && o2 instanceof String && ((String) o1).toLowerCase().equals(((String) o2).toLowerCase()));
+-    }
+-}
+diff --git a/src/main/java/org/spigotmc/CaseInsensitiveMap.java b/src/main/java/org/spigotmc/CaseInsensitiveMap.java
+deleted file mode 100644
+index 1934fd50a..000000000
+--- a/src/main/java/org/spigotmc/CaseInsensitiveMap.java
++++ /dev/null
+@@ -1,15 +0,0 @@
+-package org.spigotmc;
+-
+-import gnu.trove.map.hash.TCustomHashMap;
+-import java.util.Map;
+-
+-public class CaseInsensitiveMap<V> extends TCustomHashMap<String, V> {
+-
+-    public CaseInsensitiveMap() {
+-        super(CaseInsensitiveHashingStrategy.INSTANCE);
+-    }
+-
+-    public CaseInsensitiveMap(Map<? extends String, ? extends V> map) {
+-        super(CaseInsensitiveHashingStrategy.INSTANCE, map);
+-    }
+-}
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 1ad321639..a8736e993 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -7,7 +7,6 @@ import java.util.Map;
+ import java.util.Set;
+ import java.util.concurrent.TimeUnit;
+ import java.util.logging.Level;
+-import gnu.trove.map.hash.TObjectIntHashMap;
+ import com.google.common.collect.Lists;
+ import net.minecraft.server.AttributeRanged;
+ import net.minecraft.server.GenericAttributes;
+@@ -173,7 +172,7 @@ public class SpigotConfig
+     }
+ 
+     public static boolean disableStatSaving;
+-    public static TObjectIntHashMap<String> forcedStats = new TObjectIntHashMap<String>();
++    public static it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<String> forcedStats = new it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap<>();
+     private static void stats()
+     {
+         disableStatSaving = getBoolean( "stats.disable-saving", false );
+-- 
+2.52.0
+

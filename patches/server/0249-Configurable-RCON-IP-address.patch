@@ -1,0 +1,37 @@
+From ad38c96ad001fd275a3114379d99ef97969eb7b1 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 16 Apr 2016 00:39:33 -0400
+Subject: [PATCH] Configurable RCON IP address
+
+For servers with multiple IP's, ability to bind to a specific interface.
+
+diff --git a/src/main/java/net/minecraft/server/RemoteControlListener.java b/src/main/java/net/minecraft/server/RemoteControlListener.java
+index a4da2b46f..80d4c6401 100644
+--- a/src/main/java/net/minecraft/server/RemoteControlListener.java
++++ b/src/main/java/net/minecraft/server/RemoteControlListener.java
+@@ -24,7 +24,7 @@ public class RemoteControlListener extends RemoteConnectionThread {
+         super(iminecraftserver, "RCON Listener");
+         this.h = iminecraftserver.a("rcon.port", 0);
+         this.l = iminecraftserver.a("rcon.password", "");
+-        this.j = iminecraftserver.E();
++        this.j = iminecraftserver.a("rcon.ip", ""); // SportPaper
+         this.i = iminecraftserver.F();
+         if (0 == this.h) {
+             this.h = this.i + 10;
+@@ -37,9 +37,11 @@ public class RemoteControlListener extends RemoteConnectionThread {
+             iminecraftserver.a();
+         }
+ 
+-        if (0 == this.j.length()) {
+-            this.j = "0.0.0.0";
++        // SportPaper start - Configurable RCON IP address
++        if (this.j.isEmpty()) {
++            this.j = !iminecraftserver.E().isEmpty() ? iminecraftserver.E() : "0.0.0.0";
+         }
++        // SportPaper end
+ 
+         this.f();
+         this.k = null;
+-- 
+2.52.0
+

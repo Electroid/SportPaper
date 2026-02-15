@@ -1,0 +1,107 @@
+From 2894e5267c52391ecd16b016b6acfc59524a6380 Mon Sep 17 00:00:00 2001
+From: RoccoDev <hey@rocco.dev>
+Date: Sat, 6 Feb 2021 13:19:31 +0100
+Subject: [PATCH] Better Async Chunk API
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 6365c69bc..455cb415c 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
+ 
+ // CraftBukkit start
+ import java.util.Random;
++import java.util.concurrent.CompletableFuture;
+ 
+ import org.bukkit.Bukkit;
+ import org.bukkit.Server;
+@@ -142,6 +143,34 @@ public class ChunkProviderServer implements IChunkProvider {
+         return getChunkAt(i, j, null);
+     }
+ 
++    // SportPaper start
++    public CompletableFuture<Chunk> getChunkAtAsync(int x, int z) {
++        Chunk chunk = chunks.get(LongHash.toLong(x, z));
++        if (chunk != null) {
++            return CompletableFuture.completedFuture(chunk);
++        }
++        ChunkRegionLoader loader = null;
++
++        if (this.chunkLoader instanceof ChunkRegionLoader) {
++            loader = (ChunkRegionLoader) this.chunkLoader;
++        }
++        CompletableFuture<Chunk> future = new CompletableFuture<>();
++        // We can only use the queue for already generated chunks
++        if (loader != null && loader.chunkExists(world, x, z)) {
++            ChunkIOExecutor.queueChunkLoad(world, loader, this, x, z, () -> future.complete(getChunkAt(x, z, null)));
++            return future;
++        } else {
++            chunk = originalGetChunkAt(x, z);
++        }
++
++        unloadQueue.remove(LongHash.toLong(x, z));
++        // If we didn't load the chunk async complete the future now
++        future.complete(chunk);
++
++        return future;
++    }
++    // SportPaper end
++
+     public Chunk getChunkAt(int i, int j, Runnable runnable) {
+         Chunk chunk = chunks.get(LongHash.toLong(i, j));
+         ChunkRegionLoader loader = null;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 6a60bff28..63ba0973e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -11,6 +11,7 @@ import java.util.Iterator;
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.CompletableFuture;
+ 
+ import net.md_5.bungee.api.chat.BaseComponent;
+ import net.minecraft.server.*;
+@@ -186,6 +187,7 @@ public class CraftWorld implements World {
+     }
+ 
+     // PaperSpigot start - Async chunk load API
++    @Deprecated
+     public void getChunkAtAsync(final int x, final int z, final ChunkLoadCallback callback) {
+         final ChunkProviderServer cps = this.world.chunkProviderServer;
+         cps.getChunkAt(x, z, new Runnable() {
+@@ -195,12 +197,30 @@ public class CraftWorld implements World {
+             }
+         });
+     }
++    @Deprecated
+     public void getChunkAtAsync(Block block, ChunkLoadCallback callback) {
+         getChunkAtAsync(block.getX() >> 4, block.getZ() >> 4, callback);
+     }
++    @Deprecated
+     public void getChunkAtAsync(Location location, ChunkLoadCallback callback) {
+         getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4, callback);
+     }
++    // SportPaper start - better Java 8 API
++    @Override
++    public CompletableFuture<Chunk> getChunkAtAsync(final int x, final int z) {
++        final ChunkProviderServer cps = this.world.chunkProviderServer;
++        CompletableFuture<net.minecraft.server.Chunk> future = cps.getChunkAtAsync(x, z);
++        return future == null ? null : future.thenApply(chunk -> chunk.bukkitChunk);
++    }
++    @Override
++    public CompletableFuture<Chunk> getChunkAtAsync(Block block) {
++        return getChunkAtAsync(block.getX() >> 4, block.getZ() >> 4);
++    }
++    @Override
++    public CompletableFuture<Chunk> getChunkAtAsync(Location location) {
++        return getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
++    }
++    // SportPaper end
+     // PaperSpigot end
+ 
+     public Chunk getChunkAt(int x, int z) {
+-- 
+2.52.0
+

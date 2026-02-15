@@ -1,11 +1,24 @@
-From 01800bd76642402904fc77ba7522ddc87166f206 Mon Sep 17 00:00:00 2001
+From 4049c84dc595c1af36bb81cdd97cb73681d5d3d4 Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Mon, 6 Aug 2018 16:39:57 -0700
 Subject: [PATCH] Fix Decompilation errors
 
 
+diff --git a/src/main/java/net/minecraft/server/BlockStateInteger.java b/src/main/java/net/minecraft/server/BlockStateInteger.java
+index 4e7e489c2..7eefc2261 100644
+--- a/src/main/java/net/minecraft/server/BlockStateInteger.java
++++ b/src/main/java/net/minecraft/server/BlockStateInteger.java
+@@ -60,8 +60,4 @@ public class BlockStateInteger extends BlockState<Integer> {
+     public String a(Integer integer) {
+         return integer.toString();
+     }
+-
+-    public String a(Comparable comparable) {
+-        return this.a((Integer) comparable);
+-    }
+ }
 diff --git a/src/main/java/net/minecraft/server/IEntitySelector.java b/src/main/java/net/minecraft/server/IEntitySelector.java
-index 81c45a95..c27709e1 100644
+index 81c45a95a..c27709e1f 100644
 --- a/src/main/java/net/minecraft/server/IEntitySelector.java
 +++ b/src/main/java/net/minecraft/server/IEntitySelector.java
 @@ -61,8 +61,8 @@ public final class IEntitySelector {
@@ -19,8 +32,50 @@ index 81c45a95..c27709e1 100644
          }
      }
  }
+diff --git a/src/main/java/net/minecraft/server/PacketCompressor.java b/src/main/java/net/minecraft/server/PacketCompressor.java
+index 639ae31a9..4e5f193db 100644
+--- a/src/main/java/net/minecraft/server/PacketCompressor.java
++++ b/src/main/java/net/minecraft/server/PacketCompressor.java
+@@ -46,7 +46,7 @@ public class PacketCompressor extends MessageToByteEncoder<ByteBuf> {
+         this.c = i;
+     }
+ 
+-    protected void encode(ChannelHandlerContext channelhandlercontext, Object object, ByteBuf bytebuf) throws Exception {
+-        this.a(channelhandlercontext, (ByteBuf) object, bytebuf);
++    protected void encode(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, ByteBuf bytebuf1) throws Exception {
++        this.a(channelhandlercontext, bytebuf, bytebuf1);
+     }
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketDecrypter.java b/src/main/java/net/minecraft/server/PacketDecrypter.java
+index aca935611..75a3935f7 100644
+--- a/src/main/java/net/minecraft/server/PacketDecrypter.java
++++ b/src/main/java/net/minecraft/server/PacketDecrypter.java
+@@ -18,7 +18,7 @@ public class PacketDecrypter extends MessageToMessageDecoder<ByteBuf> {
+         list.add(this.a.a(channelhandlercontext, bytebuf));
+     }
+ 
+-    protected void decode(ChannelHandlerContext channelhandlercontext, Object object, List list) throws Exception {
+-        this.a(channelhandlercontext, (ByteBuf) object, list);
++    protected void decode(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, List<Object> list) throws Exception {
++        this.a(channelhandlercontext, bytebuf, list);
+     }
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketEncrypter.java b/src/main/java/net/minecraft/server/PacketEncrypter.java
+index bd972ebeb..a5b44643b 100644
+--- a/src/main/java/net/minecraft/server/PacketEncrypter.java
++++ b/src/main/java/net/minecraft/server/PacketEncrypter.java
+@@ -17,7 +17,7 @@ public class PacketEncrypter extends MessageToByteEncoder<ByteBuf> {
+         this.a.a(bytebuf, bytebuf1);
+     }
+ 
+-    protected void encode(ChannelHandlerContext channelhandlercontext, Object object, ByteBuf bytebuf) throws Exception {
+-        this.a(channelhandlercontext, (ByteBuf) object, bytebuf);
++    protected void encode(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, ByteBuf bytebuf1) throws Exception {
++        this.a(channelhandlercontext, bytebuf, bytebuf1);
+     }
+ }
 diff --git a/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java b/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java
-index f55bedaf..a8fc3361 100644
+index f55bedaff..a8fc3361a 100644
 --- a/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java
 +++ b/src/main/java/net/minecraft/server/PacketPlayInUseEntity.java
 @@ -46,10 +46,6 @@ public class PacketPlayInUseEntity implements Packet<PacketListenerPlayIn> {
@@ -35,7 +90,7 @@ index f55bedaf..a8fc3361 100644
  
          INTERACT, ATTACK, INTERACT_AT;
 diff --git a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
-index c5be70f8..62492650 100644
+index c5be70f8b..62492650a 100644
 --- a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
 +++ b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
 @@ -33,8 +33,4 @@ public class PacketPlayOutEntityMetadata implements Packet<PacketListenerPlayOut
@@ -48,7 +103,7 @@ index c5be70f8..62492650 100644
 -    }
  }
 diff --git a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
-index ab4520ba..fc5ad291 100644
+index ab4520ba2..fc5ad2911 100644
 --- a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
 +++ b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
 @@ -172,10 +172,6 @@ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
@@ -63,7 +118,7 @@ index ab4520ba..fc5ad291 100644
  
          static final int[] a = new int[PacketPlayOutPlayerInfo.EnumPlayerInfoAction.values().length];
 diff --git a/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java b/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
-index 90606f50..4b8eb3ee 100644
+index 90606f50b..4b8eb3eed 100644
 --- a/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
 +++ b/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
 @@ -109,8 +109,4 @@ public class PacketPlayOutScoreboardTeam implements Packet<PacketListenerPlayOut
@@ -75,6 +130,28 @@ index 90606f50..4b8eb3ee 100644
 -        this.a((PacketListenerPlayOut) packetlistener);
 -    }
  }
+diff --git a/src/main/java/net/minecraft/server/PacketPrepender.java b/src/main/java/net/minecraft/server/PacketPrepender.java
+index e09ede5bf..d264e8c2d 100644
+--- a/src/main/java/net/minecraft/server/PacketPrepender.java
++++ b/src/main/java/net/minecraft/server/PacketPrepender.java
+@@ -8,7 +8,7 @@ public class PacketPrepender extends MessageToByteEncoder<ByteBuf> {
+ 
+     public PacketPrepender() {}
+ 
+-    protected void a(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, ByteBuf bytebuf1) throws Exception {
++    protected void encode(ChannelHandlerContext channelhandlercontext, ByteBuf bytebuf, ByteBuf bytebuf1) throws Exception {
+         int i = bytebuf.readableBytes();
+         int j = PacketDataSerializer.a(i);
+ 
+@@ -22,8 +22,4 @@ public class PacketPrepender extends MessageToByteEncoder<ByteBuf> {
+             packetdataserializer.writeBytes(bytebuf, bytebuf.readerIndex(), i);
+         }
+     }
+-
+-    protected void encode(ChannelHandlerContext channelhandlercontext, Object object, ByteBuf bytebuf) throws Exception {
+-        this.a(channelhandlercontext, (ByteBuf) object, bytebuf);
+-    }
+ }
 -- 
-2.50.0
+2.52.0
 
