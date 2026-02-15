@@ -1,7 +1,9 @@
 /.idea/
 /.vscode/
-/base/mc-dev/
+/.mvn/
+/base/
 /SportPaper-API/
 /SportPaper-Server/
 *.iml
 *.DS_Store
+sportpaper.jar

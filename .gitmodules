@@ -1,7 +1,8 @@
+
 [submodule "Paper"]
 	path = base/Paper
 	url = https://github.com/PaperMC/Paper-archive.git
 	branch = ver/1.8.8
-[submodule "builddata"]
-	path = builddata
+[submodule "BuildData"]
+	path = base/BuildData
 	url = https://hub.spigotmc.org/stash/scm/spigot/builddata.git

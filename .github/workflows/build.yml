@@ -19,16 +19,15 @@ jobs:
     strategy:
       matrix:
         java:
-          - "8"
-          - "17"
+          - "21"
     runs-on: ubuntu-latest
     steps:
       - id: checkout
         name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - id: setup-java
         name: Setup Java ${{ matrix.java }}
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ matrix.java }}
           distribution: temurin
@@ -38,21 +37,24 @@ jobs:
         run: |
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub CI"
+      - id: setup-maven
+        name: Setup Maven
+        shell: bash
+        run: mkdir .mvn && cp .github/maven.config .mvn
       - id: build
         name: Build SportPaper
-        run: bash sportpaper build
+        run: bash sportpaper jar
       - id: upload
         name: Upload SportPaper
         uses: actions/upload-artifact@v4
         with:
-          name: SportPaper-Java-${{ matrix.java }}.jar
-          path: SportPaper-Server/target/sportpaper-*.jar
+          name: SportPaper.jar
+          path: sportpaper.jar
           if-no-files-found: error
       - id: deploy
         if: |
           github.repository_owner == 'Electroid' &&
-          github.ref == 'refs/heads/main' &&
-          matrix.java == '8'
+          github.ref == 'refs/heads/main'
         name: Deploy SportPaper
         run: mvn --batch-mode deploy
         env:
