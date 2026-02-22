@@ -1,0 +1,22 @@
+From cf1fb67ea501965832a4ae1b5935115f72bef56b Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 14 Apr 2015 03:07:57 -0400
+Subject: [PATCH] Correct falling block vertical offset
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 764007093..ae93d76e7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -890,7 +890,7 @@ public class CraftWorld implements World {
+         Validate.isTrue(material.isBlock(), "Material must be a block");
+ 
+         double x = location.getBlockX() + 0.5;
+-        double y = location.getBlockY() + 0.5;
++        double y = location.getBlockY();
+         double z = location.getBlockZ() + 0.5;
+ 
+         // PaperSpigot start - Add FallingBlock source location API
+-- 
+2.50.1 (Apple Git-155)
+

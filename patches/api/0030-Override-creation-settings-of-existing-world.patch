@@ -1,6 +1,6 @@
-From 2439b472e65d98aa94b4dd9e8ac6b182e42c1513 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Wed, 8 Aug 2018 14:55:29 -0700
+From dd37cfb4bb94c431f9353df0c624834eb86d1c98 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 28 Jun 2015 03:37:39 -0400
 Subject: [PATCH] Override creation settings of existing world
 
 
@@ -86,5 +86,5 @@ index 53980fdb..81c95d1f 100644
       * Creates a world with the specified options.
       * <p>
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

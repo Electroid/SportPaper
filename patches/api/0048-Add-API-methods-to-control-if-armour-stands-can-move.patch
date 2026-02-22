@@ -1,6 +1,6 @@
-From 3d60db2c6cb016e7fb5e811342b5c955466b0148 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 14 Aug 2018 23:33:36 -0700
+From 072937fd0cc8660d6b7853cd56773ce8264e9216 Mon Sep 17 00:00:00 2001
+From: kashike <kashike@vq.lc>
+Date: Wed, 21 Dec 2016 11:47:25 -0600
 Subject: [PATCH] Add API methods to control if armour stands can move
 
 
@@ -32,5 +32,5 @@ index ad77d590..7693575e 100644
 +    // Paper end
  }
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

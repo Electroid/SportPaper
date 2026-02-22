@@ -1,6 +1,6 @@
-From c65fc902e47c5b2985e0ce1c53591194b9f73fc1 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 7 Aug 2018 01:38:03 -0700
+From 54a214999e8f4b8309d4f9ea7fe5c42f17237973 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 16 Feb 2015 04:58:20 -0500
 Subject: [PATCH] Efficiently search for blocks by material
 
 
@@ -33,5 +33,5 @@ index b7bc5632..d9311090 100644
       * Capture thread-safe read-only snapshot of chunk data
       *
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

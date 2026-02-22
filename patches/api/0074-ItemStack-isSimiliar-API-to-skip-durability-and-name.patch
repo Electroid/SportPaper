@@ -1,6 +1,6 @@
-From a15a61afbf319de831d024bf9bbd965797a53cfc Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sat, 25 Aug 2018 00:34:35 -0700
+From 9f9380f5cd12808f61ce5dc6e73b291ecf14d4e0 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 15 Jun 2013 23:19:03 -0400
 Subject: [PATCH] ItemStack isSimiliar API to skip durability and name checks
 
 Skip Durability is useful if you simply want to see if an item type is the same for weapons
@@ -92,5 +92,5 @@ index 43f8d146..1954ea71 100644
  
      @Override
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

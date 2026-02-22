@@ -1,6 +1,6 @@
-From 09d595a2957bb2a835ab3e92d1daee39ffb446ea Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Thu, 16 Aug 2018 15:44:37 -0700
+From 7e6c5fafcea4db268169ef3715b5faa3e6ec2c5c Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 28 Dec 2016 01:18:55 -0500
 Subject: [PATCH] Fireworks API's
 
 Get the firework launcher
@@ -27,5 +27,5 @@ index b8a8c075..159d66d4 100644
 +    public UUID getSpawningEntity();
  }
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

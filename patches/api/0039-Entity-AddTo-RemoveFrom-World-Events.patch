@@ -1,6 +1,6 @@
-From 7fe151a224211123ec9842105b711fd47fc3ff3b Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 12 Aug 2018 02:04:18 -0700
+From 1b0f5db60ff3948b20086d84a532a3a6742e5479 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 28 Mar 2016 20:26:34 -0400
 Subject: [PATCH] Entity AddTo/RemoveFrom World Events
 
 
@@ -72,5 +72,5 @@ index 00000000..9f5ea4a0
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

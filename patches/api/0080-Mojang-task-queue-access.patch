@@ -1,6 +1,6 @@
-From ebc550311e605e60c45aaef3f3913acaf551dffd Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Mon, 27 Aug 2018 14:56:47 -0700
+From 45a8f2bda3426bcda5c37a5bf6711240362c958a Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 5 Aug 2016 09:52:58 -0400
 Subject: [PATCH] Mojang task queue access
 
 
@@ -74,5 +74,5 @@ index 2f1ed771..fddd7bed 100644
      {
          @Deprecated
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

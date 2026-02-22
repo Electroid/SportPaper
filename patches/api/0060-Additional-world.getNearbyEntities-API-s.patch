@@ -1,6 +1,6 @@
-From 9bbd555fd20ac1c35f81bb86e7edd1e56214b6f3 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 02:06:57 -0700
+From e52cbb29475af1adce5397acd4c28628cec3dc79 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 30 Apr 2018 17:55:28 -0400
 Subject: [PATCH] Additional world.getNearbyEntities API's
 
 Provides more methods to get nearby entities, and filter by types and predicates
@@ -264,5 +264,5 @@ index eea0976b..014b311e 100644
       * Get a list of all players in this World
       *
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

@@ -1,6 +1,6 @@
-From 1bb126ebb1f7a49ff124da3d021af4899a9ab010 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sat, 18 Aug 2018 22:49:18 -0700
+From bfb3d53c87e3a8d49292b1a90f97c1e0eb068d86 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 14 Jan 2018 16:59:43 -0500
 Subject: [PATCH] PreCreatureSpawnEvent
 
 Adds an event to fire before an Entity is created, so that plugins that need to cancel
@@ -119,5 +119,5 @@ index 00000000..b48a7875
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

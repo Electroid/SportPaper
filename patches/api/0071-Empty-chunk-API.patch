@@ -1,6 +1,6 @@
-From 5b2f3eacb60925bb3cd0a0ac438028b505be7bad Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Fri, 24 Aug 2018 02:36:09 -0700
+From ee5ee1ec958a04bc4a443c9614d5243804c06963 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 6 Mar 2016 03:43:35 -0500
 Subject: [PATCH] Empty chunk API
 
 
@@ -21,5 +21,5 @@ index fce2c50a..65e1a0e7 100644
       * Capture thread-safe read-only snapshot of chunk data
       *
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

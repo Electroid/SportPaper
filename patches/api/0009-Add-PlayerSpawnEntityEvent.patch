@@ -1,6 +1,6 @@
-From c3f7afda75f11f796273e6184698a358f637ec61 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sat, 4 Aug 2018 20:59:23 -0700
+From 31d30669ee3860413705ddbb8a5b7345f5f3dd39 Mon Sep 17 00:00:00 2001
+From: YukonAppleGeek <yukonvinecki@gmail.com>
+Date: Sun, 26 May 2013 18:47:29 -0700
 Subject: [PATCH] Add PlayerSpawnEntityEvent
 
 
@@ -89,5 +89,5 @@ index 00000000..1fdc6cad
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

@@ -1,6 +1,6 @@
-From ad1b564cb1ecfd53be67a88b791c43e633569ac9 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Wed, 8 Aug 2018 15:25:29 -0700
+From 0ef396870e698ef9013161dc833acb0e54bf56eb Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 29 Jun 2015 04:38:33 -0400
 Subject: [PATCH] Potion effect events
 
 
@@ -194,5 +194,5 @@ index 00000000..c95af16b
 +
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

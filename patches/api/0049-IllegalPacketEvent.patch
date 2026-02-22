@@ -1,6 +1,6 @@
-From 3155918bb2a16c52c92322b2955c2dc0af15494c Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 14 Aug 2018 23:47:08 -0700
+From 35fb7f8924937d749a29acc4f7e22fc214dd8588 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 23 Jun 2016 23:33:57 -0400
 Subject: [PATCH] IllegalPacketEvent
 
 Fire an event when an illegal packet is received to let plugins handle it
@@ -77,5 +77,5 @@ index 00000000..e79b3c9b
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

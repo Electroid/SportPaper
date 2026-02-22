@@ -1,6 +1,6 @@
-From 9e8441964310f44595fa497ec303100a068d7f77 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 15:25:03 -0700
+From 8c1175a3ae49c6d3f679dfc4ebfefb12a0f9b4cb Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 25 Jul 2018 01:36:07 -0400
 Subject: [PATCH] Expand Location Manipulation API
 
 Adds set(x, y, z), add(base, x, y, z), subtract(base, x, y, z);
@@ -61,5 +61,5 @@ index 28e40c94..bef4379c 100644
          return world.isChunkLoaded(locToBlock(x) >> 4, locToBlock(z) >> 4);
      }
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

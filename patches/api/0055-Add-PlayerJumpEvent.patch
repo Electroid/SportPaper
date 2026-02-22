@@ -1,6 +1,6 @@
-From 94d3c64a3bbbe45a1852d5a1f83497649ab6a183 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Fri, 17 Aug 2018 22:34:35 -0700
+From 390596aed0caca7cc3c66cb327a193fea6f540e3 Mon Sep 17 00:00:00 2001
+From: Zach Brown <zach.brown@destroystokyo.com>
+Date: Thu, 28 Sep 2017 17:21:32 -0400
 Subject: [PATCH] Add PlayerJumpEvent
 
 
@@ -112,5 +112,5 @@ index 00000000..0dd48fdd
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

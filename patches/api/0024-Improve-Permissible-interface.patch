@@ -1,6 +1,6 @@
-From 97c5c7d06ffbb22a1e2dacc627c40b5f614921c5 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Wed, 8 Aug 2018 00:38:11 -0700
+From 7e801793ea6dc076e6d91722357ba3497354e335 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 28 May 2015 04:31:07 -0400
 Subject: [PATCH] Improve Permissible interface
 
 
@@ -263,5 +263,5 @@ index 3b95061a..7a617309 100644
  
      private class RemoveAttachmentRunnable implements Runnable {
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

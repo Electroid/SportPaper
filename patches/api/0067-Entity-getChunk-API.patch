@@ -1,6 +1,6 @@
-From f23a67e1639c7dccda73d14489046b866d5faac1 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 14:22:31 -0700
+From e0db083b99aac4c4c2a35f3c4fdb613b06ea5bb4 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 4 Jul 2018 02:25:48 -0400
 Subject: [PATCH] Entity#getChunk API
 
 Get the chunk the entity is currently registered to
@@ -31,5 +31,5 @@ index aade959c..060d2d5f 100644
      public class Spigot
      {
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

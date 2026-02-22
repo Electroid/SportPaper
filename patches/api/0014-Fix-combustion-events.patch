@@ -1,6 +1,6 @@
-From dc1987dc2f1a0c2c76b41dd7de50f161ceabeb92 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 5 Aug 2018 20:46:54 -0700
+From 9c2fa8329f0afa62c66e97d0de31852850174766 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 30 Oct 2014 00:40:30 -0400
 Subject: [PATCH] Fix combustion events
 
 
@@ -36,5 +36,5 @@ index 00000000..5833ab7c
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

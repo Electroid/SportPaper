@@ -1,0 +1,52 @@
+From 7e5e3d479124a0911cd5b7c907504191338b86b3 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 20 Mar 2016 06:45:01 -0400
+Subject: [PATCH] Access items by EquipmentSlot
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
+index dba8d5ba1..f341f7593 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
+@@ -9,6 +9,7 @@ import org.apache.commons.lang.Validate;
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.entity.HumanEntity;
+ import org.bukkit.inventory.EntityEquipment;
++import org.bukkit.inventory.EquipmentSlot;
+ import org.bukkit.inventory.ItemStack;
+ 
+ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
+@@ -34,6 +35,30 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+         setItem(getHeldItemSlot(), stack);
+     }
+ 
++    @Override
++    public ItemStack getItem(EquipmentSlot slot) {
++        switch (slot) {
++            case HAND: return getItemInHand();
++            case HEAD: return getHelmet();
++            case CHEST: return getChestplate();
++            case LEGS: return getLeggings();
++            case FEET: return getBoots();
++        }
++        throw new UnsupportedOperationException(slot.name());
++    }
++
++    @Override
++    public void setItem(EquipmentSlot slot, ItemStack stack) {
++        switch(slot) {
++            case HAND: setItemInHand(stack); return;
++            case HEAD: setHelmet(stack); return;
++            case CHEST: setChestplate(stack); return;
++            case LEGS: setLeggings(stack); return;
++            case FEET: setBoots(stack); return;
++        }
++        throw new UnsupportedOperationException(slot.name());
++    }
++
+     @Override
+     public void setItem(int index, ItemStack item) {
+         super.setItem(index, item);
+-- 
+2.50.1 (Apple Git-155)
+

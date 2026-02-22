@@ -1,6 +1,6 @@
-From 6a07b9db42762c3e3b8cb8a3ebc621c930a749aa Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 5 Aug 2018 22:08:43 -0700
+From 5f53d4f1396c4e273a6e128624953a6a3cd1fdc2 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 15 Nov 2014 16:17:15 -0500
 Subject: [PATCH] Add PlayerAttackEntityEvent
 
 
@@ -58,5 +58,5 @@ index 00000000..b05b2314
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

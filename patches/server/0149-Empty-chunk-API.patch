@@ -1,0 +1,40 @@
+From 8f04db58aec4e1e63cfa46c5296474f910f599f5 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 6 Mar 2016 03:43:13 -0500
+Subject: [PATCH] Empty chunk API
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkSection.java b/src/main/java/net/minecraft/server/ChunkSection.java
+index 907c57b8c..7a2514390 100644
+--- a/src/main/java/net/minecraft/server/ChunkSection.java
++++ b/src/main/java/net/minecraft/server/ChunkSection.java
+@@ -71,6 +71,7 @@ public class ChunkSection {
+         return iblockdata.getBlock().toLegacyData(iblockdata);
+     }
+ 
++    public boolean isEmpty() { return this.a(); } // SportPaper - alias for following method
+     public boolean a() {
+         return this.nonEmptyBlockCount == 0;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+index 80de4eb16..14b2f0403 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -103,6 +103,14 @@ public class CraftChunk implements Chunk {
+         return blocks;
+     }
+ 
++    @Override
++    public boolean isEmpty() {
++        for(ChunkSection chunkSections : getHandle().getSections()) {
++            if(chunkSections != null && !chunkSections.isEmpty()) return false;
++        }
++        return true;
++    }
++
+     public Entity[] getEntities() {
+         int count = 0, index = 0;
+         net.minecraft.server.Chunk chunk = getHandle();
+-- 
+2.50.1 (Apple Git-155)
+

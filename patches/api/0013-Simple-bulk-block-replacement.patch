@@ -1,6 +1,6 @@
-From db53ae5a5393454f2b9d70ff57fe5240c5279e71 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 5 Aug 2018 20:20:48 -0700
+From 92dc21729d666d65c5cafdfe6b9c81eb553016ae Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 28 Sep 2014 05:47:53 -0400
 Subject: [PATCH] Simple bulk block replacement
 
 
@@ -30,5 +30,5 @@ index 05101517..b7bc5632 100644
 +    int replaceMaterial(Material original, MaterialData replacement);
  }
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

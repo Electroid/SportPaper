@@ -1,0 +1,23 @@
+From c3dd02dd8264382f00fcf39de0a63e9284379485 Mon Sep 17 00:00:00 2001
+From: Austin L Mayes <me@austinlm.me>
+Date: Mon, 21 Dec 2020 17:08:28 -0600
+Subject: [PATCH] Don't store merchant recipes with invalid data
+
+Signed-off-by: Austin L Mayes <me@austinlm.me>
+
+diff --git a/src/main/java/net/minecraft/server/MerchantRecipeList.java b/src/main/java/net/minecraft/server/MerchantRecipeList.java
+index 3dd225593..3e4d5ed18 100644
+--- a/src/main/java/net/minecraft/server/MerchantRecipeList.java
++++ b/src/main/java/net/minecraft/server/MerchantRecipeList.java
+@@ -71,7 +71,7 @@ public class MerchantRecipeList extends ArrayList<MerchantRecipe> {
+ 
+         for (int i = 0; i < this.size(); ++i) {
+             MerchantRecipe merchantrecipe = (MerchantRecipe) this.get(i);
+-
++            if (merchantrecipe.getBuyItem1() == null) continue;
+             nbttaglist.add(merchantrecipe.k());
+         }
+ 
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,6 +1,6 @@
-From 32d7e7f929a67431a04dd4d8be8dcecad551012b Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 02:41:26 -0700
+From 56525e22d6daacafc0fbc8380426b1d9d6915aea Mon Sep 17 00:00:00 2001
+From: BillyGalbreath <Blake.Galbreath@GMail.com>
+Date: Mon, 18 Jun 2018 00:41:46 -0500
 Subject: [PATCH] Add "getNearbyXXX" methods to Location
 
 
@@ -255,5 +255,5 @@ index f3c10eac..5cdc3481 100644
  
      @Override
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

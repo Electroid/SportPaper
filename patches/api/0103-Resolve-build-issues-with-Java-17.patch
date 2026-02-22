@@ -1,0 +1,52 @@
+From 24a5c24ac20ee35a7d65b537b8e60de463a6ecaf Mon Sep 17 00:00:00 2001
+From: "BT (calcastor/mame)" <43831917+calcastor@users.noreply.github.com>
+Date: Mon, 6 Feb 2023 23:31:31 -0800
+Subject: [PATCH] Resolve build issues with Java 17
+
+https://github.com/CobbleSword/NachoSpigot/commit/944e02c131b4f4f12a3140778fc9d681f773ae2c
+
+diff --git a/pom.xml b/pom.xml
+index 6a3186d5..912ad1ac 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -21,14 +21,6 @@
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+     </properties>
+ 
+-    <!-- required until fixed plexus-compiler-eclipse is deployed -->
+-    <pluginRepositories>
+-        <pluginRepository>
+-            <id>spigotmc-public</id>
+-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+-        </pluginRepository>
+-    </pluginRepositories>
+-
+     <dependencies>
+         <dependency>
+             <groupId>com.google.code.findbugs</groupId>
+@@ -108,22 +100,7 @@
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-compiler-plugin</artifactId>
+-                <!-- versions after this appear to be broken -->
+                 <version>3.1</version>
+-                <configuration>
+-                    <!-- we use the Eclipse compiler as it doesn't need a JDK -->
+-                    <compilerId>eclipse</compilerId>
+-                    <!-- source and target are ignored if this isn't true -->
+-                    <optimize>true</optimize>
+-                </configuration>
+-                <dependencies>
+-                    <!-- we need our custom version as it fixes some bugs on case sensitive file systems -->
+-                    <dependency>
+-                        <groupId>org.codehaus.plexus</groupId>
+-                        <artifactId>plexus-compiler-eclipse</artifactId>
+-                        <version>2.5.0-spigotmc</version>
+-                    </dependency>
+-                </dependencies>
+             </plugin>
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+-- 
+2.50.1 (Apple Git-155)
+

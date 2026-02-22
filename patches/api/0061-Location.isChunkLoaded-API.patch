@@ -1,6 +1,6 @@
-From b06597d583ed949ca91db9450972e6bf156cb5ac Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 02:09:16 -0700
+From 16fa737e371cca66e16db0e2001fab1d7f25b62c Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 30 Apr 2018 19:27:31 -0400
 Subject: [PATCH] Location.isChunkLoaded() API
 
 
@@ -22,5 +22,5 @@ index cd7ac2f1..bfeeae2e 100644
      public boolean equals(Object obj) {
          if (obj == null) {
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

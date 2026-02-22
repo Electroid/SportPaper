@@ -1,6 +1,6 @@
-From dc0de9f68d6373bc5a54340262d5228e61e09d16 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 14 Aug 2018 20:39:14 -0700
+From 508319a3b71dc6efe86e9d6ce5fec9fb606e5d7e Mon Sep 17 00:00:00 2001
+From: AlphaBlend <whizkid3000@hotmail.com>
+Date: Thu, 8 Sep 2016 08:47:08 -0700
 Subject: [PATCH] Add source to PlayerExpChangeEvent
 
 
@@ -68,5 +68,5 @@ index f37491d7..204ead34 100644
       * Get the amount of experience the player will receive
       *
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

@@ -1,6 +1,6 @@
-From 311efe69774d9ee19a868c81126851aefe29f53e Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Mon, 20 Aug 2018 23:54:33 -0700
+From 908b0ce46f21f81493dd6e0aec0f5017c1944269 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 14 Jan 2018 17:31:37 -0500
 Subject: [PATCH] PlayerNaturallySpawnCreaturesEvent
 
 This event can be used for when you want to exclude a certain player
@@ -75,5 +75,5 @@ index 00000000..85cb04f5
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 
