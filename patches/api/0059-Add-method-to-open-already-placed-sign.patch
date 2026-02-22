@@ -1,6 +1,6 @@
-From 2b2c365101ddeb742a36accf02d1d26a6110ef7d Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 02:01:01 -0700
+From c7b07b123c232da818807e40530fc0e2a0ca518b Mon Sep 17 00:00:00 2001
+From: Mark Vainomaa <mikroskeem@mikroskeem.eu>
+Date: Sun, 1 Apr 2018 02:28:43 +0300
 Subject: [PATCH] Add method to open already placed sign
 
 
@@ -31,5 +31,5 @@ index 3f8646dd..053e61da 100644
 +    // Paper end
  }
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

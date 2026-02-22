@@ -1,6 +1,6 @@
-From 17322f53e55f2c81c78656acd43f65bad83336af Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 02:35:59 -0700
+From 94e72a2c334bf7b23b1749c0d2bdb0dad2a9b8f7 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 24 May 2018 21:01:13 -0400
 Subject: [PATCH] Location.toBlockLocation/toCenterLocation()
 
 Convert location objects to their block coordinates, or the center of the block
@@ -38,5 +38,5 @@ index bfeeae2e..f3c10eac 100644
  
      @Override
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

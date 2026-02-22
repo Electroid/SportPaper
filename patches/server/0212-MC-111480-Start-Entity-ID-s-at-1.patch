@@ -1,0 +1,22 @@
+From b65cc2f86b75679af4a712f3bc595a45898d241c Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 29 Jul 2018 22:58:47 -0400
+Subject: [PATCH] MC-111480: Start Entity ID's at 1
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 9ab157cdc..c1791616b 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -65,7 +65,7 @@ public abstract class Entity implements ICommandListener {
+     // CraftBukikt end
+ 
+     private static final AxisAlignedBB a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+-    public static int entityCount; // SportPaper - make public
++    public static int entityCount = 1; // Paper - MC-111480 - ID 0 is treated as special for DataWatchers, start 1 // SportPaper - make public
+     private int id;
+     public double j;
+     public boolean k; public boolean blocksEntitySpawning() { return k; } // Paper - OBFHELPER
+-- 
+2.50.1 (Apple Git-155)
+

@@ -1,6 +1,6 @@
-From bf9fed5e618078757e24c9f379c8255ebddb7303 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 14 Aug 2018 15:49:15 -0700
+From e517d2e320102b1276dcdb118cdb6c89853eda7d Mon Sep 17 00:00:00 2001
+From: vemacs <d@nkmem.es>
+Date: Wed, 23 Nov 2016 12:53:43 -0500
 Subject: [PATCH] Misc Utils
 
 
@@ -42,5 +42,5 @@ index 00000000..c45e2f36
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

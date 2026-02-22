@@ -1,6 +1,6 @@
-From a5c1cc88ad2af542ca46dcc159da3e676a1d457e Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 12 Aug 2018 00:29:01 -0700
+From 76cdba4063cfcb3121b007f8bc0811c86c95222a Mon Sep 17 00:00:00 2001
+From: kashike <kashike@vq.lc>
+Date: Tue, 8 Mar 2016 13:05:59 -0800
 Subject: [PATCH] Add BaseComponent sendMessage methods to CommandSender
 
 
@@ -40,5 +40,5 @@ index 52c59477..f6ae012e 100644
 +    // Paper end
  }
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

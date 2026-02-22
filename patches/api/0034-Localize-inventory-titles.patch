@@ -1,6 +1,6 @@
-From 75eee45cbf96cd3a20b7f675665812f986ab43b9 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Wed, 8 Aug 2018 21:41:45 -0700
+From a7a5d5e20d9812de0e0c7656eb7bb2c00b9bc63c Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 12 Jul 2015 09:58:54 -0400
 Subject: [PATCH] Localize inventory titles
 
 
@@ -168,5 +168,5 @@ index 873824ec..11dbabb7 100644
      public String getTitle();
  
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

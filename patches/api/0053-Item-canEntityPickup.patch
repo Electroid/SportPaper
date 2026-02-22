@@ -1,6 +1,6 @@
-From c0720749dd2ffa4468e44fe410b7bc833a73fbe2 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Fri, 17 Aug 2018 21:09:51 -0700
+From f2db6b0620b537e92375a193b8f4516ea437407d Mon Sep 17 00:00:00 2001
+From: BillyGalbreath <Blake.Galbreath@GMail.com>
+Date: Fri, 5 May 2017 03:57:08 -0500
 Subject: [PATCH] Item#canEntityPickup
 
 
@@ -30,5 +30,5 @@ index 90260b7e..7db060b9 100644
 +    // Paper end
  }
 -- 
-2.20.1
+2.50.1 (Apple Git-155)
 

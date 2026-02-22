@@ -1,6 +1,6 @@
-From 952554d18819b18a2c39ff99ce5b3e45f6ea757f Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Mon, 27 Aug 2018 21:05:37 -0700
+From 23ff7744bb078b4148be740aa80c23a3c73c5c91 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 9 Jul 2016 05:27:03 -0400
 Subject: [PATCH] Yielding event handlers
 
 
@@ -537,5 +537,5 @@ index ce9839ec..3447aae4 100644
      }
  
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

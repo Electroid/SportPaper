@@ -1,6 +1,6 @@
-From 324d54f2c2d4b9e6ce5af5e93d0252cd11a0577d Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Wed, 8 Aug 2018 21:18:26 -0700
+From a0488bc92f1b14c4e8cec3db890f6008c765f6c6 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 3 Jul 2015 03:39:45 -0400
 Subject: [PATCH] Action event interfaces
 
 
@@ -1560,5 +1560,5 @@ index b206b1f3..ef75e5ac 100644
          trl.callEvent(breakEvent);
          assertThat(trl.getEventClass(), is((Object) Event.class));
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

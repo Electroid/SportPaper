@@ -1,6 +1,6 @@
-From 61b695e35bb0020b116824e5517521b8ae4b4bbc Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Mon, 6 Aug 2018 00:28:27 -0700
+From ed90663ceb515058a542ca6e48cf82e845fa9bc3 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 9 Dec 2014 05:23:05 -0500
 Subject: [PATCH] EventException knows the source Event
 
 
@@ -102,5 +102,5 @@ index b057b053..64812133 100644
                  }
              }, plugin, method, eventClass); // Spigot
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

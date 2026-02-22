@@ -1,6 +1,6 @@
-From e3060229ca80a5864986c6858946d388b6d0e274 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 7 Aug 2018 00:30:15 -0700
+From cf08ceeaeb314022ae3cd33cd4c0cb13d85bba85 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 14 Feb 2015 08:18:40 -0500
 Subject: [PATCH] Add invis override API
 
 
@@ -20,5 +20,5 @@ index 735b4fc1..a75b86ca 100644
       * Checks to see if this player is currently standing on a block. This
       * information may not be reliable, as it is a state provided by the
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

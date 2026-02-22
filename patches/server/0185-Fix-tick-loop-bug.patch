@@ -1,0 +1,43 @@
+From d39fba5a65b58cae271c6edf5dcdb8772af1978e Mon Sep 17 00:00:00 2001
+From: chickeneer <emcchickeneer@gmail.com>
+Date: Fri, 10 Mar 2017 03:01:46 -0500
+Subject: [PATCH] Fix tick loop bug
+
+We were not calculating time after the sleep, resulting in wrong
+calculations. This caused us to go 100ms, 0ms, 100ms, 0 ms repeatedly.
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index e61380a13..513e2c361 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -683,21 +683,23 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+                     // PaperSpigot start - Further improve tick loop
+                     wait = TICK_TIME - (curTime - lastTick);
+                     if (wait > 0) {
++                        // SportPaper start - fix the tick loop improvements
+                         if (catchupTime < 2E6) {
+                             wait += Math.abs(catchupTime);
+-                        }
+-                        if (wait < catchupTime) {
++                        } else if (wait < catchupTime) {
+                             catchupTime -= wait;
+                             wait = 0;
+-                        } else if (catchupTime > 2E6) {
++                        } else {
+                             wait -= catchupTime;
+-                            catchupTime -= catchupTime;
++                            catchupTime = 0;
+                         }
++                        // SportPaper end
+                     }
+                     if (wait > 0) {
+                         if (!doSuspension()) {
+                             Thread.sleep(wait / 1000000);
+                         }
++                        curTime = System.nanoTime();
+                         wait = TICK_TIME - (curTime - lastTick);
+                     }
+ 
+-- 
+2.50.1 (Apple Git-155)
+

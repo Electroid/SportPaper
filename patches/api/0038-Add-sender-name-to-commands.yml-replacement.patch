@@ -1,6 +1,6 @@
-From 2ea26b428144142b216c41f2fa59ea533b25c652 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 12 Aug 2018 00:32:53 -0700
+From 08ddc9eda5fcee3db4ab384288b4ff801ce54a05 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 22 Jul 2015 18:50:41 -0400
 Subject: [PATCH] Add sender name to commands.yml replacement
 
 This allows you to use $sender in commands.yml definitions to make
@@ -41,5 +41,5 @@ index f89ad075..a3e9c633 100644
          while (index != -1) {
              int start = index;
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

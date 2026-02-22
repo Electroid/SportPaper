@@ -1,6 +1,6 @@
-From a091ec90c757a60fd2a24ee2b35af13ffbd3cf8a Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 21 Aug 2018 02:38:14 -0700
+From 939f2d65ea084f6d3c0ef493435979b5612433d8 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 3 Jun 2018 04:10:13 -0400
 Subject: [PATCH] PotionEffect clone methods
 
 
@@ -42,5 +42,5 @@ index 75bfa27a..60a35516 100644
          int type = getInt(map, TYPE);
          PotionEffectType effect = PotionEffectType.getById(type);
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

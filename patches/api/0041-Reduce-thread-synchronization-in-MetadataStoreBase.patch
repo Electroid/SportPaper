@@ -1,6 +1,6 @@
-From fe876eb3587e4e57fcc46ba6e97e399d79c02c72 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Sun, 12 Aug 2018 02:51:54 -0700
+From 2acfdd3e31ff4018b071e130441ce8f13967f040 Mon Sep 17 00:00:00 2001
+From: crast <contact@jamescrasta.com>
+Date: Sat, 1 Jun 2013 13:52:30 -0600
 Subject: [PATCH] Reduce thread synchronization in MetadataStoreBase
 
 Use ConcurrentHashMap to allow thread-safe access methods and very
@@ -101,5 +101,5 @@ index 6db06169..9cf5c0ed 100644
          for (Map<Plugin, MetadataValue> values : metadataMap.values()) {
              if (values.containsKey(owningPlugin)) {
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

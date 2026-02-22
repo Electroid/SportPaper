@@ -1,6 +1,6 @@
-From a0c1232c6c13a4fde3998bc005e2f3b1b54e52ee Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Wed, 8 Aug 2018 19:34:37 -0700
+From ec05d842142601a384a1ef7eac6d4ed8ffbc321a Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 3 Jul 2015 01:08:40 -0400
 Subject: [PATCH] Physical interface
 
 
@@ -581,5 +581,5 @@ index cf909461..bd2d3a1d 100644
      /**
       * Launches a {@link Projectile} from the ProjectileSource.
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

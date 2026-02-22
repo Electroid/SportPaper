@@ -1,8 +1,9 @@
-From 7fba7e65043002a2a440dbc3fda45f4b8386022b Mon Sep 17 00:00:00 2001
+From 34b2588c5e53edc7f81f39b4ac2c4fac12a4490c Mon Sep 17 00:00:00 2001
 From: cswhite2000 <18whitechristop@gmail.com>
 Date: Sat, 25 Aug 2018 00:37:04 -0700
 Subject: [PATCH] Add DebugUtils
 
+Co-authored-by: Aikar <aikar@aikar.co>
 
 diff --git a/src/main/java/org/github/paperspigot/utils/DebugUtils.java b/src/main/java/org/github/paperspigot/utils/DebugUtils.java
 new file mode 100644
@@ -38,5 +39,5 @@ index 00000000..c7bb59ea
 +
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

@@ -1,6 +1,6 @@
-From c479e04d1398651b1ffa0de93d27385e322b57e9 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 7 Aug 2018 22:30:26 -0700
+From 2c3341959248922392f4a1ff8b4721541133f2d3 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 26 May 2015 04:00:58 -0400
 Subject: [PATCH] Accurate block hit checking
 
 
@@ -167,5 +167,5 @@ index 00000000..b1ba1d8d
 +    }
 +}
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 

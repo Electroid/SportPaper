@@ -1,0 +1,24 @@
+From f334182cbd44a293ed9178680bd7fef3131dfb1c Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 20 Mar 2016 06:44:49 -0400
+Subject: [PATCH] Access items by EquipmentSlot
+
+
+diff --git a/src/main/java/org/bukkit/inventory/PlayerInventory.java b/src/main/java/org/bukkit/inventory/PlayerInventory.java
+index b79a4f02..4b3aa301 100644
+--- a/src/main/java/org/bukkit/inventory/PlayerInventory.java
++++ b/src/main/java/org/bukkit/inventory/PlayerInventory.java
+@@ -112,6 +112,10 @@ public interface PlayerInventory extends Inventory {
+      */
+     public ItemStack getItemInHand();
+ 
++    ItemStack getItem(EquipmentSlot slot);
++
++    void setItem(EquipmentSlot slot, ItemStack stack);
++
+     /**
+      * Sets the item in hand
+      *
+-- 
+2.50.1 (Apple Git-155)
+

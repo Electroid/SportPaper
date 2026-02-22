@@ -1,6 +1,6 @@
-From d3c7e1761ecba465983747414d6fe1155e895cf1 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 14 Aug 2018 22:00:00 -0700
+From f5926e0e4cd9e51169e788737a5f25702dcd0321 Mon Sep 17 00:00:00 2001
+From: Techcable <Techcable@outlook.com>
+Date: Fri, 16 Dec 2016 21:25:39 -0600
 Subject: [PATCH] Add ProjectileCollideEvent
 
 
@@ -73,5 +73,5 @@ index 00000000..3485833e
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

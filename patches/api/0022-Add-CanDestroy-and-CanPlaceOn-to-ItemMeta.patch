@@ -1,6 +1,6 @@
-From d227b6905a5237276ab1e56392c9e43b42f57e71 Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Tue, 7 Aug 2018 21:08:35 -0700
+From 130579aef8ad42d12744d5907d0c08157e0a41be Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 22 May 2015 00:45:13 -0400
 Subject: [PATCH] Add CanDestroy and CanPlaceOn to ItemMeta
 
 
@@ -129,5 +129,5 @@ index 00000000..a0489886
 +    }
 +}
 -- 
-2.18.0
+2.50.1 (Apple Git-155)
 

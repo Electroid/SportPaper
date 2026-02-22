@@ -1,6 +1,6 @@
-From e2c48ce1564b84e7d366693a7755e872ba2364eb Mon Sep 17 00:00:00 2001
-From: cswhite2000 <18whitechristop@gmail.com>
-Date: Mon, 6 Aug 2018 13:49:22 -0700
+From 7571dfc57d9229950501d318c7d27e4b7754c6a5 Mon Sep 17 00:00:00 2001
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 23 Jan 2014 00:17:31 -0500
 Subject: [PATCH] Fake name and skin API
 
 
@@ -393,5 +393,5 @@ index 00000000..a222f21e
 +    }
 +}
 -- 
-2.19.0
+2.50.1 (Apple Git-155)
 
